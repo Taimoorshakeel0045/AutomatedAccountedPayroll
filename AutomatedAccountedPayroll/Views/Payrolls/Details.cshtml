@@ -1,0 +1,180 @@
+﻿
+@model AutomatedAccountedPayroll.Models.Payroll
+
+@{
+    ViewData["Title"] = "Payroll Details";
+}
+
+<div class="mb-4">
+    <h1>Payroll Details</h1>
+    <p class="text-muted mb-0">
+        View employee salary and payment information
+    </p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <h4>Employee Information</h4>
+        <hr />
+
+        <dl class="row">
+
+            <dt class="col-sm-3">
+                Employee Code
+            </dt>
+            <dd class="col-sm-9">
+                @if (Model.Employee != null)
+                {
+                    @Model.Employee.EmployeeCode
+                }
+                else
+                {
+                    <span class="text-muted">No employee assigned</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">
+                Employee Name
+            </dt>
+            <dd class="col-sm-9">
+                @if (Model.Employee != null)
+                {
+                    @Model.Employee.FirstName @Model.Employee.LastName
+                }
+                else
+                {
+                    <span class="text-muted">No employee assigned</span>
+                }
+            </dd>
+
+        </dl>
+
+        <h4 class="mt-4">Salary Information</h4>
+        <hr />
+
+        <dl class="row">
+
+            <dt class="col-sm-3">
+                Payroll Month
+            </dt>
+            <dd class="col-sm-9">
+                @Model.PayrollMonth.ToString("MMMM yyyy")
+            </dd>
+
+            <dt class="col-sm-3">
+                Basic Salary
+            </dt>
+            <dd class="col-sm-9">
+                @Model.BasicSalary.ToString("N2")
+            </dd>
+
+            <dt class="col-sm-3">
+                Allowances
+            </dt>
+            <dd class="col-sm-9">
+                @Model.Allowances.ToString("N2")
+            </dd>
+
+            <dt class="col-sm-3">
+                Deductions
+            </dt>
+            <dd class="col-sm-9">
+                @Model.Deductions.ToString("N2")
+            </dd>
+
+            <dt class="col-sm-3">
+                Net Salary
+            </dt>
+            <dd class="col-sm-9">
+                <strong>
+                    @Model.NetSalary.ToString("N2")
+                </strong>
+            </dd>
+
+        </dl>
+
+        ```cshtml id="f7d2qs"
+        <h4 class="mt-4">Payment Information</h4>
+        <hr />
+
+        <dl class="row">
+
+            <dt class="col-sm-3">
+                Status
+            </dt>
+            <dd class="col-sm-9">
+
+                @if (Model.Status == "Paid")
+                {
+                    <span class="badge bg-success">Paid</span>
+                }
+                else if (Model.Status == "Processed")
+                {
+                    <span class="badge bg-primary">Processed</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Draft</span>
+                }
+
+            </dd>
+
+            <dt class="col-sm-3">
+                Payment Date
+            </dt>
+            <dd class="col-sm-9">
+                @(Model.PaymentDate?.ToString("dd-MM-yyyy") ?? "Not Paid")
+            </dd>
+
+            <dt class="col-sm-3">
+                Payment Method
+            </dt>
+            <dd class="col-sm-9">
+                @(string.IsNullOrWhiteSpace(Model.PaymentMethod)
+                                ? "Not Paid"
+                                : Model.PaymentMethod)
+            </dd>
+
+            <dt class="col-sm-3">
+                Payment Reference
+            </dt>
+            <dd class="col-sm-9">
+                @(string.IsNullOrWhiteSpace(Model.PaymentReference)
+                                ? "N/A"
+                                : Model.PaymentReference)
+            </dd>
+
+            <dt class="col-sm-3">
+                Created At
+            </dt>
+            <dd class="col-sm-9">
+                @Model.CreatedAt.ToLocalTime().ToString("dd-MM-yyyy HH:mm")
+            </dd>
+
+        </dl>
+
+
+    </div>
+</div>
+
+<div class="mt-3">
+
+    <a asp-action="Edit"
+       asp-route-id="@Model.PayrollId"
+       class="btn btn-primary">
+        Edit Payroll
+    </a>
+
+    <a asp-action="Payslip"
+       asp-route-id="@Model.PayrollId"
+       class="btn btn-success">
+        View Payslip
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to Payroll
+    </a>
+
+</div>

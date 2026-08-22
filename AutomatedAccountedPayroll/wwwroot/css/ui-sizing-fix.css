@@ -1,0 +1,356 @@
+﻿/*
+    ui-sizing-fix.css
+    Global sizing and application layout overrides.
+    Employee and Department page styling stays inside their own views.
+*/
+
+
+/* ========================================
+   GLOBAL BASE
+   ======================================== */
+
+html {
+    font-size: 20px !important;
+}
+
+body {
+    margin: 0;
+    font-size: 20px !important;
+    line-height: 1.5 !important;
+}
+
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+
+.app-content {
+    font-size: 20px !important;
+}
+
+    .app-content p,
+    .app-content span,
+    .app-content label,
+    .app-content li {
+        font-size: 20px !important;
+    }
+
+    .app-content small,
+    .app-content .small,
+    .app-content .text-muted {
+        font-size: 17px !important;
+    }
+
+
+    /* ========================================
+   GLOBAL HEADINGS
+   ======================================== */
+
+    .app-content h1,
+    .app-content .h1 {
+        font-size: 40px !important;
+    }
+
+    .app-content h2,
+    .app-content .h2 {
+        font-size: 34px !important;
+    }
+
+    .app-content h3,
+    .app-content .h3 {
+        font-size: 30px !important;
+    }
+
+    .app-content h4,
+    .app-content .h4 {
+        font-size: 26px !important;
+    }
+
+    .app-content h5,
+    .app-content .h5 {
+        font-size: 23px !important;
+    }
+
+    .app-content h6,
+    .app-content .h6 {
+        font-size: 20px !important;
+    }
+
+
+/* ========================================
+   SIDEBAR
+   ======================================== */
+
+.app-sidebar {
+    width: 420px !important;
+}
+
+.app-main {
+    margin-left: 420px !important;
+    width: calc(100% - 420px) !important;
+}
+
+.sidebar-link {
+    font-size: 28px !important;
+    padding: 24px 24px !important;
+    min-height: 76px !important;
+}
+
+    .sidebar-link span {
+        font-size: 28px !important;
+    }
+
+    .sidebar-link i {
+        font-size: 30px !important;
+    }
+
+.menu-section {
+    font-size: 18px !important;
+}
+
+.brand-title {
+    font-size: 28px !important;
+}
+
+.sidebar-brand small {
+    font-size: 17px !important;
+}
+
+.user-name {
+    font-size: 21px !important;
+}
+
+.user-info small {
+    font-size: 16px !important;
+}
+
+
+/* ========================================
+   TOPBAR
+   ======================================== */
+
+.app-topbar {
+    height: 82px !important;
+}
+
+.topbar-title {
+    font-size: 26px !important;
+}
+
+.topbar-user-name {
+    font-size: 18px !important;
+}
+
+.topbar-user small {
+    font-size: 14px !important;
+}
+
+.sidebar-toggle {
+    font-size: 25px !important;
+}
+
+
+/* ========================================
+   GLOBAL BUTTONS
+   ======================================== */
+
+.app-content .btn {
+    font-size: 20px !important;
+    padding: 11px 20px !important;
+}
+
+.app-content .btn-sm {
+    font-size: 18px !important;
+    padding: 9px 16px !important;
+}
+
+
+/* ========================================
+   GLOBAL FORMS
+   ======================================== */
+
+.app-content .form-label {
+    font-size: 20px !important;
+}
+
+.app-content .form-control,
+.app-content .form-select {
+    min-height: 54px !important;
+    font-size: 20px !important;
+    padding: 10px 14px !important;
+}
+
+    .app-content .form-control::placeholder {
+        font-size: 18px !important;
+    }
+
+
+/* ========================================
+   GLOBAL TABLE
+   ======================================== */
+
+.app-content .table {
+    font-size: 20px !important;
+}
+
+    .app-content .table thead th {
+        font-size: 20px !important;
+        padding: 16px 14px !important;
+    }
+
+    .app-content .table tbody td {
+        font-size: 20px !important;
+        padding: 16px 14px !important;
+    }
+
+    .app-content .table small {
+        font-size: 17px !important;
+    }
+
+
+/* ========================================
+   GLOBAL CARDS
+   ======================================== */
+
+.app-content .card-header {
+    font-size: 20px !important;
+}
+
+.app-content .card-body {
+    font-size: 20px !important;
+}
+
+.app-content .card-footer {
+    font-size: 18px !important;
+}
+
+
+/* ========================================
+   GLOBAL BADGES
+   ======================================== */
+
+.app-content .badge {
+    font-size: 17px !important;
+    padding: 8px 13px !important;
+}
+
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.app-footer,
+.app-footer a {
+    font-size: 17px !important;
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 991.98px) {
+
+    .app-sidebar {
+        width: 360px !important;
+    }
+
+    .app-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .app-content {
+        padding: 24px !important;
+    }
+
+    .app-topbar {
+        padding: 0 22px !important;
+    }
+}
+
+
+@media (max-width: 575.98px) {
+
+    html {
+        font-size: 18px !important;
+    }
+
+    body {
+        font-size: 18px !important;
+    }
+
+    .app-content {
+        padding: 16px !important;
+        font-size: 18px !important;
+    }
+
+        .app-content p,
+        .app-content span,
+        .app-content label,
+        .app-content li {
+            font-size: 18px !important;
+        }
+
+        .app-content h1,
+        .app-content .h1 {
+            font-size: 32px !important;
+        }
+
+        .app-content h2,
+        .app-content .h2 {
+            font-size: 28px !important;
+        }
+
+        .app-content h3,
+        .app-content .h3 {
+            font-size: 25px !important;
+        }
+
+        .app-content h4,
+        .app-content .h4 {
+            font-size: 22px !important;
+        }
+
+        .app-content h5,
+        .app-content .h5 {
+            font-size: 20px !important;
+        }
+
+        .app-content h6,
+        .app-content .h6 {
+            font-size: 18px !important;
+        }
+
+        .app-content .btn {
+            font-size: 17px !important;
+        }
+
+        .app-content .form-control,
+        .app-content .form-select {
+            font-size: 17px !important;
+            min-height: 48px !important;
+        }
+
+        .app-content .table tbody td {
+            font-size: 18px !important;
+        }
+
+    .topbar-title {
+        font-size: 15px !important;
+    }
+
+    .topbar-user {
+        display: none;
+    }
+
+    .app-footer,
+    .app-footer a {
+        font-size: 11px !important;
+    }
+
+    .sidebar-link {
+        padding: 14px 15px !important;
+        min-height: 50px !important;
+    }
+}

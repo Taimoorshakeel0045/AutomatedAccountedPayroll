@@ -1,0 +1,242 @@
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Department>
+
+@{
+    ViewData["Title"] = "Departments";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+
+    
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <div class="dashboard-title-icon">
+                <i class="bi bi-diagram-3-fill"></i>
+            </div>
+
+            <h1 class="mb-0">Departments</h1>
+        </div>
+
+        <p class="text-muted mb-0">
+            Manage company departments and organizational structure.
+        </p>
+    </div>
+
+    <div>
+        <a asp-action="Create"
+           class="btn btn-primary dashboard-primary-btn">
+            <i class="bi bi-plus-lg me-1"></i>
+            Add Department
+        </a>
+    </div>
+  
+
+</div>
+
+<div class="card">
+
+    
+    <div class="card-header d-flex justify-content-between align-items-center py-3">
+
+        <div>
+            <h5 class="mb-1">
+                <i class="bi bi-diagram-3 me-1 dashboard-title-icon"></i>
+                Department List
+            </h5>
+
+            <small class="text-muted">
+                Manage your company departments
+            </small>
+        </div>
+
+        <span class="badge bg-primary">
+            @Model.Count() Departments
+        </span>
+
+    </div>
+
+
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover mb-0 department-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Department Name
+                        </th>
+
+                        <th>
+                            Description
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th class="text-end">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <div class="panel-icon rounded-3 d-flex align-items-center justify-content-center"
+                                             style="width:42px;height:42px;">
+
+                                            <i class="bi bi-diagram-3-fill"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <div class="fw-semibold">
+                                                @item.DepartmentName
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        <span>
+                                            @item.Description
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            No description
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge status-green-bg">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge status-red-bg">
+                                            <i class="bi bi-x-circle me-1"></i>
+                                            Inactive
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td class="text-end">
+
+                                    <div class="btn-group" role="group">
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.DepartmentId"
+                                           class="btn btn-outline-primary btn-sm"
+                                           title="Edit Department">
+
+                                            <i class="bi bi-pencil"></i>
+
+                                        </a>
+
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.DepartmentId"
+                                           class="btn btn-outline-secondary btn-sm"
+                                           title="View Details">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.DepartmentId"
+                                           class="btn btn-outline-danger btn-sm"
+                                           title="Delete Department">
+
+                                            <i class="bi bi-trash"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="4" class="text-center py-5">
+
+                                <div class="text-muted">
+
+                                    <i class="bi bi-diagram-3"
+                                       style="font-size: 40px;"></i>
+
+                                    <div class="mt-2 fw-semibold">
+                                        No departments found
+                                    </div>
+
+                                    <div class="small">
+                                        Create your first department to get started.
+                                    </div>
+
+                                    <a asp-action="Create"
+                                       class="btn btn-primary mt-3">
+
+                                        <i class="bi bi-plus-lg me-1"></i>
+                                        Add Department
+
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+   
+
+</div>

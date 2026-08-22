@@ -1,0 +1,893 @@
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Leave>
+
+@{
+    ViewData["Title"] = "Leave Management";
+
+    var leaveList = Model?.ToList()
+        ?? new List<AutomatedAccountedPayroll.Models.Leave>();
+
+    var totalLeaves = Convert.ToInt32(ViewBag.TotalLeaves ?? 0);
+    var pendingCount = Convert.ToInt32(ViewBag.PendingCount ?? 0);
+    var approvedCount = Convert.ToInt32(ViewBag.ApprovedCount ?? 0);
+    var rejectedCount = Convert.ToInt32(ViewBag.RejectedCount ?? 0);
+
+    var totalLeaveDays = Convert.ToDecimal(
+        ViewBag.TotalLeaveDays ?? 0);
+
+    var selectedEmployeeId =
+        ViewData["EmployeeId"] as int?;
+
+    var selectedLeaveType =
+        ViewData["LeaveType"]?.ToString();
+
+    var selectedStatus =
+        ViewData["Status"]?.ToString();
+
+    var employees =
+        ViewBag.Employees
+        as IEnumerable<AutomatedAccountedPayroll.Models.Employee>
+        ?? Enumerable.Empty<AutomatedAccountedPayroll.Models.Employee>();
+}
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-3 mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <div class="text-primary fs-4">
+                    <i class="bi bi-calendar2-week"></i>
+                </div>
+
+                <h1 class="h3 mb-0">
+                    Leave Management
+                </h1>
+
+            </div>
+
+            <p class="text-muted mb-0">
+                Manage employee leave requests and approvals.
+            </p>
+
+        </div>
+
+
+        <a asp-action="Create"
+           class="btn btn-primary px-4">
+
+            <i class="bi bi-plus-lg me-1"></i>
+            Create Leave Request
+
+        </a>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- TOTAL -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small mb-1">
+                                Total Requests
+                            </div>
+
+                            <h3 class="mb-0">
+                                @totalLeaves
+                            </h3>
+
+                        </div>
+
+                        <div class="rounded-circle bg-primary bg-opacity-10
+                                    text-primary d-flex align-items-center
+                                    justify-content-center"
+                             style="width:48px;height:48px;">
+
+                            <i class="bi bi-calendar2-week fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PENDING -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small mb-1">
+                                Pending
+                            </div>
+
+                            <h3 class="mb-0 text-warning">
+                                @pendingCount
+                            </h3>
+
+                            <small class="text-muted">
+                                Awaiting approval
+                            </small>
+
+                        </div>
+
+                        <div class="rounded-circle bg-warning bg-opacity-10
+                                    text-warning d-flex align-items-center
+                                    justify-content-center"
+                             style="width:48px;height:48px;">
+
+                            <i class="bi bi-hourglass-split fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPROVED -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small mb-1">
+                                Approved
+                            </div>
+
+                            <h3 class="mb-0 text-success">
+                                @approvedCount
+                            </h3>
+
+                            <small class="text-muted">
+                                Approved requests
+                            </small>
+
+                        </div>
+
+                        <div class="rounded-circle bg-success bg-opacity-10
+                                    text-success d-flex align-items-center
+                                    justify-content-center"
+                             style="width:48px;height:48px;">
+
+                            <i class="bi bi-check-circle fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REJECTED -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small mb-1">
+                                Rejected
+                            </div>
+
+                            <h3 class="mb-0 text-danger">
+                                @rejectedCount
+                            </h3>
+
+                            <small class="text-muted">
+                                Rejected requests
+                            </small>
+
+                        </div>
+
+                        <div class="rounded-circle bg-danger bg-opacity-10
+                                    text-danger d-flex align-items-center
+                                    justify-content-center"
+                             style="width:48px;height:48px;">
+
+                            <i class="bi bi-x-circle fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOTAL DAYS -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body py-3">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small">
+                                Total Leave Days
+                            </div>
+
+                            <h5 class="mb-0">
+                                @totalLeaveDays.ToString("0.00")
+                            </h5>
+
+                        </div>
+
+                        <i class="bi bi-calendar-range text-primary fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTERS -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex align-items-center gap-2">
+
+                <div class="rounded-circle bg-primary bg-opacity-10
+                            text-primary d-flex align-items-center
+                            justify-content-center"
+                     style="width:38px;height:38px;">
+
+                    <i class="bi bi-funnel"></i>
+
+                </div>
+
+                <div>
+
+                    <h5 class="mb-0">
+                        Filter Leave Requests
+                    </h5>
+
+                    <small class="text-muted">
+                        Find specific leave requests
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body pt-2">
+
+            <form asp-action="Index"
+                  method="get">
+
+                <div class="row g-3 align-items-end">
+
+                    <!-- EMPLOYEE -->
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Employee
+                        </label>
+
+                        <select name="employeeId"
+                                class="form-select">
+
+                            <option value="">
+                                All Employees
+                            </option>
+
+                            @foreach (var employee in employees)
+                            {
+                                <option value="@employee.EmployeeId"
+                                        selected="@(selectedEmployeeId == employee.EmployeeId)">
+
+                                    @employee.FirstName
+                                    @employee.LastName
+                                    (@employee.EmployeeCode)
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- LEAVE TYPE -->
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Leave Type
+                        </label>
+
+                        <select name="leaveType"
+                                class="form-select">
+
+                            <option value="">
+                                All Leave Types
+                            </option>
+
+                            <option value="Casual"
+                                    selected="@(selectedLeaveType == "Casual")">
+                                Casual
+                            </option>
+
+                            <option value="Sick"
+                                    selected="@(selectedLeaveType == "Sick")">
+                                Sick
+                            </option>
+
+                            <option value="Annual"
+                                    selected="@(selectedLeaveType == "Annual")">
+                                Annual
+                            </option>
+
+                            <option value="Emergency"
+                                    selected="@(selectedLeaveType == "Emergency")">
+                                Emergency
+                            </option>
+
+                            <option value="Unpaid"
+                                    selected="@(selectedLeaveType == "Unpaid")">
+                                Unpaid
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Status
+                        </label>
+
+                        <select name="status"
+                                class="form-select">
+
+                            <option value="">
+                                All Statuses
+                            </option>
+
+                            <option value="Pending"
+                                    selected="@(selectedStatus == "Pending")">
+                                Pending
+                            </option>
+
+                            <option value="Approved"
+                                    selected="@(selectedStatus == "Approved")">
+                                Approved
+                            </option>
+
+                            <option value="Rejected"
+                                    selected="@(selectedStatus == "Rejected")">
+                                Rejected
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="col-12">
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+
+                                <i class="bi bi-search me-1"></i>
+                                Apply Filters
+
+                            </button>
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-secondary">
+
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                Clear
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- RECORDS -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex flex-wrap justify-content-between
+                        align-items-center gap-2">
+
+                <div>
+
+                    <h5 class="mb-1">
+                        Leave Requests
+                    </h5>
+
+                    <small class="text-muted">
+                        @totalLeaves request(s) found
+                    </small>
+
+                </div>
+
+                <span class="text-muted small">
+
+                    <i class="bi bi-sort-down me-1"></i>
+                    Latest requests first
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (leaveList.Any())
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Employee
+                                </th>
+
+                                <th>
+                                    Leave Type
+                                </th>
+
+                                <th>
+                                    Period
+                                </th>
+
+                                <th>
+                                    Days
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Applied
+                                </th>
+
+                                <th>
+                                    Approved By
+                                </th>
+
+                                <th class="text-end pe-4">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in leaveList)
+                            {
+                                var firstInitial =
+                                item.Employee?.FirstName?.FirstOrDefault();
+
+                                var lastInitial =
+                                item.Employee?.LastName?.FirstOrDefault();
+
+                                <tr>
+
+                                    <!-- EMPLOYEE -->
+
+                                    <td class="ps-4">
+
+                                        <div class="d-flex align-items-center gap-2">
+
+                                            <div class="rounded-circle bg-primary bg-opacity-10
+                                                                text-primary d-flex align-items-center
+                                                                justify-content-center fw-semibold"
+                                                 style="width:40px;height:40px;">
+
+                                                @firstInitial@lastInitial
+
+                                            </div>
+
+                                            <div>
+
+                                                <div class="fw-semibold">
+
+                                                    @item.Employee?.FirstName
+                                                    @item.Employee?.LastName
+
+                                                </div>
+
+                                                <small class="text-muted">
+
+                                                    @item.Employee?.EmployeeCode
+
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- LEAVE TYPE -->
+
+                                    <td>
+
+                                        @if (item.LeaveType == "Casual")
+                                        {
+                                            <span class="badge rounded-pill bg-primary">
+                                                Casual
+                                            </span>
+                                        }
+                                        else if (item.LeaveType == "Sick")
+                                        {
+                                            <span class="badge rounded-pill bg-info">
+                                                Sick
+                                            </span>
+                                        }
+                                        else if (item.LeaveType == "Annual")
+                                        {
+                                            <span class="badge rounded-pill bg-success">
+                                                Annual
+                                            </span>
+                                        }
+                                        else if (item.LeaveType == "Emergency")
+                                        {
+                                            <span class="badge rounded-pill bg-warning text-dark">
+                                                Emergency
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill bg-secondary">
+                                                @item.LeaveType
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- PERIOD -->
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+
+                                            @item.StartDate.ToString("dd MMM yyyy")
+
+                                        </div>
+
+                                        <small class="text-muted">
+
+                                            to
+                                            @item.EndDate.ToString("dd MMM yyyy")
+
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- DAYS -->
+
+                                    <td>
+
+                                        <span class="fw-semibold">
+                                            @item.TotalDays.ToString("0.00")
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        @if (item.Status == "Pending")
+                                        {
+                                            <span class="badge rounded-pill bg-warning text-dark">
+
+                                                <i class="bi bi-hourglass-split me-1"></i>
+                                                Pending
+
+                                            </span>
+                                        }
+                                        else if (item.Status == "Approved")
+                                        {
+                                            <span class="badge rounded-pill bg-success">
+
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Approved
+
+                                            </span>
+                                        }
+                                        else if (item.Status == "Rejected")
+                                        {
+                                            <span class="badge rounded-pill bg-danger">
+
+                                                <i class="bi bi-x-circle me-1"></i>
+                                                Rejected
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill bg-secondary">
+                                                @item.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- APPLIED -->
+
+                                    <td>
+                                        <div class="fw-semibold">
+                                            @item.AppliedDate.ToLocalTime().ToString("dd MMM yyyy")
+                                        </div>
+
+                                        <small class="text-muted">
+                                            @item.AppliedDate.ToLocalTime().ToString("hh:mm tt")
+                                        </small>
+                                    </td>
+
+
+                                    <!-- APPROVED BY -->
+
+                                    <td>
+
+                                        @if (!string.IsNullOrWhiteSpace(item.ApprovedBy))
+                                        {
+                                            <span class="fw-semibold">
+                                                @item.ApprovedBy
+                                            </span>
+
+                                            @if (item.ApprovedDate.HasValue)
+                                            {
+                                                <small class="d-block text-muted">
+                                                    @item.ApprovedDate.Value.ToLocalTime().ToString("dd MMM yyyy")
+                                                </small>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                -
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- ACTIONS -->
+
+                                    <td class="text-end pe-4">
+
+                                        <div class="btn-group">
+
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.LeaveId"
+                                               class="btn btn-sm btn-outline-secondary"
+                                               title="View Details">
+
+                                                <i class="bi bi-eye"></i>
+
+                                            </a>
+
+
+                                            @if (item.Status == "Pending")
+                                            {
+                                                <a asp-action="Edit"
+                                                   asp-route-id="@item.LeaveId"
+                                                   class="btn btn-sm btn-outline-primary"
+                                                   title="Edit Leave">
+
+                                                    <i class="bi bi-pencil"></i>
+
+                                                </a>
+                                            }
+
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.LeaveId"
+                                               class="btn btn-sm btn-outline-danger"
+                                               title="Delete Leave">
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </a>
+
+                                        </div>
+
+
+                                        @if (item.Status == "Pending")
+                                        {
+                                            <div class="d-flex justify-content-end
+                                                                    gap-1 mt-2">
+
+                                                <form asp-action="Approve"
+                                                      asp-route-id="@item.LeaveId"
+                                                      method="post">
+
+                                                    @Html.AntiForgeryToken()
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-success"
+                                                            title="Approve">
+
+                                                        <i class="bi bi-check-lg"></i>
+                                                        Approve
+
+                                                    </button>
+
+                                                </form>
+
+
+                                                <form asp-action="Reject"
+                                                      asp-route-id="@item.LeaveId"
+                                                      method="post">
+
+                                                    @Html.AntiForgeryToken()
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-danger"
+                                                            title="Reject">
+
+                                                        <i class="bi bi-x-lg"></i>
+                                                        Reject
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <!-- EMPTY STATE -->
+
+                <div class="text-center py-5">
+
+                    <div class="rounded-circle bg-primary bg-opacity-10
+                                    text-primary d-inline-flex align-items-center
+                                    justify-content-center mb-3"
+                         style="width:70px;height:70px;">
+
+                        <i class="bi bi-calendar-x fs-2"></i>
+
+                    </div>
+
+                    <h5 class="mb-2">
+                        No leave requests found
+                    </h5>
+
+                    <p class="text-muted mb-4">
+                        Try changing your filters or create a new leave request.
+                    </p>
+
+                    <a asp-action="Create"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Create Leave Request
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

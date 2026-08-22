@@ -1,0 +1,915 @@
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Attendance";
+
+    var attendanceList = Model?.ToList()
+        ?? new List<AutomatedAccountedPayroll.Models.Attendance>();
+
+    var totalAttendance = Convert.ToInt32(ViewBag.TotalAttendance ?? 0);
+    var presentCount = Convert.ToInt32(ViewBag.PresentCount ?? 0);
+    var absentCount = Convert.ToInt32(ViewBag.AbsentCount ?? 0);
+    var lateCount = Convert.ToInt32(ViewBag.LateCount ?? 0);
+    var leaveCount = Convert.ToInt32(ViewBag.LeaveCount ?? 0);
+    var halfDayCount = Convert.ToInt32(ViewBag.HalfDayCount ?? 0);
+
+    var attendanceRate = totalAttendance > 0
+        ? Math.Round((double)presentCount / totalAttendance * 100, 1)
+        : 0;
+
+    var selectedEmployeeId = ViewData["EmployeeId"] as int?;
+    var selectedStatus = ViewData["Status"]?.ToString();
+
+    var employees = ViewBag.Employees
+        as IEnumerable<AutomatedAccountedPayroll.Models.Employee>
+        ?? Enumerable.Empty<AutomatedAccountedPayroll.Models.Employee>();
+}
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <div class="text-primary fs-4">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+
+                <h1 class="h3 mb-0">
+                    Attendance
+                </h1>
+
+            </div>
+
+            <p class="text-muted mb-0">
+                Monitor and manage employee attendance records.
+            </p>
+
+        </div>
+
+
+        <a asp-action="Create"
+           class="btn btn-primary px-4">
+
+            <i class="bi bi-plus-lg me-1"></i>
+            Mark Attendance
+
+        </a>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Total -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small mb-1">
+                                Total Records
+                            </div>
+
+                            <h3 class="mb-0">
+                                @totalAttendance
+                            </h3>
+
+                        </div>
+
+                        <div class="rounded-circle bg-primary bg-opacity-10
+                                    text-primary d-flex align-items-center
+                                    justify-content-center"
+                             style="width:48px;height:48px;">
+
+                            <i class="bi bi-calendar-check fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Present -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small mb-1">
+                                Present
+                            </div>
+
+                            <h3 class="mb-0 text-success">
+                                @presentCount
+                            </h3>
+
+                            <small class="text-muted">
+                                @attendanceRate% attendance rate
+                            </small>
+
+                        </div>
+
+                        <div class="rounded-circle bg-success bg-opacity-10
+                                    text-success d-flex align-items-center
+                                    justify-content-center"
+                             style="width:48px;height:48px;">
+
+                            <i class="bi bi-check-circle fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Absent -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small mb-1">
+                                Absent
+                            </div>
+
+                            <h3 class="mb-0 text-danger">
+                                @absentCount
+                            </h3>
+
+                            <small class="text-muted">
+                                Absent records
+                            </small>
+
+                        </div>
+
+                        <div class="rounded-circle bg-danger bg-opacity-10
+                                    text-danger d-flex align-items-center
+                                    justify-content-center"
+                             style="width:48px;height:48px;">
+
+                            <i class="bi bi-x-circle fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Late -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small mb-1">
+                                Late
+                            </div>
+
+                            <h3 class="mb-0 text-warning">
+                                @lateCount
+                            </h3>
+
+                            <small class="text-muted">
+                                Late arrivals
+                            </small>
+
+                        </div>
+
+                        <div class="rounded-circle bg-warning bg-opacity-10
+                                    text-warning d-flex align-items-center
+                                    justify-content-center"
+                             style="width:48px;height:48px;">
+
+                            <i class="bi bi-clock fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SECONDARY STATISTICS -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body py-3">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small">
+                                Half Day
+                            </div>
+
+                            <h5 class="mb-0">
+                                @halfDayCount
+                            </h5>
+
+                        </div>
+
+                        <i class="bi bi-hourglass-split text-info fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body py-3">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small">
+                                Leave
+                            </div>
+
+                            <h5 class="mb-0">
+                                @leaveCount
+                            </h5>
+
+                        </div>
+
+                        <i class="bi bi-calendar-x text-secondary fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body py-3">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-muted small">
+                                Attendance Rate
+                            </div>
+
+                            <h5 class="mb-0">
+                                @attendanceRate%
+                            </h5>
+
+                        </div>
+
+                        <i class="bi bi-graph-up-arrow text-primary fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTERS -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex align-items-center gap-2">
+
+                <div class="rounded-circle bg-primary bg-opacity-10
+                            text-primary d-flex align-items-center
+                            justify-content-center"
+                     style="width:38px;height:38px;">
+
+                    <i class="bi bi-funnel"></i>
+
+                </div>
+
+                <div>
+
+                    <h5 class="mb-0">
+                        Filter Attendance
+                    </h5>
+
+                    <small class="text-muted">
+                        Find specific attendance records
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body pt-2">
+
+            <form asp-action="Index"
+                  method="get">
+
+                <div class="row g-3 align-items-end">
+
+                    <!-- Date -->
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Attendance Date
+                        </label>
+
+                        <input type="date"
+                               name="attendanceDate"
+                               value="@(ViewData["AttendanceDate"] is DateTime date
+                                                                       ? date.ToString("yyyy-MM-dd")
+                                                                       : "")"
+                               class="form-control" />
+
+                    </div>
+
+
+                    <!-- Employee -->
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Employee
+                        </label>
+
+                        <select name="employeeId"
+                                class="form-select">
+
+                            <option value="">
+                                All Employees
+                            </option>
+
+                            @foreach (var employee in employees)
+                            {
+                                <option value="@employee.EmployeeId"
+                                        selected="@(selectedEmployeeId == employee.EmployeeId)">
+
+                                    @employee.FirstName @employee.LastName
+                                    (@employee.EmployeeCode)
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Status -->
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Status
+                        </label>
+
+                        <select name="status"
+                                class="form-select">
+
+                            <option value="">
+                                All Statuses
+                            </option>
+
+                            <option value="Present"
+                                    selected="@(selectedStatus == "Present")">
+                                Present
+                            </option>
+
+                            <option value="Absent"
+                                    selected="@(selectedStatus == "Absent")">
+                                Absent
+                            </option>
+
+                            <option value="Late"
+                                    selected="@(selectedStatus == "Late")">
+                                Late
+                            </option>
+
+                            <option value="Half Day"
+                                    selected="@(selectedStatus == "Half Day")">
+                                Half Day
+                            </option>
+
+                            <option value="Leave"
+                                    selected="@(selectedStatus == "Leave")">
+                                Leave
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="col-12">
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+
+                                <i class="bi bi-search me-1"></i>
+                                Apply Filters
+
+                            </button>
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-secondary">
+
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                Clear
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- RECORDS -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex flex-wrap justify-content-between
+                        align-items-center gap-2">
+
+                <div>
+
+                    <h5 class="mb-1">
+                        Attendance Records
+                    </h5>
+
+                    <small class="text-muted">
+                        @totalAttendance record(s) found
+                    </small>
+
+                </div>
+
+                <span class="text-muted small">
+
+                    <i class="bi bi-sort-down me-1"></i>
+                    Latest records first
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (attendanceList.Any())
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Employee
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Check In
+                                </th>
+
+                                <th>
+                                    Check Out
+                                </th>
+
+                                <th>
+                                    Working Hours
+                                </th>
+
+                                <th>
+                                    Late
+                                </th>
+
+                                <th>
+                                    Remarks
+                                </th>
+
+                                <th class="text-end pe-4">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in attendanceList)
+                            {
+                                var firstInitial =
+                                item.Employee?.FirstName?.FirstOrDefault();
+
+                                var lastInitial =
+                                item.Employee?.LastName?.FirstOrDefault();
+
+                                <tr>
+
+                                    <!-- Employee -->
+
+                                    <td class="ps-4">
+
+                                        <div class="d-flex align-items-center gap-2">
+
+                                            <div class="rounded-circle bg-primary bg-opacity-10
+                                                                text-primary d-flex align-items-center
+                                                                justify-content-center fw-semibold"
+                                                 style="width:40px;height:40px;">
+
+                                                @firstInitial@lastInitial
+
+                                            </div>
+
+                                            <div>
+
+                                                <div class="fw-semibold">
+
+                                                    @item.Employee?.FirstName
+                                                    @item.Employee?.LastName
+
+                                                </div>
+
+                                                <small class="text-muted">
+
+                                                    @item.Employee?.EmployeeCode
+
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Date -->
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+
+                                            @item.AttendanceDate.ToString("dd MMM yyyy")
+
+                                        </div>
+
+                                        <small class="text-muted">
+
+                                            @item.AttendanceDate.ToString("dddd")
+
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- Status -->
+
+                                    <td>
+
+                                        @if (item.Status == "Present")
+                                        {
+                                            <span class="badge rounded-pill bg-success">
+
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Present
+
+                                            </span>
+                                        }
+                                        else if (item.Status == "Absent")
+                                        {
+                                            <span class="badge rounded-pill bg-danger">
+
+                                                <i class="bi bi-x-circle me-1"></i>
+                                                Absent
+
+                                            </span>
+                                        }
+                                        else if (item.Status == "Late")
+                                        {
+                                            <span class="badge rounded-pill bg-warning text-dark">
+
+                                                <i class="bi bi-clock me-1"></i>
+                                                Late
+
+                                            </span>
+                                        }
+                                        else if (item.Status == "Half Day")
+                                        {
+                                            <span class="badge rounded-pill bg-info">
+
+                                                <i class="bi bi-hourglass-split me-1"></i>
+                                                Half Day
+
+                                            </span>
+                                        }
+                                        else if (item.Status == "Leave")
+                                        {
+                                            <span class="badge rounded-pill bg-secondary">
+
+                                                <i class="bi bi-calendar-x me-1"></i>
+                                                Leave
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill bg-secondary">
+                                                @item.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Check In -->
+
+                                    <td>
+                                        @if (item.CheckInTime.HasValue)
+                                        {
+                                            <span class="fw-semibold">
+                                                @DateTime.Today.Add(item.CheckInTime.Value).ToString("hh:mm tt")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Not Recorded
+                                            </span>
+                                        }
+                                    </td>
+
+
+                                    <!-- Check Out -->
+
+                                    <td>
+                                        @if (item.CheckOutTime.HasValue)
+                                        {
+                                            <span class="fw-semibold">
+                                                @DateTime.Today.Add(item.CheckOutTime.Value).ToString("hh:mm tt")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Not Recorded
+                                            </span>
+                                        }
+                                    </td>
+
+
+                                    <!-- Working Hours -->
+
+                                    <td>
+
+                                        @if (item.WorkingHours.HasValue)
+                                        {
+                                            <span class="fw-semibold">
+
+                                                @item.WorkingHours.Value.ToString("0.00") h
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                N/A
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Late -->
+
+                                    <td>
+
+                                        @if (item.LateMinutes > 0)
+                                        {
+                                            <span class="badge rounded-pill bg-warning text-dark">
+
+                                                <i class="bi bi-clock me-1"></i>
+                                                @item.LateMinutes min
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                -
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Remarks -->
+
+                                    <td>
+
+                                        @if (!string.IsNullOrWhiteSpace(item.Remarks))
+                                        {
+                                            <span title="@item.Remarks">
+
+                                                @(item.Remarks.Length > 25
+                                                                                    ? item.Remarks.Substring(0, 25) + "..."
+                                                                                    : item.Remarks)
+
+                                </span>
+                                                                }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                No remarks
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Actions -->
+
+                                    <td class="text-end pe-4">
+
+                                        <div class="btn-group">
+
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.AttendanceId"
+                                               class="btn btn-sm btn-outline-secondary"
+                                               title="View Details">
+
+                                                <i class="bi bi-eye"></i>
+
+                                            </a>
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.AttendanceId"
+                                               class="btn btn-sm btn-outline-primary"
+                                               title="Edit Attendance">
+
+                                                <i class="bi bi-pencil"></i>
+
+                                            </a>
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.AttendanceId"
+                                               class="btn btn-sm btn-outline-danger"
+                                               title="Delete Attendance">
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <!-- EMPTY STATE -->
+
+                <div class="text-center py-5">
+
+                    <div class="rounded-circle bg-primary bg-opacity-10
+                                    text-primary d-inline-flex align-items-center
+                                    justify-content-center mb-3"
+                         style="width:70px;height:70px;">
+
+                        <i class="bi bi-calendar-x fs-2"></i>
+
+                    </div>
+
+                    <h5 class="mb-2">
+                        No attendance records found
+                    </h5>
+
+                    <p class="text-muted mb-4">
+                        Try changing your filters or create a new attendance record.
+                    </p>
+
+                    <a asp-action="Create"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Mark Attendance
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

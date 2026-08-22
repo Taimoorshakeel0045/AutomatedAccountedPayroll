@@ -1,0 +1,384 @@
+﻿@model AutomatedAccountedPayroll.Models.Payroll
+
+@{
+    ViewData["Title"] = "Payslip";
+}
+
+<style>
+    .payslip-container {
+        max-width: 900px;
+        margin: 30px auto;
+    }
+
+    .payslip-header {
+        border-bottom: 2px solid #212529;
+        padding-bottom: 20px;
+        margin-bottom: 25px;
+    }
+
+    .company-name {
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .payslip-title {
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .employee-info {
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .net-salary {
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .signature-area {
+        margin-top: 70px;
+    }
+
+    .signature-line {
+        border-top: 1px solid #212529;
+        width: 220px;
+        padding-top: 8px;
+    }
+
+    @@media print {
+
+        body {
+            background: white !important;
+        }
+
+        .no-print {
+            display: none !important;
+        }
+
+        .payslip-container {
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .employee-info {
+            background-color: white !important;
+            border: 1px solid #dee2e6;
+        }
+    }
+</style>
+
+<div class="payslip-container">
+
+    <div class="no-print d-flex justify-content-between align-items-center mb-4">
+
+        ```cshtml
+        <div class="no-print d-flex justify-content-between align-items-center mb-4">
+
+            <!-- PDF Download Button Start -->
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Back to Payroll
+            </a>
+
+            <div>
+                <button onclick="window.print()"
+                        class="btn btn-primary me-2">
+                    Print Payslip
+                </button>
+
+                <a asp-action="DownloadPayslip"
+                   asp-route-id="@Model.PayrollId"
+                   class="btn btn-success">
+                    Download PDF
+                </a>
+                <!-- PDF Download Button End Here -->
+
+            </div>
+
+        </div>
+        ```
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body p-4">
+
+            <div class="payslip-header text-center">
+
+                <div class="company-name">
+                    Automated Accounted Payroll
+                </div>
+
+                <div class="text-muted">
+                    Accounting and Payroll Management System
+                </div>
+
+                <div class="payslip-title mt-3">
+                    EMPLOYEE PAYSLIP
+                </div>
+
+                <div class="text-muted">
+                    @Model.PayrollMonth.ToString("MMMM yyyy")
+                </div>
+
+            </div>
+
+            <div class="employee-info">
+
+                <div class="section-title">
+                    Employee Information
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-2">
+                        <strong>Employee Code:</strong>
+
+                        @if (Model.Employee != null)
+                        {
+                            @Model.Employee.EmployeeCode
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <strong>Employee Name:</strong>
+
+                        @if (Model.Employee != null)
+                        {
+                            @Model.Employee.FirstName
+                            @Model.Employee.LastName
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <strong>Department:</strong>
+
+                        @if (Model.Employee?.Department != null)
+                        {
+                            @Model.Employee.Department.DepartmentName
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <strong>Designation:</strong>
+
+                        @if (Model.Employee?.Designation != null)
+                        {
+                            @Model.Employee.Designation.DesignationName
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <strong>Employment Type:</strong>
+
+                        @if (Model.Employee != null)
+                        {
+                            @Model.Employee.EmploymentType
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <strong>Payroll Month:</strong>
+                        @Model.PayrollMonth.ToString("MMMM yyyy")
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="section-title">
+                Salary Details
+            </div>
+
+            <table class="table table-bordered">
+
+                <tbody>
+
+                    <tr>
+                        <th>Basic Salary</th>
+
+                        <td class="text-end">
+                            @Model.BasicSalary.ToString("N2")
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Allowances</th>
+
+                        <td class="text-end">
+                            @Model.Allowances.ToString("N2")
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Deductions</th>
+
+                        <td class="text-end">
+                            @Model.Deductions.ToString("N2")
+                        </td>
+                    </tr>
+
+                    <tr class="table-light">
+
+                        <th>
+                            Net Salary
+                        </th>
+
+                        <th class="text-end net-salary">
+                            @Model.NetSalary.ToString("N2")
+                        </th>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <div class="section-title mt-4">
+                Payment Information
+            </div>
+
+            <table class="table table-bordered">
+
+                <tbody>
+
+                    <tr>
+
+                        <th>Status</th>
+
+                        <td>
+
+                            @if (Model.Status == "Paid")
+                            {
+                                <span class="badge bg-success">
+                                    Paid
+                                </span>
+                            }
+                            else if (Model.Status == "Processed")
+                            {
+                                <span class="badge bg-primary">
+                                    Processed
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">
+                                    Draft
+                                </span>
+                            }
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Payment Date</th>
+
+                        <td>
+                            @(Model.PaymentDate?.ToString("dd-MM-yyyy") ?? "Not Paid")
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Payment Method</th>
+
+                        <td>
+                            @(string.IsNullOrWhiteSpace(Model.PaymentMethod)
+                                                        ? "Not Paid"
+                                                        : Model.PaymentMethod)
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Payment Reference</th>
+
+                        <td>
+                            @(string.IsNullOrWhiteSpace(Model.PaymentReference)
+                                                        ? "N/A"
+                                                        : Model.PaymentReference)
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <div class="signature-area">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <div class="signature-line">
+                            Employee Signature
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="signature-line">
+                            Authorized Signature
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="text-center text-muted mt-5">
+
+                <small>
+                    This payslip was generated by Automated Accounted Payroll.
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

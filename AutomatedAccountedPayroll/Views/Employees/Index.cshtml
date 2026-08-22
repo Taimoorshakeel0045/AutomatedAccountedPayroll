@@ -1,0 +1,506 @@
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Employee>
+
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<div class="employee-page">
+
+    <!-- PAGE HEADER -->
+    <div class="employee-header">
+
+        <div class="employee-title-row">
+
+            <div class="employee-title-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+
+            <div>
+                <h1>Employees</h1>
+
+                <p>
+                    Manage employees, departments, designations and employment status.
+                </p>
+            </div>
+
+        </div>
+
+        <a asp-action="Create"
+           class="employee-primary-btn">
+
+            <i class="bi bi-person-plus-fill"></i>
+            Add Employee
+
+        </a>
+
+    </div>
+
+
+    <!-- SEARCH AND FILTERS -->
+    <div class="employee-filter-card">
+
+        <div class="filter-header">
+
+            <div>
+                <h5>
+                    <i class="bi bi-funnel me-2"></i>
+                    Search & Filter
+                </h5>
+
+                <span>
+                    Find employees using the available filters.
+                </span>
+            </div>
+
+        </div>
+
+
+        <form asp-action="Index" method="get">
+
+            <div class="row g-3 align-items-end">
+
+                <!-- SEARCH -->
+                <div class="col-lg-5 col-md-6">
+
+                    <label class="employee-form-label">
+                        Search Employees
+                    </label>
+
+                    <div class="employee-input-wrapper">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text"
+                               name="searchString"
+                               value="@ViewData["SearchString"]"
+                               class="employee-input"
+                               placeholder="Code, name, CNIC or phone..." />
+
+                    </div>
+
+                </div>
+
+
+                <!-- DEPARTMENT -->
+                <div class="col-lg-3 col-md-6">
+
+                    <label class="employee-form-label">
+                        Department
+                    </label>
+
+                    <select name="departmentId"
+                            class="employee-select">
+
+                        <option value="">
+                            All Departments
+                        </option>
+
+                        @foreach (var department in ViewBag.Departments)
+                        {
+                            if (ViewData["DepartmentId"]?.ToString()
+                            == department.DepartmentId.ToString())
+                            {
+                                <option value="@department.DepartmentId"
+                                        selected>
+                                    @department.DepartmentName
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@department.DepartmentId">
+                                    @department.DepartmentName
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- STATUS -->
+                <div class="col-lg-2 col-md-6">
+
+                    <label class="employee-form-label">
+                        Status
+                    </label>
+
+                    <select name="status"
+                            class="employee-select">
+
+                        @if (ViewData["Status"]?.ToString() == "Active")
+                        {
+                            <option value="">
+                                All Status
+                            </option>
+
+                            <option value="Active" selected>
+                                Active
+                            </option>
+
+                            <option value="Inactive">
+                                Inactive
+                            </option>
+                        }
+                        else if (ViewData["Status"]?.ToString() == "Inactive")
+                        {
+                            <option value="">
+                                All Status
+                            </option>
+
+                            <option value="Active">
+                                Active
+                            </option>
+
+                            <option value="Inactive" selected>
+                                Inactive
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="" selected>
+                                All Status
+                            </option>
+
+                            <option value="Active">
+                                Active
+                            </option>
+
+                            <option value="Inactive">
+                                Inactive
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+                <div class="col-lg-2 col-md-6">
+
+                    <div class="employee-filter-buttons">
+
+                        <button type="submit"
+                                class="employee-search-btn">
+
+                            <i class="bi bi-search"></i>
+                            Search
+
+                        </button>
+
+                        <a asp-action="Index"
+                           class="employee-clear-btn"
+                           title="Clear Filters">
+
+                            <i class="bi bi-arrow-counterclockwise"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- EMPLOYEE TABLE -->
+    <div class="employee-table-card">
+
+        <!-- TABLE HEADER -->
+        <div class="employee-table-header">
+
+            <div>
+
+                <h5>
+                    Employee List
+                </h5>
+
+                <span>
+                    Manage your employee records
+                </span>
+
+            </div>
+
+            <div class="employee-count">
+
+                <i class="bi bi-people"></i>
+
+                @Model.Count() Employees
+
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table employee-table align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th class="employee-code-column">
+                            Employee
+                        </th>
+
+                        <th>
+                            Department
+                        </th>
+
+                        <th>
+                            Designation
+                        </th>
+
+                        <th>
+                            Employment
+                        </th>
+
+                        <th>
+                            Salary
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th class="text-end">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @if (!Model.Any())
+                    {
+                        <tr>
+
+                            <td colspan="7">
+
+                                <div class="employee-empty">
+
+                                    <div class="empty-icon">
+                                        <i class="bi bi-people"></i>
+                                    </div>
+
+                                    <h5>
+                                        No Employees Found
+                                    </h5>
+
+                                    <p>
+                                        Try changing your search or filters.
+                                    </p>
+
+                                    <a asp-action="Create"
+                                       class="employee-primary-btn">
+
+                                        <i class="bi bi-person-plus"></i>
+                                        Add Employee
+
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            var initials = "";
+
+                            if (!string.IsNullOrWhiteSpace(item.FirstName))
+                            {
+                                initials += item.FirstName.Substring(0, 1).ToUpper();
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(item.LastName))
+                            {
+                                initials += item.LastName.Substring(0, 1).ToUpper();
+                            }
+
+                            <tr>
+
+                                <!-- EMPLOYEE -->
+                                <td>
+
+                                    <div class="employee-profile">
+
+                                        <div class="employee-avatar">
+                                            @initials
+                                        </div>
+
+                                        <div class="employee-profile-info">
+
+                                            <strong>
+                                                @item.FirstName @item.LastName
+                                            </strong>
+
+                                            <span>
+                                                @item.EmployeeCode
+                                            </span>
+
+                                            @if (!string.IsNullOrWhiteSpace(item.Email))
+                                            {
+                                                <small>
+                                                    @item.Email
+                                                </small>
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- DEPARTMENT -->
+                                <td>
+
+                                    @if (item.Department != null)
+                                    {
+                                        <span class="employee-department">
+
+                                            <i class="bi bi-diagram-3"></i>
+
+                                            @item.Department.DepartmentName
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="employee-not-assigned">
+                                            Not Assigned
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- DESIGNATION -->
+                                <td>
+
+                                    @if (item.Designation != null)
+                                    {
+                                        <span>
+                                            @item.Designation.DesignationName
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="employee-not-assigned">
+                                            Not Assigned
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- EMPLOYMENT -->
+                                <td>
+
+                                    <span class="employment-badge">
+                                        @item.EmploymentType
+                                    </span>
+
+                                </td>
+
+
+                                <!-- SALARY -->
+                                <td>
+
+                                    <strong class="employee-salary">
+                                        @item.BasicSalary.ToString("N2")
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- STATUS -->
+                                <td>
+
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="employee-status active">
+
+                                            <span class="status-dot"></span>
+
+                                            Active
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="employee-status inactive">
+
+                                            <span class="status-dot"></span>
+
+                                            Inactive
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+                                <td>
+
+                                    <div class="employee-actions">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.EmployeeId"
+                                           class="employee-action-btn view"
+                                           title="View Details">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.EmployeeId"
+                                           class="employee-action-btn edit"
+                                           title="Edit Employee">
+
+                                            <i class="bi bi-pencil"></i>
+
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.EmployeeId"
+                                           class="employee-action-btn delete"
+                                           title="Delete Employee">
+
+                                            <i class="bi bi-trash"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+

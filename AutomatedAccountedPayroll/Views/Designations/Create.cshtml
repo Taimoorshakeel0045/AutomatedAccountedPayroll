@@ -1,0 +1,115 @@
+﻿@model AutomatedAccountedPayroll.Models.Designation
+
+@{
+    ViewData["Title"] = "Create Designation";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Create Designation</h1>
+            <p class="text-muted mb-0">
+                Add a designation and assign it to a department.
+            </p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Back to Designations
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-action="Create">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DesignationName"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="DesignationName"
+                           class="form-control"
+                           placeholder="e.g. Lecturer" />
+
+                    <span asp-validation-for="DesignationName"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <!-- looked selectoin method on dropdown -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Department
+                    </label>
+
+                    <input type="hidden"
+                           asp-for="DepartmentId" />
+
+                    <input type="text"
+                           class="form-control"
+                           value="@ViewBag.SelectedDepartmentName"
+                           readonly />
+
+                    <span asp-validation-for="DepartmentId"
+                          class="text-danger">
+                    </span>
+
+                </div>
+              
+
+
+                <div class="mb-3">
+                    <label asp-for="Description"
+                           class="form-label">
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Optional description">
+                    </textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input asp-for="IsActive"
+                           class="form-check-input" />
+
+                    <label asp-for="IsActive"
+                           class="form-check-label">
+                    </label>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Create Designation
+                </button>
+
+                <a asp-action="Index"
+                   class="btn btn-secondary ms-2">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

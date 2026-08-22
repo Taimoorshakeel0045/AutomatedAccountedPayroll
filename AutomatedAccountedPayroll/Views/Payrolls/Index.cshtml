@@ -1,0 +1,858 @@
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Payroll>
+
+@{
+    ViewData["Title"] = "Payroll";
+
+
+var payrollList = Model?.ToList() ?? new List<AutomatedAccountedPayroll.Models.Payroll>();
+
+    var totalPayroll = payrollList.Count;
+    var paidPayroll = payrollList.Count(x => x.Status == "Paid");
+    var processedPayroll = payrollList.Count(x => x.Status == "Processed");
+    var draftPayroll = payrollList.Count(x => x.Status != "Paid" && x.Status != "Processed");
+
+    var totalBasicSalary = payrollList.Sum(x => x.BasicSalary);
+    var totalAllowances = payrollList.Sum(x => x.Allowances);
+    var totalDeductions = payrollList.Sum(x => x.Deductions);
+    var totalNetSalary = payrollList.Sum(x => x.NetSalary);
+
+    var paidPercentage = totalPayroll > 0
+        ? (paidPayroll * 100.0 / totalPayroll)
+        : 0;
+
+    var processedPercentage = totalPayroll > 0
+        ? (processedPayroll * 100.0 / totalPayroll)
+        : 0;
+
+    var draftPercentage = totalPayroll > 0
+        ? (draftPayroll * 100.0 / totalPayroll)
+        : 0;
+
+
+}
+
+<div class="container-fluid py-4">
+
+    
+    <!-- Header -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <h1 class="h3 fw-bold mb-0">
+                    Payroll Dashboard
+                </h1>
+
+                <span class="badge bg-light text-dark border">
+                    @DateTime.Now.ToString("MMMM yyyy")
+                </span>
+
+            </div>
+
+            <p class="text-muted mb-0">
+                Monitor salaries, payments, deductions and payroll records.
+            </p>
+
+        </div>
+
+
+        <a asp-action="Create"
+           class="btn btn-primary px-4">
+
+            <i class="bi bi-plus-lg me-1"></i>
+
+            Create Payroll
+
+        </a>
+
+    </div>
+
+
+    <!-- Main Statistics -->
+
+    <div class="row g-3 mb-4">
+
+
+        <!-- Total Payroll -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <p class="text-muted small fw-semibold mb-2">
+                                PAYROLL RECORDS
+                            </p>
+
+                            <h2 class="fw-bold mb-1">
+                                @totalPayroll
+                            </h2>
+
+                            <small class="text-muted">
+                                Total records
+                            </small>
+
+                        </div>
+
+
+                        <div class="rounded-3 bg-primary bg-opacity-10 text-primary p-3">
+
+                            <i class="bi bi-wallet2 fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Paid -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <p class="text-muted small fw-semibold mb-2">
+                                PAID
+                            </p>
+
+                            <h2 class="fw-bold text-success mb-1">
+                                @paidPayroll
+                            </h2>
+
+                            <small class="text-muted">
+                                @paidPercentage.ToString("0")% of payroll
+                            </small>
+
+                        </div>
+
+
+                        <div class="rounded-3 bg-success bg-opacity-10 text-success p-3">
+
+                            <i class="bi bi-check-circle fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Processed -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <p class="text-muted small fw-semibold mb-2">
+                                PROCESSED
+                            </p>
+
+                            <h2 class="fw-bold text-primary mb-1">
+                                @processedPayroll
+                            </h2>
+
+                            <small class="text-muted">
+                                @processedPercentage.ToString("0")% of payroll
+                            </small>
+
+                        </div>
+
+
+                        <div class="rounded-3 bg-primary bg-opacity-10 text-primary p-3">
+
+                            <i class="bi bi-arrow-repeat fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Draft -->
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <p class="text-muted small fw-semibold mb-2">
+                                DRAFT
+                            </p>
+
+                            <h2 class="fw-bold text-secondary mb-1">
+                                @draftPayroll
+                            </h2>
+
+                            <small class="text-muted">
+                                @draftPercentage.ToString("0")% of payroll
+                            </small>
+
+                        </div>
+
+
+                        <div class="rounded-3 bg-secondary bg-opacity-10 text-secondary p-3">
+
+                            <i class="bi bi-file-earmark-text fs-4"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Financial Overview -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Financial Overview
+                    </h5>
+
+                    <p class="text-muted small mb-0">
+                        Summary of the current payroll records.
+                    </p>
+
+                </div>
+
+                <i class="bi bi-bar-chart-line fs-3 text-muted"></i>
+
+            </div>
+
+
+            <div class="row g-4">
+
+
+                <!-- Basic Salary -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="d-flex align-items-center gap-2 mb-2">
+
+                            <i class="bi bi-cash text-primary"></i>
+
+                            <span class="text-muted small">
+                                Basic Salary
+                            </span>
+
+                        </div>
+
+                        <h5 class="fw-bold mb-0">
+                            Rs. @totalBasicSalary.ToString("N2")
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Allowances -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="d-flex align-items-center gap-2 mb-2">
+
+                            <i class="bi bi-plus-circle text-success"></i>
+
+                            <span class="text-muted small">
+                                Allowances
+                            </span>
+
+                        </div>
+
+                        <h5 class="fw-bold text-success mb-0">
+                            + Rs. @totalAllowances.ToString("N2")
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Deductions -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="d-flex align-items-center gap-2 mb-2">
+
+                            <i class="bi bi-dash-circle text-danger"></i>
+
+                            <span class="text-muted small">
+                                Deductions
+                            </span>
+
+                        </div>
+
+                        <h5 class="fw-bold text-danger mb-0">
+                            - Rs. @totalDeductions.ToString("N2")
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Net Salary -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="border rounded-3 bg-light p-3 h-100">
+
+                        <div class="d-flex align-items-center gap-2 mb-2">
+
+                            <i class="bi bi-bank text-primary"></i>
+
+                            <span class="text-muted small">
+                                Net Payroll
+                            </span>
+
+                        </div>
+
+                        <h5 class="fw-bold text-primary mb-0">
+                            Rs. @totalNetSalary.ToString("N2")
+                        </h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex align-items-center gap-2 mb-3">
+
+                <i class="bi bi-funnel text-primary"></i>
+
+                <h5 class="fw-bold mb-0">
+                    Payroll Filters
+                </h5>
+
+            </div>
+
+
+            <form asp-action="Index"
+                  method="get"
+                  class="row g-3 align-items-end">
+
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Payroll Month
+                    </label>
+
+                    <input type="month"
+                           name="payrollMonth"
+                           value="@(ViewData["PayrollMonth"] is DateTime month
+                                                            ? month.ToString("yyyy-MM")
+                                                            : "")"
+                           class="form-control" />
+
+                </div>
+
+
+                <div class="col-md-auto">
+
+                    <button type="submit"
+                            class="btn btn-primary px-4">
+
+                        <i class="bi bi-search me-1"></i>
+
+                        Apply Filter
+
+                    </button>
+
+                </div>
+
+
+                <div class="col-md-auto">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary px-4">
+
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+                        Clear
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Payroll Records -->
+
+    <div class="card border-0 shadow-sm">
+
+
+        <div class="card-header bg-white border-0 p-4">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Payroll Records
+                    </h5>
+
+                    <p class="text-muted small mb-0">
+                        @totalPayroll record(s) found
+                    </p>
+
+                </div>
+
+
+                @if (payrollList.Any())
+                {
+                    <div class="text-muted small">
+
+                        Showing
+                        <strong>@payrollList.Count</strong>
+                        payroll record(s)
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+
+            @if (payrollList.Any())
+            {
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Employee
+                                </th>
+
+                                <th>
+                                    Period
+                                </th>
+
+                                <th>
+                                    Basic
+                                </th>
+
+                                <th>
+                                    Allowances
+                                </th>
+
+                                <th>
+                                    Deductions
+                                </th>
+
+                                <th>
+                                    Net Salary
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Payment
+                                </th>
+
+                                <th class="text-end pe-4">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            @foreach (var item in payrollList)
+                            {
+
+                                <tr>
+
+
+                                    <!-- Employee -->
+
+                                    <td class="ps-4">
+
+                                        <div class="d-flex align-items-center gap-3">
+
+                                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center"
+                                                 style="width:42px;height:42px;">
+
+                                                @if (!string.IsNullOrWhiteSpace(item.Employee?.FirstName))
+                                                {
+                                                    @item.Employee.FirstName.Substring(0, 1).ToUpper()
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-person"></i>
+                                                }
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <div class="fw-semibold">
+
+                                                    @item.Employee?.FirstName
+                                                    @item.Employee?.LastName
+
+                                                </div>
+
+                                                <small class="text-muted">
+
+                                                    @item.Employee?.EmployeeCode
+
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Period -->
+
+                                    <td>
+
+                                        <span class="fw-semibold">
+
+                                            @item.PayrollMonth.ToString("MMM yyyy")
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Basic -->
+
+                                    <td>
+
+                                        <span class="text-nowrap">
+
+                                            Rs. @item.BasicSalary.ToString("N0")
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Allowances -->
+
+                                    <td>
+
+                                        <span class="text-success text-nowrap">
+
+                                            + Rs. @item.Allowances.ToString("N0")
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Deductions -->
+
+                                    <td>
+
+                                        <span class="text-danger text-nowrap">
+
+                                            - Rs. @item.Deductions.ToString("N0")
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Net Salary -->
+
+                                    <td>
+
+                                        <strong class="text-nowrap">
+
+                                            Rs. @item.NetSalary.ToString("N0")
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- Status -->
+
+                                    <td>
+
+                                        @if (item.Status == "Paid")
+                                        {
+
+                                            <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle">
+
+                                                <i class="bi bi-check-circle me-1"></i>
+
+                                                Paid
+
+                                            </span>
+
+                                        }
+                                        else if (item.Status == "Processed")
+                                        {
+
+                                            <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle">
+
+                                                <i class="bi bi-arrow-repeat me-1"></i>
+
+                                                Processed
+
+                                            </span>
+
+                                        }
+                                        else
+                                        {
+
+                                            <span class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle">
+
+                                                <i class="bi bi-file-earmark me-1"></i>
+
+                                                Draft
+
+                                            </span>
+
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Payment -->
+
+                                    <td>
+
+                                        @if (item.PaymentDate.HasValue)
+                                        {
+
+                                            <div class="fw-semibold">
+
+                                                @item.PaymentDate.Value.ToString("dd MMM yyyy")
+
+                                            </div>
+
+                                            @if (!string.IsNullOrWhiteSpace(item.PaymentMethod))
+                                            {
+
+                                                <small class="text-muted">
+
+                                                    @item.PaymentMethod
+
+                                                </small>
+
+                                            }
+
+                                        }
+                                        else
+                                        {
+
+                                            <span class="badge bg-light text-muted border">
+
+                                                Not Paid
+
+                                            </span>
+
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Actions -->
+
+                                    <td class="text-end pe-4">
+
+                                        <div class="btn-group">
+
+
+                                            <a asp-action="Payslip"
+                                               asp-route-id="@item.PayrollId"
+                                               class="btn btn-sm btn-outline-success"
+                                               title="Payslip">
+
+                                                <i class="bi bi-receipt"></i>
+
+                                            </a>
+
+
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.PayrollId"
+                                               class="btn btn-sm btn-outline-secondary"
+                                               title="Details">
+
+                                                <i class="bi bi-eye"></i>
+
+                                            </a>
+
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.PayrollId"
+                                               class="btn btn-sm btn-outline-primary"
+                                               title="Edit">
+
+                                                <i class="bi bi-pencil"></i>
+
+                                            </a>
+
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.PayrollId"
+                                               class="btn btn-sm btn-outline-danger"
+                                               title="Delete">
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+
+                                </tr>
+
+                            }
+
+
+                        </tbody>
+
+
+                    </table>
+
+                </div>
+
+            }
+            else
+            {
+
+                <!-- Empty State -->
+
+                <div class="text-center py-5 px-3">
+
+                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width:72px;height:72px;">
+
+                        <i class="bi bi-wallet2 fs-2"></i>
+
+                    </div>
+
+
+                    <h5 class="fw-bold">
+                        No payroll records found
+                    </h5>
+
+
+                    <p class="text-muted mb-4">
+
+                        No payroll records exist for the selected period.
+
+                    </p>
+
+
+                    <a asp-action="Create"
+                       class="btn btn-primary px-4">
+
+                        <i class="bi bi-plus-lg me-1"></i>
+
+                        Create Payroll
+
+                    </a>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+    
+
+</div>

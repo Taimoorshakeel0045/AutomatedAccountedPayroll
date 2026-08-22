@@ -1,0 +1,106 @@
+﻿
+@model IEnumerable<AutomatedAccountedPayroll.Models.Department>
+
+@{
+    ViewData["Title"] = "Designations";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="h3 mb-1">Designations</h1>
+
+            <p class="text-muted mb-0">
+                Select a department to manage its designations.
+            </p>
+        </div>
+
+        <a asp-action="Create"
+           class="btn btn-primary">
+            Create Designation
+        </a>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>
+                                Department
+                            </th>
+
+                            <th class="text-end">
+                                Actions
+                            </th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @if (!Model.Any())
+                        {
+                            <tr>
+
+                                <td colspan="2"
+                                    class="text-center text-muted py-4">
+
+                                    No active departments found.
+
+                                </td>
+
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var department in Model)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+                                            @department.DepartmentName
+                                        </strong>
+
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        <a asp-action="DepartmentDesignations"
+                                           asp-route-id="@department.DepartmentId"
+                                           class="btn btn-sm btn-primary">
+
+                                            View Designations
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

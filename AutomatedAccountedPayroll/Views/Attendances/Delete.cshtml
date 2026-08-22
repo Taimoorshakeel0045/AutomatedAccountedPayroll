@@ -1,0 +1,438 @@
+﻿@model AutomatedAccountedPayroll.Models.Attendance
+
+@{
+    ViewData["Title"] = "Delete Attendance";
+    var employee = Model.Employee;
+
+    var checkInDisplay = Model.CheckInTime.HasValue
+        ? DateTime.Today
+            .Add(Model.CheckInTime.Value)
+            .ToString("hh:mm tt")
+        : "Not Recorded";
+
+    var checkOutDisplay = Model.CheckOutTime.HasValue
+        ? DateTime.Today
+            .Add(Model.CheckOutTime.Value)
+            .ToString("hh:mm tt")
+        : "Not Recorded";
+
+    var workingHoursDisplay = Model.WorkingHours.HasValue
+        ? $"{Model.WorkingHours.Value:0.00} hours"
+        : "Not Available";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-3 mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <i class="bi bi-trash text-danger fs-4"></i>
+
+                <h1 class="h3 mb-0">
+                    Delete Attendance
+                </h1>
+
+            </div>
+
+            <p class="text-muted mb-0">
+                Review the attendance record before deleting it.
+            </p>
+
+        </div>
+
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Attendance
+
+        </a>
+
+    </div>
+
+
+    <!-- DELETE CARD -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex align-items-center gap-2">
+
+                <div class="rounded-circle bg-danger bg-opacity-10
+                            text-danger d-flex align-items-center
+                            justify-content-center"
+                     style="width:42px;height:42px;">
+
+                    <i class="bi bi-exclamation-triangle"></i>
+
+                </div>
+
+                <div>
+
+                    <h5 class="mb-1 text-danger">
+                        Confirm Deletion
+                    </h5>
+
+                    <small class="text-muted">
+                        This action cannot be undone.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <div class="alert alert-warning d-flex align-items-start gap-3">
+
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+
+                <div>
+
+                    <div class="fw-semibold">
+                        Are you sure you want to delete this attendance record?
+                    </div>
+
+                    <div class="small mt-1">
+                        The attendance record and its calculated values will be permanently removed.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- EMPLOYEE -->
+
+            <div class="border rounded-3 p-3 mb-4">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="rounded-circle bg-primary bg-opacity-10
+                                text-primary d-flex align-items-center
+                                justify-content-center fw-semibold"
+                         style="width:54px;height:54px;">
+
+                        @if (employee != null)
+                        {
+                            @employee.FirstName?.FirstOrDefault()
+                            @employee.LastName?.FirstOrDefault()
+                        }
+                        else
+                        {
+                            <i class="bi bi-person"></i>
+                        }
+
+                    </div>
+
+
+                    <div>
+
+                        @if (employee != null)
+                        {
+                            <div class="fw-semibold fs-5">
+
+                                @employee.FirstName
+                                @employee.LastName
+
+                            </div>
+
+                            <div class="text-muted">
+
+                                Employee Code:
+                                <span class="fw-semibold">
+                                    @employee.EmployeeCode
+                                </span>
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-muted">
+                                Employee information unavailable
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DETAILS -->
+
+            <div class="row g-4">
+
+                <!-- DATE -->
+
+                <div class="col-md-6">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Attendance Date
+                        </div>
+
+                        <div class="fw-semibold">
+                            @Model.AttendanceDate.ToString("dd MMM yyyy")
+                        </div>
+
+                        <small class="text-muted">
+                            @Model.AttendanceDate.ToString("dddd")
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="col-md-6">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-2">
+                            Status
+                        </div>
+
+                        @if (Model.Status == "Present")
+                        {
+                            <span class="badge rounded-pill bg-success px-3 py-2">
+
+                                <i class="bi bi-check-circle me-1"></i>
+                                Present
+
+                            </span>
+                        }
+                        else if (Model.Status == "Absent")
+                        {
+                            <span class="badge rounded-pill bg-danger px-3 py-2">
+
+                                <i class="bi bi-x-circle me-1"></i>
+                                Absent
+
+                            </span>
+                        }
+                        else if (Model.Status == "Late")
+                        {
+                            <span class="badge rounded-pill bg-warning text-dark px-3 py-2">
+
+                                <i class="bi bi-clock me-1"></i>
+                                Late
+
+                            </span>
+                        }
+                        else if (Model.Status == "Half Day")
+                        {
+                            <span class="badge rounded-pill bg-info px-3 py-2">
+
+                                <i class="bi bi-hourglass-split me-1"></i>
+                                Half Day
+
+                            </span>
+                        }
+                        else if (Model.Status == "Leave")
+                        {
+                            <span class="badge rounded-pill bg-secondary px-3 py-2">
+
+                                <i class="bi bi-calendar-x me-1"></i>
+                                Leave
+
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge rounded-pill bg-secondary px-3 py-2">
+                                @Model.Status
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- CHECK IN -->
+
+                <div class="col-md-6">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Check In
+                        </div>
+
+                        <div class="fw-semibold fs-5">
+                            @checkInDisplay
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CHECK OUT -->
+
+                <div class="col-md-6">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Check Out
+                        </div>
+
+                        <div class="fw-semibold fs-5">
+                            @checkOutDisplay
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- WORKING HOURS -->
+
+                <div class="col-md-6">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Working Hours
+                        </div>
+
+                        <div class="fw-semibold fs-5">
+                            @workingHoursDisplay
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LATE MINUTES -->
+
+                <div class="col-md-6">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Late Minutes
+                        </div>
+
+                        @if (Model.LateMinutes > 0)
+                        {
+                            <div class="fw-semibold fs-5 text-warning">
+                                @Model.LateMinutes minutes
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="fw-semibold fs-5">
+                                0 minutes
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- REMARKS -->
+
+                <div class="col-12">
+
+                    <div class="border rounded-3 p-3">
+
+                        <div class="text-muted small mb-1">
+                            Remarks
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Remarks))
+                        {
+                            <div>
+                                @Model.Remarks
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-muted">
+                                No remarks
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- CREATED AT -->
+
+                <div class="col-12">
+
+                    <div class="border rounded-3 p-3">
+
+                        <div class="text-muted small mb-1">
+                            Created At
+                        </div>
+
+                        <div class="fw-semibold">
+                            @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="card-footer bg-white">
+
+            <form asp-action="Delete"
+                  method="post"
+                  class="d-flex justify-content-end gap-2">
+
+                <input type="hidden"
+                       asp-for="AttendanceId" />
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary">
+
+                    <i class="bi bi-x-lg me-1"></i>
+                    Cancel
+
+                </a>
+
+                <button type="submit"
+                        class="btn btn-danger">
+
+                    <i class="bi bi-trash me-1"></i>
+                    Delete Attendance
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

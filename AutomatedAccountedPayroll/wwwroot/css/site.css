@@ -1,0 +1,762 @@
+body {
+    margin: 0;
+    background: #f5f7fb;
+    color: #1f2937;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html {
+    font-size: 20px;
+}
+
+.app-wrapper {
+    min-height: 100vh;
+    display: flex;
+}
+
+.app-sidebar {
+    width: 330px;
+    min-height: 100vh;
+    background: #111827;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+    transition: all .25s ease;
+}
+
+.sidebar-brand {
+    height: 82px;
+    padding: 0 26px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.brand-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 11px;
+    background: #2563eb;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.brand-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.sidebar-brand small {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.sidebar-menu {
+    padding: 24px 16px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.menu-section {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #6b7280;
+    padding: 18px 14px 10px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #d1d5db;
+    text-decoration: none;
+    padding: 18px 20px;
+    margin-bottom: 8px;
+    min-height: 64px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 500;
+    transition: all .2s ease;
+}
+
+    .sidebar-link i {
+        width: 23px;
+        min-width: 23px;
+        font-size: 22px;
+        text-align: center;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(255,255,255,.08);
+        color: #fff;
+        transform: translateX(2px);
+    }
+
+    .sidebar-link.active {
+        background: #2563eb;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(37,99,235,.25);
+    }
+
+.sidebar-user {
+    padding: 20px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar, .topbar-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #2563eb;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.user-info {
+    min-width: 0;
+}
+
+.user-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-info small {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.app-main {
+    margin-left: 330px;
+    width: calc(100% - 330px);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: all .25s ease;
+}
+
+.app-topbar {
+    height: 82px;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sidebar-toggle {
+    border: 0;
+    background: transparent;
+    font-size: 25px;
+    color: #4b5563;
+    margin-right: 16px;
+}
+
+    .sidebar-toggle:hover {
+        color: #2563eb;
+    }
+
+.topbar-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.topbar-user-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.topbar-user small {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.app-content {
+    flex: 1;
+    padding: 32px;
+    font-size: 20px;
+}
+
+    .app-content p, .app-content span, .app-content label, .app-content li {
+        font-size: 20px;
+    }
+
+    .app-content small, .app-content .small, .app-content .text-muted {
+        font-size: 17px;
+    }
+
+    .app-content h1, .app-content .h1 {
+        font-size: 40px;
+    }
+
+    .app-content h2, .app-content .h2 {
+        font-size: 34px;
+    }
+
+    .app-content h3, .app-content .h3 {
+        font-size: 30px;
+    }
+
+    .app-content h4, .app-content .h4 {
+        font-size: 26px;
+    }
+
+    .app-content h5, .app-content .h5 {
+        font-size: 23px;
+    }
+
+    .app-content h6, .app-content .h6 {
+        font-size: 20px;
+    }
+
+.app-footer {
+    min-height: 60px;
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+    padding: 17px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #6b7280;
+    font-size: 17px;
+}
+
+    .app-footer a {
+        color: #2563eb;
+        text-decoration: none;
+        font-size: 17px;
+    }
+
+        .app-footer a:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+
+.public-footer {
+    margin-top: 50px;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 9px 16px;
+    transition: all .2s ease;
+}
+
+.app-content .btn {
+    font-size: 20px;
+    padding: 11px 20px;
+}
+
+.app-content .btn-sm {
+    font-size: 18px;
+    padding: 9px 16px;
+}
+
+.btn-primary {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+}
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+.btn-secondary {
+    background: #6b7280;
+    border-color: #6b7280;
+    color: #fff;
+}
+
+    .btn-secondary:hover {
+        background: #4b5563;
+        border-color: #4b5563;
+        color: #fff;
+    }
+
+.btn-outline-primary {
+    color: #2563eb;
+    border-color: #2563eb;
+    background: #fff;
+}
+
+    .btn-outline-primary:hover {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #fff;
+    }
+
+.btn-danger {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: #fff;
+}
+
+    .btn-danger:hover {
+        background: #b91c1c;
+        border-color: #b91c1c;
+        color: #fff;
+    }
+
+.btn-success {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #fff;
+}
+
+    .btn-success:hover {
+        background: #15803d;
+        border-color: #15803d;
+        color: #fff;
+    }
+
+.card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 3px 12px rgba(0,0,0,.04);
+}
+
+.card-header {
+    background: #fff;
+    border-bottom: 1px solid #eef0f4;
+}
+
+.card-body {
+    font-size: 20px;
+}
+
+.card-footer {
+    background: #fff;
+    border-top: 1px solid #eef0f4;
+    font-size: 18px;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #374151;
+}
+
+.app-content .form-label {
+    font-size: 20px;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border-color: #d1d5db;
+    min-height: 54px;
+    padding: 10px 14px;
+    font-size: 20px;
+    color: #1f2937;
+    background: #fff;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    }
+
+    .form-control::placeholder {
+        font-size: 18px;
+    }
+
+.table {
+    background: #fff;
+    color: #1f2937;
+}
+
+.app-content .table {
+    font-size: 20px;
+}
+
+    .app-content .table thead th {
+        font-size: 17px;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        color: #6b7280;
+        font-weight: 600;
+        background: #f8fafc;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 16px 14px;
+    }
+
+    .app-content .table tbody td {
+        font-size: 20px;
+        border-color: #f0f2f5;
+        padding: 16px 14px;
+        vertical-align: middle;
+    }
+
+    .app-content .table small {
+        font-size: 17px;
+    }
+
+.table-hover tbody tr:hover {
+    background: #f8fafc;
+}
+
+.badge {
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 20px;
+}
+
+.app-content .badge {
+    font-size: 17px;
+    padding: 8px 13px;
+}
+
+a {
+    color: #2563eb;
+}
+
+    a:hover {
+        color: #1d4ed8;
+    }
+
+.progress {
+    background: #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: #2563eb;
+    border-radius: 20px;
+}
+
+.dashboard-title-icon {
+    color: #2563eb !important;
+}
+
+.dashboard-primary-btn {
+    background: #2563eb !important;
+    border-color: #2563eb !important;
+    color: #fff !important;
+}
+
+    .dashboard-primary-btn:hover {
+        background: #1d4ed8 !important;
+        border-color: #1d4ed8 !important;
+    }
+
+.kpi-purple, .kpi-burgundy, .kpi-beige {
+    background: rgba(37,99,235,.10) !important;
+    color: #2563eb !important;
+}
+
+.kpi-green {
+    background: rgba(22,163,74,.10) !important;
+    color: #16a34a !important;
+}
+
+.kpi-success, .kpi-success-text {
+    color: #16a34a !important;
+}
+
+.panel-icon, .panel-icon-gold {
+    background: rgba(37,99,235,.10) !important;
+    color: #2563eb !important;
+}
+
+.status-green {
+    color: #16a34a !important;
+}
+
+.status-red {
+    color: #dc2626 !important;
+}
+
+.status-green-bg {
+    background: rgba(22,163,74,.10) !important;
+    color: #16a34a !important;
+}
+
+.status-red-bg {
+    background: rgba(220,38,38,.10) !important;
+    color: #dc2626 !important;
+}
+
+.quick-purple, .quick-burgundy, .quick-beige {
+    background: rgba(37,99,235,.10) !important;
+    color: #2563eb !important;
+}
+
+.quick-green {
+    background: rgba(22,163,74,.10) !important;
+    color: #16a34a !important;
+}
+
+.system-burgundy, .system-beige {
+    background: rgba(37,99,235,.10) !important;
+    color: #2563eb !important;
+}
+
+.system-button {
+    color: #2563eb !important;
+    border-color: #2563eb !important;
+}
+
+    .system-button:hover {
+        background: #2563eb !important;
+        color: #fff !important;
+    }
+
+
+
+@media (max-width: 991.98px) {
+    .app-sidebar {
+        transform: translateX(-100%);
+        width: 330px;
+    }
+
+    .app-main {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    body.sidebar-collapsed .app-sidebar {
+        transform: translateX(0);
+    }
+
+    .app-content {
+        padding: 24px;
+    }
+
+    .app-topbar {
+        padding: 0 22px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    html {
+        font-size: 18px;
+    }
+
+    body {
+        font-size: 18px;
+        line-height: 1.5;
+    }
+
+    .app-content {
+        padding: 16px;
+        font-size: 18px;
+    }
+
+        .app-content p, .app-content span, .app-content label, .app-content li {
+            font-size: 18px;
+        }
+
+        .app-content h1, .app-content .h1 {
+            font-size: 32px;
+        }
+
+        .app-content h2, .app-content .h2 {
+            font-size: 28px;
+        }
+
+        .app-content h3, .app-content .h3 {
+            font-size: 25px;
+        }
+
+        .app-content h4, .app-content .h4 {
+            font-size: 22px;
+        }
+
+        .app-content h5, .app-content .h5 {
+            font-size: 20px;
+        }
+
+        .app-content h6, .app-content .h6 {
+            font-size: 18px;
+        }
+
+        .app-content .btn {
+            font-size: 17px;
+            padding: 9px 16px;
+        }
+
+        .app-content .form-control, .app-content .form-select {
+            font-size: 17px;
+            min-height: 48px;
+        }
+
+        .app-content .table tbody td {
+            font-size: 18px;
+        }
+
+    
+
+    .topbar-title {
+        font-size: 15px;
+    }
+
+    .topbar-user {
+        display: none;
+    }
+
+    .app-footer {
+        padding: 14px 18px;
+        font-size: 11px;
+    }
+
+        .app-footer a {
+            font-size: 11px;
+        }
+
+    .sidebar-link {
+        padding: 14px 15px;
+        min-height: 50px;
+    }
+}
+
+
+/* ========================================
+   DEPARTMENT PAGE TYPOGRAPHY
+   ======================================== */
+
+.department-table thead th {
+    font-size: 30px !important;
+    padding: 22px 18px !important;
+}
+
+.department-table tbody td,
+.department-table tbody td span,
+.department-table tbody td div,
+.department-table tbody td .fw-semibold,
+.department-table tbody td .fw-bold {
+    font-size: 36px !important;
+}
+
+.department-table tbody td {
+    padding: 24px 18px !important;
+}
+
+.department-table .badge {
+    font-size: 26px !important;
+    padding: 11px 16px !important;
+}
+
+.department-table .btn {
+    font-size: 24px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+}
+
+
+
+
+
+.app-sidebar {
+    width: 330px !important;
+}
+
+.app-main {
+    margin-left: 330px !important;
+    width: calc(100% - 330px) !important;
+}
+
+.sidebar-brand {
+    height: 90px;
+    padding: 0 28px;
+    gap: 16px;
+}
+
+.brand-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 25px;
+}
+
+.brand-title {
+    font-size: 25px;
+}
+
+.sidebar-brand small {
+    font-size: 16px;
+}
+
+.sidebar-menu {
+    padding: 26px 18px;
+}
+
+.menu-section {
+    font-size: 16px !important;
+    padding: 20px 16px 12px;
+}
+
+.sidebar-link {
+    gap: 18px;
+    padding: 20px 22px;
+    margin-bottom: 9px;
+    min-height: 70px;
+    border-radius: 11px;
+    font-size: 24px !important;
+}
+
+    .sidebar-link i {
+        width: 27px;
+        min-width: 27px;
+        font-size: 26px !important;
+    }
+
+.sidebar-user {
+    padding: 24px;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+}
+
+.user-name {
+    font-size: 19px;
+}
+
+.user-info small {
+    font-size: 15px;
+}

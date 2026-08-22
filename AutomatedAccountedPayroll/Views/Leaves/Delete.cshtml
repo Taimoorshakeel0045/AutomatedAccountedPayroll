@@ -1,0 +1,469 @@
+﻿@model AutomatedAccountedPayroll.Models.Leave
+
+@{
+    ViewData["Title"] = "Delete Leave Request";
+
+    var employee = Model.Employee;
+
+    var statusClass = Model.Status switch
+    {
+        "Approved" => "bg-success",
+        "Rejected" => "bg-danger",
+        _ => "bg-warning text-dark"
+    };
+
+    var statusIcon = Model.Status switch
+    {
+        "Approved" => "bi-check-circle",
+        "Rejected" => "bi-x-circle",
+        _ => "bi-hourglass-split"
+    };
+
+    var appliedDateDisplay =
+        Model.AppliedDate.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt");
+
+    var approvedDateDisplay =
+        Model.ApprovedDate.HasValue
+            ? Model.ApprovedDate.Value.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
+            : "Not Available";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <span class="badge bg-danger-subtle text-danger px-3 py-2">
+                    <i class="bi bi-trash me-1"></i>
+                    Leave Management
+                </span>
+
+            </div>
+
+            <h1 class="h3 fw-bold mb-1">
+                Delete Leave Request
+            </h1>
+
+            <p class="text-muted mb-0">
+                Review the leave request before deleting it.
+            </p>
+
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Leave Management
+
+        </a>
+
+    </div>
+
+
+    <!-- DELETE WARNING -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex align-items-center gap-2">
+
+                <div class="rounded-circle bg-danger bg-opacity-10
+                            text-danger d-flex align-items-center
+                            justify-content-center"
+                     style="width:42px;height:42px;">
+
+                    <i class="bi bi-exclamation-triangle"></i>
+
+                </div>
+
+                <div>
+
+                    <h5 class="mb-1 text-danger">
+                        Confirm Deletion
+                    </h5>
+
+                    <small class="text-muted">
+                        This action cannot be undone.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <div class="alert alert-warning d-flex align-items-start gap-3">
+
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+
+                <div>
+
+                    <div class="fw-semibold">
+                        Are you sure you want to delete this leave request?
+                    </div>
+
+                    <div class="small mt-1">
+                        Review all information below before continuing.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- EMPLOYEE -->
+
+            <div class="border rounded-3 p-3 mb-4">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="rounded-circle bg-primary bg-opacity-10
+                                text-primary d-flex align-items-center
+                                justify-content-center fw-semibold"
+                         style="width:54px;height:54px;">
+
+                        @if (employee != null)
+                        {
+                            @employee.FirstName?.FirstOrDefault()
+                            @employee.LastName?.FirstOrDefault()
+                        }
+                        else
+                        {
+                            <i class="bi bi-person"></i>
+                        }
+
+                    </div>
+
+                    <div>
+
+                        @if (employee != null)
+                        {
+                            <div class="fw-semibold fs-5">
+                                @employee.FirstName @employee.LastName
+                            </div>
+
+                            <div class="text-muted">
+                                Employee Code:
+                                <span class="fw-semibold">
+                                    @employee.EmployeeCode
+                                </span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-muted">
+                                Employee information unavailable
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DETAILS -->
+
+            <div class="row g-4">
+
+                <!-- LEAVE TYPE -->
+
+                <div class="col-md-6">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-2">
+                            Leave Type
+                        </div>
+
+                        <span class="badge rounded-pill bg-primary px-3 py-2">
+                            @Model.LeaveType
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="col-md-6">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-2">
+                            Status
+                        </div>
+
+                        <span class="badge rounded-pill @statusClass px-3 py-2">
+
+                            <i class="bi @statusIcon me-1"></i>
+                            @Model.Status
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- START DATE -->
+
+                <div class="col-md-4">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Start Date
+                        </div>
+
+                        <div class="fw-semibold">
+                            @Model.StartDate.ToString("dd MMM yyyy")
+                        </div>
+
+                        <small class="text-muted">
+                            @Model.StartDate.ToString("dddd")
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- END DATE -->
+
+                <div class="col-md-4">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            End Date
+                        </div>
+
+                        <div class="fw-semibold">
+                            @Model.EndDate.ToString("dd MMM yyyy")
+                        </div>
+
+                        <small class="text-muted">
+                            @Model.EndDate.ToString("dddd")
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOTAL DAYS -->
+
+                <div class="col-md-4">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Total Days
+                        </div>
+
+                        <div class="fw-semibold fs-5">
+                            @Model.TotalDays.ToString("0.00")
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REASON -->
+
+                <div class="col-md-6">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Reason
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Reason))
+                        {
+                            <div>
+                                @Model.Reason
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-muted">
+                                No reason provided
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- REMARKS -->
+
+                <div class="col-md-6">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Remarks
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Remarks))
+                        {
+                            <div>
+                                @Model.Remarks
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-muted">
+                                No remarks
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- APPLIED DATE -->
+
+                <div class="col-md-4">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Applied Date
+                        </div>
+
+                        <div class="fw-semibold">
+                            @appliedDateDisplay
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- APPROVED BY -->
+
+                <div class="col-md-4">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Approved By
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.ApprovedBy))
+                        {
+                            <div class="fw-semibold">
+                                @Model.ApprovedBy
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-muted">
+                                Not Available
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- APPROVED DATE -->
+
+                <div class="col-md-4">
+
+                    <div class="border rounded-3 p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Approval Date
+                        </div>
+
+                        <div class="fw-semibold">
+                            @approvedDateDisplay
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- APPROVED LEAVE WARNING -->
+            @if (Model.Status == "Approved")
+            {
+                <div class="alert alert-danger d-flex align-items-start gap-3 mt-4 mb-0">
+
+                    <i class="bi bi-exclamation-octagon-fill fs-5"></i>
+
+                    <div>
+
+                        <div class="fw-semibold">
+                            This leave has already been approved.
+                        </div>
+
+                        <div class="small mt-1">
+                            Approved leave may already have corresponding Attendance records.
+                            Deleting this request should therefore be handled carefully.
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="card-footer bg-white">
+
+            <form asp-action="Delete"
+                  method="post"
+                  class="d-flex justify-content-end gap-2">
+
+                <input type="hidden"
+                       asp-for="LeaveId" />
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary">
+
+                    <i class="bi bi-x-lg me-1"></i>
+                    Cancel
+
+                </a>
+
+                <button type="submit"
+                        class="btn btn-danger">
+
+                    <i class="bi bi-trash me-1"></i>
+                    Delete Leave Request
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

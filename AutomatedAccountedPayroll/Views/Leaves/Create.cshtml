@@ -1,0 +1,845 @@
+﻿@model AutomatedAccountedPayroll.Models.Leave
+
+@{
+    ViewData["Title"] = "Create Leave Request";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-3 mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                    <i class="bi bi-calendar2-week me-1"></i>
+                    Leave Management
+                </span>
+
+            </div>
+
+            <h1 class="h3 fw-bold mb-1">
+                Create Leave Request
+            </h1>
+
+            <p class="text-muted mb-0">
+                Create a leave request for an active employee.
+            </p>
+
+        </div>
+
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Leave Management
+
+        </a>
+
+    </div>
+
+
+    <form asp-action="Create"
+          method="post"
+          id="leaveForm">
+
+        <div asp-validation-summary="ModelOnly"
+             class="alert alert-danger shadow-sm">
+        </div>
+
+
+        <div class="row g-4">
+
+            <!-- LEFT SIDE -->
+
+            <div class="col-lg-8">
+
+                <!-- EMPLOYEE & LEAVE TYPE -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="bg-primary-subtle text-primary
+                                        rounded-3 p-2 me-3">
+
+                                <i class="bi bi-person-check fs-5"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h5 class="mb-1 fw-semibold">
+                                    Leave Information
+                                </h5>
+
+                                <small class="text-muted">
+                                    Select the employee and type of leave.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <div class="row g-4">
+
+                            <!-- EMPLOYEE -->
+
+                            <div class="col-12">
+
+                                <label asp-for="EmployeeId"
+                                       class="form-label fw-semibold">
+                                    Employee
+                                </label>
+
+                                <select asp-for="EmployeeId"
+                                        class="form-select form-select-lg"
+                                        asp-items="ViewBag.EmployeeId"
+                                        id="employeeSelect">
+
+                                    <option value="">
+                                        Select an employee
+                                    </option>
+
+                                </select>
+
+                                <div class="form-text">
+                                    Only active employees are available.
+                                </div>
+
+                                <span asp-validation-for="EmployeeId"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- LEAVE TYPE -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="LeaveType"
+                                       class="form-label fw-semibold">
+                                    Leave Type
+                                </label>
+
+                                <select asp-for="LeaveType"
+                                        class="form-select"
+                                        id="leaveType">
+
+                                    <option value="">
+                                        Select leave type
+                                    </option>
+
+                                    <option value="Casual">
+                                        Casual
+                                    </option>
+
+                                    <option value="Sick">
+                                        Sick
+                                    </option>
+
+                                    <option value="Annual">
+                                        Annual
+                                    </option>
+
+                                    <option value="Emergency">
+                                        Emergency
+                                    </option>
+
+                                    <option value="Unpaid">
+                                        Unpaid
+                                    </option>
+
+                                </select>
+
+                                <span asp-validation-for="LeaveType"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- STATUS -->
+
+                            <div class="col-md-6">
+
+                                <label class="form-label fw-semibold">
+                                    Status
+                                </label>
+
+                                <input type="text"
+                                       class="form-control"
+                                       value="Pending"
+                                       disabled />
+
+                                <div class="form-text">
+                                    New leave requests automatically start as Pending.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LEAVE DATES -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="bg-success-subtle text-success
+                                        rounded-3 p-2 me-3">
+
+                                <i class="bi bi-calendar-range fs-5"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h5 class="mb-1 fw-semibold">
+                                    Leave Period
+                                </h5>
+
+                                <small class="text-muted">
+                                    Select the start and end dates.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <div class="row g-4">
+
+                            <!-- START DATE -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="StartDate"
+                                       class="form-label fw-semibold">
+                                    Start Date
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </span>
+
+                                    <input asp-for="StartDate"
+                                           type="date"
+                                           class="form-control"
+                                           id="startDate" />
+
+                                </div>
+
+                                <span asp-validation-for="StartDate"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- END DATE -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="EndDate"
+                                       class="form-label fw-semibold">
+                                    End Date
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </span>
+
+                                    <input asp-for="EndDate"
+                                           type="date"
+                                           class="form-control"
+                                           id="endDate" />
+
+                                </div>
+
+                                <span asp-validation-for="EndDate"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- TOTAL DAYS -->
+
+                            <div class="col-12">
+
+                                <div class="alert alert-primary
+                                            d-flex align-items-center
+                                            justify-content-between gap-3 mb-0">
+
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <i class="bi bi-calendar-range fs-4"></i>
+
+                                        <div>
+
+                                            <div class="small text-muted">
+                                                Calculated Leave Duration
+                                            </div>
+
+                                            <div class="fw-semibold"
+                                                 id="totalDaysText">
+                                                Select start and end dates
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="fs-4 fw-bold"
+                                         id="totalDaysValue">
+                                        -
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REASON -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="bg-info-subtle text-info
+                                        rounded-3 p-2 me-3">
+
+                                <i class="bi bi-chat-left-text fs-5"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h5 class="mb-1 fw-semibold">
+                                    Leave Reason
+                                </h5>
+
+                                <small class="text-muted">
+                                    Provide the reason for the leave request.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <label asp-for="Reason"
+                               class="form-label fw-semibold">
+                            Reason
+                        </label>
+
+                        <textarea asp-for="Reason"
+                                  class="form-control"
+                                  rows="4"
+                                  maxlength="500"
+                                  placeholder="Enter the reason for this leave request..."></textarea>
+
+                        <span asp-validation-for="Reason"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REMARKS -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="bg-secondary-subtle text-secondary
+                                        rounded-3 p-2 me-3">
+
+                                <i class="bi bi-pencil-square fs-5"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h5 class="mb-1 fw-semibold">
+                                    Remarks
+                                </h5>
+
+                                <small class="text-muted">
+                                    Add any additional information.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <label asp-for="Remarks"
+                               class="form-label fw-semibold">
+                            Remarks
+                        </label>
+
+                        <textarea asp-for="Remarks"
+                                  class="form-control"
+                                  rows="4"
+                                  maxlength="500"
+                                  placeholder="Enter additional remarks if required..."></textarea>
+
+                        <span asp-validation-for="Remarks"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT SIDE -->
+
+            <div class="col-lg-4">
+
+                <!-- SUMMARY -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <h5 class="mb-0 fw-semibold">
+                            Leave Summary
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex align-items-center mb-4">
+
+                            <div class="bg-primary-subtle text-primary
+                                        rounded-3 p-3 me-3">
+
+                                <i class="bi bi-person fs-4"></i>
+
+                            </div>
+
+                            <div>
+
+                                <div class="small text-muted">
+                                    Employee
+                                </div>
+
+                                <div class="fw-semibold"
+                                     id="summaryEmployee">
+                                    Select employee
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="d-flex align-items-center mb-4">
+
+                            <div class="bg-info-subtle text-info
+                                        rounded-3 p-3 me-3">
+
+                                <i class="bi bi-calendar2-week fs-4"></i>
+
+                            </div>
+
+                            <div>
+
+                                <div class="small text-muted">
+                                    Leave Type
+                                </div>
+
+                                <div class="fw-semibold"
+                                     id="summaryLeaveType">
+                                    Select leave type
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="d-flex align-items-center mb-4">
+
+                            <div class="bg-success-subtle text-success
+                                        rounded-3 p-3 me-3">
+
+                                <i class="bi bi-calendar-range fs-4"></i>
+
+                            </div>
+
+                            <div>
+
+                                <div class="small text-muted">
+                                    Duration
+                                </div>
+
+                                <div class="fw-semibold"
+                                     id="summaryDuration">
+                                    Not calculated
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="bg-warning-subtle text-warning
+                                        rounded-3 p-3 me-3">
+
+                                <i class="bi bi-hourglass-split fs-4"></i>
+
+                            </div>
+
+                            <div>
+
+                                <div class="small text-muted">
+                                    Request Status
+                                </div>
+
+                                <div class="fw-semibold text-warning">
+                                    Pending
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- GUIDELINES -->
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex align-items-start">
+
+                            <div class="text-primary me-3">
+
+                                <i class="bi bi-info-circle fs-4"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h6 class="fw-semibold">
+                                    Leave Guidelines
+                                </h6>
+
+                                <ul class="text-muted small mb-0 ps-3">
+
+                                    <li class="mb-2">
+                                        Select an active employee.
+                                    </li>
+
+                                    <li class="mb-2">
+                                        Select a valid leave type.
+                                    </li>
+
+                                    <li class="mb-2">
+                                        End Date cannot be earlier than Start Date.
+                                    </li>
+
+                                    <li class="mb-2">
+                                        Total days are calculated automatically.
+                                    </li>
+
+                                    <li class="mb-2">
+                                        New leave requests start as Pending.
+                                    </li>
+
+                                    <li>
+                                        Pending or approved overlapping leave is not allowed.
+                                    </li>
+
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="card border-0 shadow-sm mt-4">
+
+            <div class="card-body d-flex flex-column flex-sm-row
+                        justify-content-end gap-2 p-3">
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary">
+
+                    <i class="bi bi-x-lg me-1"></i>
+                    Cancel
+
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary px-4">
+
+                    <i class="bi bi-check-lg me-1"></i>
+                    Create Leave Request
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const employeeSelect =
+                document.getElementById("employeeSelect");
+
+            const leaveType =
+                document.getElementById("leaveType");
+
+            const startDate =
+                document.getElementById("startDate");
+
+            const endDate =
+                document.getElementById("endDate");
+
+            const summaryEmployee =
+                document.getElementById("summaryEmployee");
+
+            const summaryLeaveType =
+                document.getElementById("summaryLeaveType");
+
+            const summaryDuration =
+                document.getElementById("summaryDuration");
+
+            const totalDaysText =
+                document.getElementById("totalDaysText");
+
+            const totalDaysValue =
+                document.getElementById("totalDaysValue");
+
+
+            function updateEmployeeSummary() {
+
+                const selectedOption =
+                    employeeSelect.options[
+                        employeeSelect.selectedIndex
+                    ];
+
+                if (selectedOption &&
+                    selectedOption.value) {
+
+                    summaryEmployee.textContent =
+                        selectedOption.text;
+
+                } else {
+
+                    summaryEmployee.textContent =
+                        "Select employee";
+                }
+            }
+
+
+            function updateLeaveTypeSummary() {
+
+                const selectedOption =
+                    leaveType.options[
+                        leaveType.selectedIndex
+                    ];
+
+                if (selectedOption &&
+                    selectedOption.value) {
+
+                    summaryLeaveType.textContent =
+                        selectedOption.text;
+
+                } else {
+
+                    summaryLeaveType.textContent =
+                        "Select leave type";
+                }
+            }
+
+
+            function updateTotalDays() {
+
+                if (!startDate.value ||
+                    !endDate.value) {
+
+                    totalDaysText.textContent =
+                        "Select start and end dates";
+
+                    totalDaysValue.textContent =
+                        "-";
+
+                    summaryDuration.textContent =
+                        "Not calculated";
+
+                    return;
+                }
+
+
+                const start =
+                    new Date(
+                        startDate.value + "T00:00:00"
+                    );
+
+                const end =
+                    new Date(
+                        endDate.value + "T00:00:00"
+                    );
+
+
+                const difference =
+                    end.getTime() -
+                    start.getTime();
+
+
+                const days =
+                    Math.floor(
+                        difference /
+                        (1000 * 60 * 60 * 24)
+                    ) + 1;
+
+
+                if (days <= 0) {
+
+                    totalDaysText.textContent =
+                        "End date must be on or after start date";
+
+                    totalDaysValue.textContent =
+                        "-";
+
+                    summaryDuration.textContent =
+                        "Invalid date range";
+
+                    return;
+                }
+
+
+                totalDaysText.textContent =
+                    days === 1
+                        ? "1 calendar day"
+                        : `${days} calendar days`;
+
+                totalDaysValue.textContent =
+                    days.toString();
+
+                summaryDuration.textContent =
+                    days === 1
+                        ? "1 day"
+                        : `${days} days`;
+            }
+
+
+            employeeSelect.addEventListener(
+                "change",
+                updateEmployeeSummary
+            );
+
+
+            leaveType.addEventListener(
+                "change",
+                updateLeaveTypeSummary
+            );
+
+
+            startDate.addEventListener(
+                "change",
+                updateTotalDays
+            );
+
+
+            endDate.addEventListener(
+                "change",
+                updateTotalDays
+            );
+
+
+            updateEmployeeSummary();
+            updateLeaveTypeSummary();
+            updateTotalDays();
+
+        });
+
+    </script>
+}

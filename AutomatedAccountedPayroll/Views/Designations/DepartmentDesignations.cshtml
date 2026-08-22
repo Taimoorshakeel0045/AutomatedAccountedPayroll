@@ -1,0 +1,159 @@
+﻿
+@model IEnumerable<AutomatedAccountedPayroll.Models.Designation>
+
+@{
+    var department = ViewBag.Department
+        as AutomatedAccountedPayroll.Models.Department;
+
+    ViewData["Title"] = "Department Designations";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="h3 mb-1">
+                @department?.DepartmentName
+            </h1>
+
+            <p class="text-muted mb-0">
+                Manage designations for this department.
+            </p>
+
+        </div>
+
+        <div>
+
+            <a asp-action="Create"
+               asp-route-departmentId="@department?.DepartmentId"
+               class="btn btn-primary">
+                Add Designation
+            </a>
+            
+
+
+            <a asp-action="Index"
+               class="btn btn-secondary ms-2">
+                Back to Departments
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th class="ps-4">
+                                Designation
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th class="text-end pe-4">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @if (!Model.Any())
+                        {
+                            <tr>
+
+                                <td colspan="3"
+                                    class="text-center text-muted py-5">
+
+                                    No designations have been created
+                                    for this department yet.
+
+                                </td>
+
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var designation in Model)
+                            {
+                                <tr>
+
+                                    <td class="ps-4">
+
+                                        <strong>
+                                            @designation.DesignationName
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (designation.IsActive)
+                                        {
+                                            <span class="badge bg-success">
+                                                Active
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                Inactive
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td class="text-end pe-4">
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@designation.DesignationId"
+                                           class="btn btn-sm btn-outline-primary">
+
+                                            Edit
+
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@designation.DesignationId"
+                                           class="btn btn-sm btn-outline-danger ms-1">
+
+                                            Delete
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

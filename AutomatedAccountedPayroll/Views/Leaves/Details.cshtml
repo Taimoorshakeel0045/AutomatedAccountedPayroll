@@ -1,0 +1,662 @@
+﻿@model AutomatedAccountedPayroll.Models.Leave
+
+@{
+    ViewData["Title"] = "Leave Details";
+
+    var employee = Model.Employee;
+
+    var statusClass = Model.Status switch
+    {
+        "Approved" => "bg-success",
+        "Rejected" => "bg-danger",
+        _ => "bg-warning text-dark"
+    };
+
+    var statusIcon = Model.Status switch
+    {
+        "Approved" => "bi-check-circle",
+        "Rejected" => "bi-x-circle",
+        _ => "bi-hourglass-split"
+    };
+
+    var leaveTypeClass = Model.LeaveType switch
+    {
+        "Casual" => "bg-primary",
+        "Sick" => "bg-info",
+        "Annual" => "bg-success",
+        "Emergency" => "bg-warning text-dark",
+        _ => "bg-secondary"
+    };
+
+    var appliedDateDisplay =
+        Model.AppliedDate.ToLocalTime()
+            .ToString("dd MMM yyyy, hh:mm tt");
+
+    var approvedDateDisplay =
+        Model.ApprovedDate.HasValue
+            ? Model.ApprovedDate.Value.ToLocalTime()
+                .ToString("dd MMM yyyy, hh:mm tt")
+            : "Not Available";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-3 mb-4">
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                    <i class="bi bi-calendar2-week me-1"></i>
+                    Leave Management
+                </span>
+
+            </div>
+
+            <h1 class="h3 fw-bold mb-1">
+                Leave Details
+            </h1>
+
+            <p class="text-muted mb-0">
+                Review the leave request and approval information.
+            </p>
+
+        </div>
+
+
+        <div class="d-flex gap-2">
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Back
+
+            </a>
+
+            @if (Model.Status == "Pending")
+            {
+                <a asp-action="Edit"
+                   asp-route-id="@Model.LeaveId"
+                   class="btn btn-primary">
+
+                    <i class="bi bi-pencil me-1"></i>
+                    Edit
+
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- EMPLOYEE -->
+
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex flex-wrap
+                                justify-content-between
+                                align-items-center gap-3">
+
+                        <div class="d-flex align-items-center gap-3">
+
+                            <div class="rounded-circle bg-primary bg-opacity-10
+                                        text-primary d-flex align-items-center
+                                        justify-content-center fw-semibold"
+                                 style="width:64px;height:64px;font-size:20px;">
+
+                                @if (employee != null)
+                                {
+                                    @employee.FirstName?.FirstOrDefault()
+                                    @employee.LastName?.FirstOrDefault()
+                                }
+                                else
+                                {
+                                    <i class="bi bi-person"></i>
+                                }
+
+                            </div>
+
+
+                            <div>
+
+                                @if (employee != null)
+                                {
+                                    <h4 class="mb-1">
+                                        @employee.FirstName @employee.LastName
+                                    </h4>
+
+                                    <div class="text-muted">
+
+                                        Employee Code:
+
+                                        <span class="fw-semibold">
+                                            @employee.EmployeeCode
+                                        </span>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <h4 class="mb-1">
+                                        Employee Information Unavailable
+                                    </h4>
+                                }
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-md-end">
+
+                            <div class="text-muted small mb-1">
+                                Request Status
+                            </div>
+
+                            <span class="badge rounded-pill @statusClass px-3 py-2">
+
+                                <i class="bi @statusIcon me-1"></i>
+
+                                @Model.Status
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LEAVE TYPE -->
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="text-muted small mb-2">
+                        Leave Type
+                    </div>
+
+                    <span class="badge rounded-pill @leaveTypeClass px-3 py-2">
+                        @Model.LeaveType
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL DAYS -->
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="text-muted small mb-2">
+                        Total Leave Days
+                    </div>
+
+                    <div class="fw-semibold fs-3">
+                        @Model.TotalDays.ToString("0.00")
+                    </div>
+
+                    <small class="text-muted">
+                        Calendar days
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPLIED DATE -->
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="text-muted small mb-2">
+                        Applied Date
+                    </div>
+
+                    <div class="fw-semibold">
+                        @appliedDateDisplay
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LEAVE PERIOD -->
+
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white border-0 py-3">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <i class="bi bi-calendar-range text-primary fs-5"></i>
+
+                        <div>
+
+                            <h5 class="mb-0">
+                                Leave Period
+                            </h5>
+
+                            <small class="text-muted">
+                                Requested leave dates
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row g-4">
+
+                        <div class="col-md-4">
+
+                            <div class="text-muted small mb-1">
+                                Start Date
+                            </div>
+
+                            <div class="fw-semibold">
+                                @Model.StartDate.ToString("dd MMM yyyy")
+                            </div>
+
+                            <small class="text-muted">
+                                @Model.StartDate.ToString("dddd")
+                            </small>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <div class="text-muted small mb-1">
+                                End Date
+                            </div>
+
+                            <div class="fw-semibold">
+                                @Model.EndDate.ToString("dd MMM yyyy")
+                            </div>
+
+                            <small class="text-muted">
+                                @Model.EndDate.ToString("dddd")
+                            </small>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <div class="text-muted small mb-1">
+                                Duration
+                            </div>
+
+                            <div class="fw-semibold">
+                                @Model.TotalDays.ToString("0.00") days
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REASON -->
+
+        <div class="col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-white border-0 py-3">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <i class="bi bi-chat-left-text text-info fs-5"></i>
+
+                        <div>
+
+                            <h5 class="mb-0">
+                                Leave Reason
+                            </h5>
+
+                            <small class="text-muted">
+                                Reason provided with the request
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Reason))
+                    {
+                        <div>
+                            @Model.Reason
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">
+                            No reason provided.
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REMARKS -->
+
+        <div class="col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-white border-0 py-3">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <i class="bi bi-pencil-square text-secondary fs-5"></i>
+
+                        <div>
+
+                            <h5 class="mb-0">
+                                Remarks
+                            </h5>
+
+                            <small class="text-muted">
+                                Additional information
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Remarks))
+                    {
+                        <div>
+                            @Model.Remarks
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">
+                            No remarks added.
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPROVAL INFORMATION -->
+
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white border-0 py-3">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <i class="bi bi-person-check text-success fs-5"></i>
+
+                        <div>
+
+                            <h5 class="mb-0">
+                                Approval Information
+                            </h5>
+
+                            <small class="text-muted">
+                                Administrative approval details
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row g-4">
+
+                        <div class="col-md-4">
+
+                            <div class="text-muted small mb-1">
+                                Status
+                            </div>
+
+                            <span class="badge rounded-pill @statusClass px-3 py-2">
+
+                                <i class="bi @statusIcon me-1"></i>
+
+                                @Model.Status
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <div class="text-muted small mb-1">
+                                Approved By
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(Model.ApprovedBy))
+                            {
+                                <div class="fw-semibold">
+                                    @Model.ApprovedBy
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-muted">
+                                    Not available
+                                </div>
+                            }
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <div class="text-muted small mb-1">
+                                Approval Date
+                            </div>
+
+                            <div class="fw-semibold">
+                                @approvedDateDisplay
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPROVAL ACTIONS -->
+        @if (Model.Status == "Pending")
+        {
+            <div class="col-12">
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-header bg-white border-0 py-3">
+
+                        <h5 class="mb-0 fw-semibold">
+                            Review Leave Request
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <p class="text-muted mb-4">
+                            Approve or reject this pending leave request.
+                        </p>
+
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <form asp-action="Approve"
+                                  asp-route-id="@Model.LeaveId"
+                                  method="post">
+
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="btn btn-success">
+
+                                    <i class="bi bi-check-lg me-1"></i>
+                                    Approve Leave
+
+                                </button>
+
+                            </form>
+
+
+                            <form asp-action="Reject"
+                                  asp-route-id="@Model.LeaveId"
+                                  method="post"
+                                  class="d-flex gap-2">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="text"
+                                       name="remarks"
+                                       class="form-control"
+                                       maxlength="500"
+                                       placeholder="Rejection remarks (optional)" />
+
+                                <button type="submit"
+                                        class="btn btn-outline-danger">
+
+                                    <i class="bi bi-x-lg me-1"></i>
+                                    Reject Leave
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+
+        <!-- ACTIONS -->
+
+        <div class="col-12">
+
+            <div class="d-flex justify-content-end gap-2">
+
+                @if (Model.Status == "Pending")
+                {
+                    <a asp-action="Edit"
+                       asp-route-id="@Model.LeaveId"
+                       class="btn btn-outline-primary">
+
+                        <i class="bi bi-pencil me-1"></i>
+                        Edit
+
+                    </a>
+                }
+
+                @if (Model.Status != "Approved")
+{
+    <a asp-action="Delete"
+       asp-route-id="@Model.LeaveId"
+       class="btn btn-outline-danger">
+
+        <i class="bi bi-trash me-1"></i>
+        Delete
+
+    </a>
+}
+
+                <a asp-action="Index"
+                   class="btn btn-primary">
+
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Leave Management
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
