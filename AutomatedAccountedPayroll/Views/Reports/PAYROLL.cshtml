@@ -1,0 +1,480 @@
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Payroll>
+
+@{
+    ViewData["Title"] = "Payroll Report";
+}
+
+<div class="attendance-report-page">
+
+    <!-- PAGE HEADER -->
+    <div class="report-page-header">
+        <div>
+            <h1>Payroll Report</h1>
+            <p>Review payroll records, salary components, payments, and payroll status.</p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+    <a asp-controller="Reports"
+       asp-action="PayrollPdf"
+       asp-route-fromMonth="@ViewBag.FromMonth"
+       asp-route-toMonth="@ViewBag.ToMonth"
+       asp-route-employeeId="@ViewBag.EmployeeId"
+       asp-route-status="@ViewBag.Status"
+       class="btn btn-danger btn-sm">
+        <i class="bi bi-file-earmark-pdf me-1"></i>
+        Download PDF
+    </a>
+
+
+    <button type="button"
+            onclick="window.print()"
+            class="btn btn-secondary btn-sm">
+        <i class="bi bi-printer me-1"></i>
+        Print Report
+    </button>
+
+
+    <a asp-controller="Dashboard"
+       asp-action="Index"
+       class="btn btn-light btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>
+        Dashboard
+    </a>
+
+</div>
+
+    <!-- FILTER CARD -->
+    <div class="report-filter-card">
+
+        <form asp-controller="Reports"
+              asp-action="Payroll"
+              method="get">
+
+            <div class="row g-3">
+
+                <!-- FROM MONTH -->
+                <div class="col-md-3">
+                    <label class="form-label">
+                        From Month
+                    </label>
+
+                    <input type="month"
+                           name="fromMonth"
+                           value="@(ViewBag.FromMonth != null
+                               ? ((DateTime)ViewBag.FromMonth).ToString("yyyy-MM")
+                               : "")"
+                           class="form-control" />
+                </div>
+
+
+                <!-- TO MONTH -->
+                <div class="col-md-3">
+                    <label class="form-label">
+                        To Month
+                    </label>
+
+                    <input type="month"
+                           name="toMonth"
+                           value="@(ViewBag.ToMonth != null
+                               ? ((DateTime)ViewBag.ToMonth).ToString("yyyy-MM")
+                               : "")"
+                           class="form-control" />
+                </div>
+
+
+                <!-- EMPLOYEE -->
+                <div class="col-md-3">
+                    <label class="form-label">
+                        Employee
+                    </label>
+
+                    <select name="employeeId"
+                            class="form-select">
+
+                        <option value="">
+                            All Employees
+                        </option>
+
+                        @foreach (var employee in ViewBag.Employees)
+                        {
+                            @if (ViewBag.EmployeeId == employee.EmployeeId)
+                            {
+                                <option value="@employee.EmployeeId" selected>
+                                    @employee.FirstName @employee.LastName
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@employee.EmployeeId">
+                                    @employee.FirstName @employee.LastName
+                                </option>
+                            }
+                        }
+
+                    </select>
+                </div>
+
+
+                <!-- STATUS -->
+                <div class="col-md-3">
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select name="status"
+                            class="form-select">
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        <option value="Draft"
+                                selected="@(ViewBag.Status == "Draft")">
+                            Draft
+                        </option>
+
+                        <option value="Processed"
+                                selected="@(ViewBag.Status == "Processed")">
+                            Processed
+                        </option>
+
+                        <option value="Paid"
+                                selected="@(ViewBag.Status == "Paid")">
+                            Paid
+                        </option>
+
+                    </select>
+                </div>
+
+            </div>
+
+
+            <div class="d-flex justify-content-end gap-2 mt-3">
+
+                <a asp-controller="Reports"
+                   asp-action="Payroll"
+                   class="btn btn-light btn-sm">
+
+                    <i class="bi bi-arrow-clockwise me-1"></i>
+                    Reset
+
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary btn-sm">
+
+                    <i class="bi bi-funnel me-1"></i>
+                    Apply Filters
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+    <div class="report-summary-grid">
+
+        <div class="report-summary-card">
+            <div class="report-summary-icon">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div>
+                <span>Total Payroll</span>
+                <strong>@ViewBag.TotalPayroll</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card absent">
+            <div class="report-summary-icon">
+                <i class="bi bi-file-earmark"></i>
+            </div>
+            <div>
+                <span>Draft</span>
+                <strong>@ViewBag.DraftCount</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card late">
+            <div class="report-summary-icon">
+                <i class="bi bi-arrow-repeat"></i>
+            </div>
+            <div>
+                <span>Processed</span>
+                <strong>@ViewBag.ProcessedCount</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card present">
+            <div class="report-summary-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div>
+                <span>Paid</span>
+                <strong>@ViewBag.PaidCount</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card">
+            <div class="report-summary-icon">
+                <i class="bi bi-cash"></i>
+            </div>
+            <div>
+                <span>Basic Salary</span>
+                <strong>@Convert.ToDecimal(ViewBag.TotalBasicSalary).ToString("N2")</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card">
+            <div class="report-summary-icon">
+                <i class="bi bi-plus-circle"></i>
+            </div>
+            <div>
+                <span>Allowances</span>
+                <strong>@Convert.ToDecimal(ViewBag.TotalAllowances).ToString("N2")</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card">
+            <div class="report-summary-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div>
+                <span>Overtime</span>
+                <strong>@Convert.ToDecimal(ViewBag.TotalOvertime).ToString("N2")</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card">
+            <div class="report-summary-icon">
+                <i class="bi bi-gift"></i>
+            </div>
+            <div>
+                <span>Bonus</span>
+                <strong>@Convert.ToDecimal(ViewBag.TotalBonus).ToString("N2")</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card absent">
+            <div class="report-summary-icon">
+                <i class="bi bi-dash-circle"></i>
+            </div>
+            <div>
+                <span>Other Deductions</span>
+                <strong>@Convert.ToDecimal(ViewBag.TotalDeductions).ToString("N2")</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card absent">
+            <div class="report-summary-icon">
+                <i class="bi bi-bank"></i>
+            </div>
+            <div>
+                <span>Loan Deduction</span>
+                <strong>@Convert.ToDecimal(ViewBag.TotalLoanDeduction).ToString("N2")</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card absent">
+            <div class="report-summary-icon">
+                <i class="bi bi-cash-coin"></i>
+            </div>
+            <div>
+                <span>Advance Salary</span>
+                <strong>@Convert.ToDecimal(ViewBag.TotalAdvanceSalary).ToString("N2")</strong>
+            </div>
+        </div>
+
+        <div class="report-summary-card leave">
+            <div class="report-summary-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div>
+                <span>Total Net Salary</span>
+                <strong>@Convert.ToDecimal(ViewBag.TotalNetSalary).ToString("N2")</strong>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- PAYROLL TABLE -->
+    <div class="report-table-card">
+
+        <div class="report-table-header">
+
+            <div>
+                <h5>
+                    Payroll Records
+                </h5>
+
+                <p>
+                    @Model.Count() payroll record(s) found
+                </p>
+            </div>
+
+        </div>
+
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table attendance-report-table mb-0">
+
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Month</th>
+                            <th>Basic Salary</th>
+                            <th>Allowances</th>
+                            <th>Overtime</th>
+                            <th>Bonus</th>
+                            <th>Deductions</th>
+                            <th>Loan Deduction</th>
+                            <th>Advance Salary</th>
+                            <th>Net Salary</th>
+                            <th>Status</th>
+                            <th>Payment Date</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var payroll in Model)
+                        {
+                            <tr>
+
+                                <!-- EMPLOYEE -->
+                                <td>
+                                    <div class="report-employee-name">
+                                        @payroll.Employee?.FirstName
+                                        @payroll.Employee?.LastName
+                                    </div>
+
+                                    <div class="report-employee-code">
+                                        @payroll.Employee?.EmployeeCode
+                                    </div>
+                                </td>
+
+
+                                <!-- MONTH -->
+                                <td>
+                                    @payroll.PayrollMonth.ToString("MMM yyyy")
+                                </td>
+
+
+                                <!-- BASIC -->
+                                <td>
+                                    @payroll.BasicSalary.ToString("N2")
+                                </td>
+
+
+                                <!-- ALLOWANCES -->
+                                <td>
+                                    @payroll.Allowances.ToString("N2")
+                                </td>
+
+
+                                <!-- OVERTIME -->
+                                <td>
+                                    @payroll.Overtime.ToString("N2")
+                                </td>
+
+
+                                <!-- BONUS -->
+                                <td>
+                                    @payroll.Bonus.ToString("N2")
+                                </td>
+
+
+                                <!-- DEDUCTIONS -->
+                                <td>
+                                    @payroll.Deductions.ToString("N2")
+                                </td>
+
+
+                                <!-- LOAN DEDUCTION -->
+                                <td>
+                                    @payroll.LoanDeduction.ToString("N2")
+                                </td>
+
+
+                                <!-- ADVANCE SALARY -->
+                                <td>
+                                    @payroll.AdvanceSalary.ToString("N2")
+                                </td>
+
+
+                                <!-- NET -->
+                                <td>
+                                    <strong>
+                                        @payroll.NetSalary.ToString("N2")
+                                    </strong>
+                                </td>
+
+
+                                <!-- STATUS -->
+                                <td>
+
+                                    @if (payroll.Status == "Paid")
+                                    {
+                                        <span class="report-status present">
+                                            Paid
+                                        </span>
+                                    }
+                                    else if (payroll.Status == "Processed")
+                                    {
+                                        <span class="report-status late">
+                                            Processed
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="report-status absent">
+                                            @payroll.Status
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- PAYMENT DATE -->
+                                <td>
+                                    @(payroll.PaymentDate.HasValue
+                                        ? payroll.PaymentDate.Value.ToString("dd MMM yyyy")
+                                        : "-")
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="report-empty">
+
+                <i class="bi bi-wallet2"></i>
+
+                <h5>No payroll records found</h5>
+
+                <p>
+                    Try changing your filters or create payroll records first.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+</div>

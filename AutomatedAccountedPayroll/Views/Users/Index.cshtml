@@ -1,0 +1,461 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@model IEnumerable<IdentityUser>
+
+@{
+    ViewData["Title"] = "User Management";
+
+    var userRoles =
+        ViewBag.UserRoles as Dictionary<string, string>
+        ?? new Dictionary<string, string>();
+
+    var linkedEmployees =
+        ViewBag.LinkedEmployees as Dictionary<string, AutomatedAccountedPayroll.Models.Employee>
+        ?? new Dictionary<string, AutomatedAccountedPayroll.Models.Employee>();
+}
+
+<div class="attendance-report-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="report-page-header d-flex justify-content-between align-items-center">
+
+        <div>
+
+            <h1>User Management</h1>
+
+            <p>
+                Manage system users, roles and employee account links.
+            </p>
+
+        </div>
+
+        <div>
+
+            <a asp-action="Create"
+               class="btn btn-primary btn-sm">
+
+                <i class="bi bi-person-plus me-1"></i>
+                Create User
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="report-summary-grid">
+
+        <!-- TOTAL USERS -->
+
+        <div class="report-summary-card">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-people"></i>
+            </div>
+
+            <div>
+
+                <span>Total Users</span>
+
+                <strong>
+                    @Model.Count()
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- ADMINS -->
+
+        <div class="report-summary-card present">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-shield-check"></i>
+            </div>
+
+            <div>
+
+                <span>Admins</span>
+
+                <strong>
+                    @Model.Count(u =>
+                        userRoles.ContainsKey(u.Id) &&
+                        userRoles[u.Id] == "Admin")
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- USERS -->
+
+        <div class="report-summary-card leave">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-person"></i>
+            </div>
+
+            <div>
+
+                <span>Users</span>
+
+                <strong>
+                    @Model.Count(u =>
+                        !userRoles.ContainsKey(u.Id) ||
+                        userRoles[u.Id] == "User")
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- USER TABLE -->
+
+    <div class="report-table-card">
+
+        <div class="report-table-header">
+
+            <div>
+
+                <h5>
+                    System Users
+                </h5>
+
+                <p>
+                    @Model.Count() user(s) found
+                </p>
+
+            </div>
+
+        </div>
+
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table attendance-report-table mb-0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                User
+                            </th>
+
+                            <th>
+                                Email
+                            </th>
+
+                            <th>
+                                Employee
+                            </th>
+
+                            <th>
+                                Role
+                            </th>
+
+                            <th>
+                                Account Status
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var user in Model)
+                        {
+                            var role =
+                                userRoles.ContainsKey(user.Id)
+                                    ? userRoles[user.Id]
+                                    : "User";
+
+                            var employee =
+                                linkedEmployees.ContainsKey(user.Id)
+                                    ? linkedEmployees[user.Id]
+                                    : null;
+
+                            var isDisabled =
+                                user.LockoutEnd.HasValue &&
+                                user.LockoutEnd.Value > DateTimeOffset.UtcNow;
+
+
+                            <tr>
+
+                                <!-- USER -->
+
+                                <td>
+
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center"
+                                             style="width:42px;height:42px;">
+
+                                            <i class="bi bi-person"></i>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <div class="report-employee-name">
+
+                                                @user.UserName
+
+                                            </div>
+
+                                            <div class="report-employee-code">
+
+                                                @user.Id
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- EMAIL -->
+
+                                <td>
+
+                                    @user.Email
+
+                                </td>
+
+
+                                <!-- EMPLOYEE -->
+
+                                <td>
+
+                                    @if (employee != null)
+                                    {
+                                        <div>
+
+                                            <div class="fw-semibold">
+
+                                                @employee.FirstName
+                                                @employee.LastName
+
+                                            </div>
+
+                                            <div class="small text-muted">
+
+                                                @employee.EmployeeCode
+
+                                            </div>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="report-status">
+
+                                            <i class="bi bi-person-x me-1"></i>
+
+                                            Not Linked
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ROLE -->
+
+                                <td>
+
+                                    @if (role == "Admin")
+                                    {
+                                        <span class="report-status present">
+
+                                            <i class="bi bi-shield-check me-1"></i>
+
+                                            Admin
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="report-status">
+
+                                            <i class="bi bi-person me-1"></i>
+
+                                            User
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ACCOUNT STATUS -->
+
+                                <td>
+
+                                    @if (isDisabled)
+                                    {
+                                        <span class="report-status absent">
+
+                                            <i class="bi bi-lock-fill me-1"></i>
+
+                                            Disabled
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="report-status present">
+
+                                            <i class="bi bi-check-circle me-1"></i>
+
+                                            Active
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td>
+
+                                    <div class="d-flex gap-1">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@user.Id"
+                                           class="btn btn-sm btn-light"
+                                           title="Details">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@user.Id"
+                                           class="btn btn-sm btn-light"
+                                           title="Edit">
+
+                                            <i class="bi bi-pencil"></i>
+
+                                        </a>
+
+
+                                        @if (isDisabled)
+                                        {
+                                            <form asp-action="EnableAccount"
+                                                  method="post"
+                                                  class="d-inline">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@user.Id" />
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-light text-success"
+                                                        title="Enable Account">
+
+                                                    <i class="bi bi-unlock"></i>
+
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="DisableAccount"
+                                                  method="post"
+                                                  class="d-inline">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@user.Id" />
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-light text-warning"
+                                                        title="Disable Account">
+
+                                                    <i class="bi bi-lock"></i>
+
+                                                </button>
+
+                                            </form>
+                                        }
+
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@user.Id"
+                                           class="btn btn-sm btn-light text-danger"
+                                           title="Delete">
+
+                                            <i class="bi bi-trash"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="report-empty">
+
+                <i class="bi bi-people"></i>
+
+                <h5>
+                    No users found
+                </h5>
+
+                <p>
+                    Create a user to give them access to the system.
+                </p>
+
+                <a asp-action="Create"
+                   class="btn btn-primary btn-sm">
+
+                    <i class="bi bi-person-plus me-1"></i>
+
+                    Create User
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>

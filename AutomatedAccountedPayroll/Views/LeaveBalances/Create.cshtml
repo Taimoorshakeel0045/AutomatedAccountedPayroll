@@ -1,0 +1,410 @@
+@model AutomatedAccountedPayroll.Models.LeaveBalance
+
+@{
+    ViewData["Title"] = "Create Leave Balance";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+
+                <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                    <i class="bi bi-calendar-check me-1"></i>
+                    Leave Management
+                </span>
+
+            </div>
+
+            <h1 class="h3 fw-bold mb-1">
+                Create Leave Balance
+            </h1>
+
+            <p class="text-muted mb-0">
+                Assign a yearly leave allocation to an employee.
+            </p>
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Leave Balances
+
+        </a>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <form asp-action="Create"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger">
+                </div>
+
+
+                <!-- EMPLOYEE -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="bg-primary-subtle text-primary rounded-3 p-2 me-3">
+                                <i class="bi bi-person-check fs-5"></i>
+                            </div>
+
+                            <div>
+
+                                <h5 class="mb-1 fw-semibold">
+                                    Employee
+                                </h5>
+
+                                <small class="text-muted">
+                                    Select the employee who will receive this balance.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <label asp-for="EmployeeId"
+                               class="form-label fw-semibold">
+                            Employee
+                        </label>
+
+                        <select asp-for="EmployeeId"
+                                class="form-select form-select-lg">
+
+                            <option value="">
+                                Select Employee
+                            </option>
+
+                            @if (ViewBag.Employees != null)
+                            {
+                                foreach (var employee in ViewBag.Employees)
+                                {
+                                    <option value="@employee.EmployeeId">
+                                        @employee.EmployeeCode
+                                        - @employee.FirstName @employee.LastName
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                        <span asp-validation-for="EmployeeId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BALANCE INFORMATION -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white border-bottom py-3">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="bg-success-subtle text-success rounded-3 p-2 me-3">
+                                <i class="bi bi-calendar-plus fs-5"></i>
+                            </div>
+
+                            <div>
+
+                                <h5 class="mb-1 fw-semibold">
+                                    Balance Information
+                                </h5>
+
+                                <small class="text-muted">
+                                    Define the yearly leave allocation.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+                        <div class="row g-4">
+
+                            <div class="col-md-6">
+
+                                <label asp-for="Year"
+                                       class="form-label fw-semibold">
+                                    Year
+                                </label>
+
+                                <input asp-for="Year"
+                                       type="number"
+                                       class="form-control"
+                                       min="2000"
+                                       max="2100"
+                                       value="@DateTime.Now.Year" />
+
+                                <span asp-validation-for="Year"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label asp-for="LeaveType"
+                                       class="form-label fw-semibold">
+                                    Leave Type
+                                </label>
+
+                                <select asp-for="LeaveType"
+                                        class="form-select">
+
+                                    <option value="">
+                                        Select Leave Type
+                                    </option>
+
+                                    <option value="Casual">
+                                        Casual
+                                    </option>
+
+                                    <option value="Sick">
+                                        Sick
+                                    </option>
+
+                                    <option value="Annual">
+                                        Annual
+                                    </option>
+
+                                    <option value="Emergency">
+                                        Emergency
+                                    </option>
+
+                                    <option value="Unpaid">
+                                        Unpaid
+                                    </option>
+
+                                </select>
+
+                                <span asp-validation-for="LeaveType"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label asp-for="AllocatedDays"
+                                       class="form-label fw-semibold">
+                                    Allocated Days
+                                </label>
+
+                                <div class="input-group">
+
+                                    <input asp-for="AllocatedDays"
+                                           type="number"
+                                           class="form-control"
+                                           min="0"
+                                           step="0.5"
+                                           placeholder="e.g. 12" />
+
+                                    <span class="input-group-text">
+                                        Days
+                                    </span>
+
+                                </div>
+
+                                <span asp-validation-for="AllocatedDays"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SYSTEM CONTROLLED -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex align-items-start">
+
+                            <div class="text-info me-3">
+                                <i class="bi bi-info-circle fs-4"></i>
+                            </div>
+
+                            <div>
+
+                                <h6 class="fw-semibold">
+                                    System Controlled Information
+                                </h6>
+
+                                <p class="text-muted small mb-0">
+                                    Used Days will automatically start at 0.
+                                    It will be updated when approved leave is processed.
+                                    Remaining Days will be calculated from Allocated Days minus Used Days.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body d-flex justify-content-end gap-2">
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+
+                            <i class="bi bi-x-lg me-1"></i>
+                            Cancel
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary px-4">
+
+                            <i class="bi bi-check-lg me-1"></i>
+                            Create Balance
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- SIDE INFORMATION -->
+
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white border-bottom py-3">
+
+                    <h5 class="mb-0 fw-semibold">
+                        Leave Balance Rules
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex align-items-start mb-4">
+
+                        <div class="text-primary me-3">
+                            <i class="bi bi-1-circle fs-4"></i>
+                        </div>
+
+                        <div>
+
+                            <div class="fw-semibold">
+                                One balance per type
+                            </div>
+
+                            <small class="text-muted">
+                                An employee can have one balance for each leave type in a year.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="d-flex align-items-start mb-4">
+
+                        <div class="text-success me-3">
+                            <i class="bi bi-2-circle fs-4"></i>
+                        </div>
+
+                        <div>
+
+                            <div class="fw-semibold">
+                                Used days start at zero
+                            </div>
+
+                            <small class="text-muted">
+                                The system controls used leave days.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="d-flex align-items-start">
+
+                        <div class="text-info me-3">
+                            <i class="bi bi-3-circle fs-4"></i>
+                        </div>
+
+                        <div>
+
+                            <div class="fw-semibold">
+                                Remaining days are calculated
+                            </div>
+
+                            <small class="text-muted">
+                                Remaining = Allocated minus Used.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

@@ -1,10 +1,15 @@
 using AutomatedAccountedPayroll.Data;
+using AutomatedAccountedPayroll.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
 QuestPDF.Settings.License = LicenseType.Community;
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<AuditLogAuthenticationEvents>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
@@ -19,9 +24,32 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
+
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(3650);
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnSigningIn = async context =>
+    {
+        var auditEvents = context.HttpContext.RequestServices
+            .GetRequiredService<AuditLogAuthenticationEvents>();
+
+        await auditEvents.LogAsync("Login", context.Principal);
+    };
+
+    options.Events.OnSigningOut = async context =>
+    {
+        var auditEvents = context.HttpContext.RequestServices
+            .GetRequiredService<AuditLogAuthenticationEvents>();
+
+        await auditEvents.LogAsync("Logout", context.HttpContext.User);
+    };
+});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -42,6 +70,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

@@ -1,15 +1,14 @@
-﻿
-@model IEnumerable<AutomatedAccountedPayroll.Models.Designation>
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Designation>
 
 @{
-    var department = ViewBag.Department
-        as AutomatedAccountedPayroll.Models.Department;
+    var department = ViewBag.Department as AutomatedAccountedPayroll.Models.Department;
 
     ViewData["Title"] = "Department Designations";
 }
 
 <div class="container-fluid">
 
+    <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
@@ -19,7 +18,7 @@
             </h1>
 
             <p class="text-muted mb-0">
-                Manage designations for this department.
+                Manage designations for this school department.
             </p>
 
         </div>
@@ -29,14 +28,18 @@
             <a asp-action="Create"
                asp-route-departmentId="@department?.DepartmentId"
                class="btn btn-primary">
-                Add Designation
-            </a>
-            
 
+                <i class="bi bi-plus-lg me-1"></i>
+                Add Designation
+
+            </a>
 
             <a asp-action="Index"
                class="btn btn-secondary ms-2">
+
+                <i class="bi bi-arrow-left me-1"></i>
                 Back to Departments
+
             </a>
 
         </div>
@@ -44,7 +47,135 @@
     </div>
 
 
+    <!-- Summary Boxes -->
+    <div class="row g-4 mb-4">
+
+        <!-- Total -->
+        <div class="col-xl-4 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                Total Designations
+                            </p>
+
+                            <h2 class="mb-0">
+                                @ViewBag.TotalDesignations
+                            </h2>
+
+                        </div>
+
+                        <div class="fs-2 text-primary">
+
+                            <i class="bi bi-person-badge"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Active -->
+        <div class="col-xl-4 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                Active Designations
+                            </p>
+
+                            <h2 class="mb-0">
+                                @ViewBag.ActiveDesignations
+                            </h2>
+
+                        </div>
+
+                        <div class="fs-2 text-success">
+
+                            <i class="bi bi-check-circle"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Inactive -->
+        <div class="col-xl-4 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                Inactive Designations
+                            </p>
+
+                            <h2 class="mb-0">
+                                @ViewBag.InactiveDesignations
+                            </h2>
+
+                        </div>
+
+                        <div class="fs-2 text-secondary">
+
+                            <i class="bi bi-pause-circle"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Designation List -->
     <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <h5 class="mb-1">
+                Department Designations
+            </h5>
+
+            <p class="text-muted mb-0">
+                View and manage all designations assigned to
+                @department?.DepartmentName.
+            </p>
+
+        </div>
+
 
         <div class="card-body p-0">
 
@@ -56,7 +187,7 @@
 
                         <tr>
 
-                            <th class="ps-4">
+                            <th>
                                 Designation
                             </th>
 
@@ -64,13 +195,14 @@
                                 Status
                             </th>
 
-                            <th class="text-end pe-4">
+                            <th class="text-end">
                                 Actions
                             </th>
 
                         </tr>
 
                     </thead>
+
 
                     <tbody>
 
@@ -81,8 +213,17 @@
                                 <td colspan="3"
                                     class="text-center text-muted py-5">
 
-                                    No designations have been created
-                                    for this department yet.
+                                    <div class="fs-2 mb-2">
+                                        <i class="bi bi-person-badge"></i>
+                                    </div>
+
+                                    <strong>
+                                        No designations found.
+                                    </strong>
+
+                                    <div class="mt-1">
+                                        Add the first designation for this department.
+                                    </div>
 
                                 </td>
 
@@ -94,11 +235,29 @@
                             {
                                 <tr>
 
-                                    <td class="ps-4">
+                                    <td>
 
-                                        <strong>
-                                            @designation.DesignationName
-                                        </strong>
+                                        <div class="d-flex align-items-center">
+
+                                            <div class="me-3 fs-4 text-primary">
+
+                                                <i class="bi bi-person-badge"></i>
+
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    @designation.DesignationName
+                                                </strong>
+
+                                                <div class="text-muted small">
+                                                    @department?.DepartmentName
+                                                </div>
+
+                                            </div>
+
+                                        </div>
 
                                     </td>
 
@@ -121,20 +280,31 @@
                                     </td>
 
 
-                                    <td class="text-end pe-4">
+                                    <td class="text-end">
 
                                         <a asp-action="Edit"
                                            asp-route-id="@designation.DesignationId"
-                                           class="btn btn-sm btn-outline-primary">
+                                           class="btn btn-sm btn-outline-primary me-1">
 
+                                            <i class="bi bi-pencil me-1"></i>
                                             Edit
+
+                                        </a>
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@designation.DesignationId"
+                                           class="btn btn-sm btn-outline-info me-1">
+
+                                            <i class="bi bi-eye me-1"></i>
+                                            Details
 
                                         </a>
 
                                         <a asp-action="Delete"
                                            asp-route-id="@designation.DesignationId"
-                                           class="btn btn-sm btn-outline-danger ms-1">
+                                           class="btn btn-sm btn-outline-danger">
 
+                                            <i class="bi bi-trash me-1"></i>
                                             Delete
 
                                         </a>
@@ -156,4 +326,3 @@
     </div>
 
 </div>
-

@@ -1,8 +1,564 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using AutomatedAccountedPayroll.Models
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var recentPayrolls =
+        ViewBag.RecentPayrolls as List<Payroll>
+        ?? new List<Payroll>();
+
+    var recentLoans =
+        ViewBag.RecentLoans as List<Loan>
+        ?? new List<Loan>();
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="attendance-report-page">
+
+    <!-- HEADER -->
+
+    <div class="report-page-header">
+
+        <div>
+            <h1>Dashboard</h1>
+
+            <p>
+                Overview of your accounting and payroll management system.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- MAIN SUMMARY -->
+
+    <div class="report-summary-grid">
+
+        <!-- TOTAL EMPLOYEES -->
+
+        <div class="report-summary-card">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-people"></i>
+            </div>
+
+            <div>
+                <span>Total Employees</span>
+
+                <strong>
+                    @ViewBag.TotalEmployees
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE EMPLOYEES -->
+
+        <div class="report-summary-card present">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-person-check"></i>
+            </div>
+
+            <div>
+                <span>Active Employees</span>
+
+                <strong>
+                    @ViewBag.ActiveEmployees
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- USERS -->
+
+        <div class="report-summary-card">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-person-badge"></i>
+            </div>
+
+            <div>
+                <span>System Users</span>
+
+                <strong>
+                    @ViewBag.TotalUsers
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE LOANS -->
+
+        <div class="report-summary-card leave">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+
+            <div>
+                <span>Active Loans</span>
+
+                <strong>
+                    @ViewBag.ActiveLoans
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- PENDING LEAVES -->
+
+        <div class="report-summary-card late">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-calendar2-x"></i>
+            </div>
+
+            <div>
+                <span>Pending Leaves</span>
+
+                <strong>
+                    @ViewBag.PendingLeaves
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FINANCIAL SUMMARY -->
+
+    <div class="report-summary-grid">
+
+        <!-- NET PAYROLL -->
+
+        <div class="report-summary-card">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-wallet2"></i>
+            </div>
+
+            <div>
+                <span>Total Net Payroll</span>
+
+                <strong>
+                    Rs. @ViewBag.TotalNetPayroll.ToString("N2")
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- PAID PAYROLL -->
+
+        <div class="report-summary-card present">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+
+            <div>
+                <span>Paid Payroll</span>
+
+                <strong>
+                    @ViewBag.PaidPayroll
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- OUTSTANDING LOANS -->
+
+        <div class="report-summary-card late">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-bank"></i>
+            </div>
+
+            <div>
+                <span>Outstanding Loans</span>
+
+                <strong>
+                    Rs. @ViewBag.OutstandingLoanBalance.ToString("N2")
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL PAYROLL RECORDS -->
+
+        <div class="report-summary-card">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-file-earmark-text"></i>
+            </div>
+
+            <div>
+                <span>Payroll Records</span>
+
+                <strong>
+                    @ViewBag.TotalPayroll
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+ <!-- QUICK ACTIONS -->
+
+<div class="report-table-card mb-4">
+
+    <div class="report-table-header">
+
+        <div>
+            <h5>Quick Actions</h5>
+
+            <p>
+                Frequently used system operations.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="p-4">
+
+        <div class="d-flex flex-wrap gap-2">
+
+            @if (User.IsInRole("Admin") || User.IsInRole("HR"))
+            {
+                <a asp-controller="Employees"
+                   asp-action="Create"
+                   class="btn btn-primary">
+
+                    <i class="bi bi-person-plus me-1"></i>
+                    Add Employee
+
+                </a>
+            }
+
+            @if (User.IsInRole("Admin") || User.IsInRole("Accountant"))
+            {
+                <a asp-controller="Payrolls"
+                   asp-action="Create"
+                   class="btn btn-success">
+
+                    <i class="bi bi-wallet2 me-1"></i>
+                    Create Payroll
+
+                </a>
+
+                <a asp-controller="Loans"
+                   asp-action="Create"
+                   class="btn btn-warning">
+
+                    <i class="bi bi-cash-stack me-1"></i>
+                    Add Loan
+
+                </a>
+            }
+
+            @if (User.IsInRole("Admin") || User.IsInRole("HR"))
+            {
+                <a asp-controller="Users"
+                   asp-action="Create"
+                   class="btn btn-secondary">
+
+                    <i class="bi bi-person-plus me-1"></i>
+                    Create User
+
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- RECENT PAYROLL -->
+
+    <div class="report-table-card mb-4">
+
+        <div class="report-table-header">
+
+            <div>
+                <h5>Recent Payroll</h5>
+
+                <p>
+                    Latest payroll records in the system.
+                </p>
+            </div>
+
+            <div>
+
+                <a asp-controller="Payrolls"
+                   asp-action="Index"
+                   class="btn btn-sm btn-outline-primary">
+
+                    View All
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        @if (recentPayrolls.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table attendance-report-table mb-0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Employee</th>
+                            <th>Period</th>
+                            <th>Net Salary</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var payroll in recentPayrolls)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <div class="report-employee-name">
+
+                                        @payroll.Employee?.FirstName
+                                        @payroll.Employee?.LastName
+
+                                    </div>
+
+                                    <div class="report-employee-code">
+
+                                        @payroll.Employee?.EmployeeCode
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    @payroll.PayrollMonth
+                                        .ToString("MMM yyyy")
+
+                                </td>
+
+
+                                <td>
+
+                                    <strong>
+                                        Rs. @payroll.NetSalary.ToString("N2")
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (payroll.Status == "Paid")
+                                    {
+                                        <span class="report-status present">
+                                            Paid
+                                        </span>
+                                    }
+                                    else if (payroll.Status == "Processed")
+                                    {
+                                        <span class="report-status present">
+                                            Processed
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="report-status">
+                                            Draft
+                                        </span>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="report-empty">
+
+                <i class="bi bi-wallet2"></i>
+
+                <h5>No payroll records</h5>
+
+                <p>
+                    Payroll records will appear here once created.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- RECENT LOANS -->
+
+    <div class="report-table-card">
+
+        <div class="report-table-header">
+
+            <div>
+                <h5>Recent Loans</h5>
+
+                <p>
+                    Latest employee loan records.
+                </p>
+            </div>
+
+            <div>
+
+                <a asp-controller="Loans"
+                   asp-action="Index"
+                   class="btn btn-sm btn-outline-primary">
+
+                    View All
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        @if (recentLoans.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table attendance-report-table mb-0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Employee</th>
+                            <th>Loan Amount</th>
+                            <th>Remaining Balance</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var loan in recentLoans)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <div class="report-employee-name">
+
+                                        @loan.Employee?.FirstName
+                                        @loan.Employee?.LastName
+
+                                    </div>
+
+                                    <div class="report-employee-code">
+
+                                        @loan.Employee?.EmployeeCode
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    Rs. @loan.LoanAmount.ToString("N2")
+
+                                </td>
+
+
+                                <td>
+
+                                    <strong>
+                                        Rs. @loan.RemainingBalance.ToString("N2")
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (loan.Status == "Active")
+                                    {
+                                        <span class="report-status present">
+                                            Active
+                                        </span>
+                                    }
+                                    else if (loan.Status == "Completed")
+                                    {
+                                        <span class="report-status present">
+                                            Completed
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="report-status absent">
+                                            @loan.Status
+                                        </span>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="report-empty">
+
+                <i class="bi bi-cash-stack"></i>
+
+                <h5>No loan records</h5>
+
+                <p>
+                    Loan records will appear here once created.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
 </div>

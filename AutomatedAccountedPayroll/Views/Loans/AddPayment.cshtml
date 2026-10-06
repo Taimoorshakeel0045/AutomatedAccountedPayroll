@@ -1,0 +1,360 @@
+﻿@model AutomatedAccountedPayroll.Models.Loan
+
+@{
+    ViewData["Title"] = "Add Loan Payment";
+
+    var loan = ViewBag.Loan as AutomatedAccountedPayroll.Models.Loan;
+}
+
+<div class="container-fluid">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Add Loan Payment
+            </h2>
+
+            <p class="text-muted mb-0">
+                Record a payment against an employee loan.
+            </p>
+        </div>
+
+        <div>
+            <a asp-action="Details"
+               asp-route-id="@loan?.LoanId"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Loan
+
+            </a>
+        </div>
+
+    </div>
+
+
+    @if (loan != null)
+    {
+        <!-- LOAN SUMMARY -->
+        <div class="card border-0 shadow-sm mb-4">
+
+            <div class="card-header bg-white border-0 py-3">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="bg-primary-subtle text-primary rounded-3 p-2 me-3">
+                        <i class="bi bi-wallet2 fs-5"></i>
+                    </div>
+
+                    <div>
+
+                        <h5 class="mb-1 fw-semibold">
+                            Loan Summary
+                        </h5>
+
+                        <small class="text-muted">
+                            Information about the selected loan.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="row g-4">
+
+                    <!-- EMPLOYEE -->
+                    <div class="col-md-3">
+
+                        <div class="text-muted small mb-1">
+                            Employee
+                        </div>
+
+                        <div class="fw-semibold">
+                            @(loan.Employee == null
+                                ? "N/A"
+                                : $"{loan.Employee.FirstName} {loan.Employee.LastName}")
+                        </div>
+
+                    </div>
+
+
+                    <!-- LOAN AMOUNT -->
+                    <div class="col-md-3">
+
+                        <div class="text-muted small mb-1">
+                            Loan Amount
+                        </div>
+
+                        <div class="fw-semibold">
+                            Rs. @loan.LoanAmount.ToString("N0")
+                        </div>
+
+                    </div>
+
+
+                    <!-- REMAINING -->
+                    <div class="col-md-3">
+
+                        <div class="text-muted small mb-1">
+                            Remaining Balance
+                        </div>
+
+                        <div class="fw-semibold text-danger">
+                            Rs. @loan.RemainingBalance.ToString("N0")
+                        </div>
+
+                    </div>
+
+
+                    <!-- INSTALLMENT -->
+                    <div class="col-md-3">
+
+                        <div class="text-muted small mb-1">
+                            Monthly Installment
+                        </div>
+
+                        <div class="fw-semibold">
+                            Rs. @loan.MonthlyInstallment.ToString("N0")
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT FORM -->
+        <div class="row justify-content-center">
+
+            <div class="col-lg-7">
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-header bg-white border-0 py-3">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="bg-success-subtle text-success rounded-3 p-2 me-3">
+                                <i class="bi bi-cash-stack fs-5"></i>
+                            </div>
+
+                            <div>
+
+                                <h5 class="mb-1 fw-semibold">
+                                    Payment Information
+                                </h5>
+
+                                <small class="text-muted">
+                                    Enter the payment details below.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <form asp-action="AddPayment" method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="loanId"
+                                   value="@loan.LoanId" />
+
+
+                            <!-- PAYMENT DATE -->
+                            <div class="mb-4">
+
+                                <label for="paymentDate"
+                                       class="form-label fw-semibold">
+                                    Payment Date
+                                </label>
+
+                                <input type="date"
+                                       id="paymentDate"
+                                       name="paymentDate"
+                                       class="form-control"
+                                       value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                       required />
+
+                            </div>
+
+
+                            <!-- PAYMENT AMOUNT -->
+                            <div class="mb-4">
+
+                                <label for="paymentAmount"
+                                       class="form-label fw-semibold">
+                                    Payment Amount
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+                                        Rs.
+                                    </span>
+
+                                    <input type="number"
+                                           id="paymentAmount"
+                                           name="paymentAmount"
+                                           class="form-control"
+                                           min="0.01"
+                                           max="@loan.RemainingBalance"
+                                           step="0.01"
+                                           placeholder="Enter payment amount"
+                                           required />
+
+                                </div>
+
+                                <div class="form-text">
+                                    Maximum payment:
+                                    <strong>
+                                        Rs. @loan.RemainingBalance.ToString("N2")
+                                    </strong>
+                                </div>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="paymentAmount"
+                                      data-valmsg-replace="true">
+                                </span>
+
+                            </div>
+
+
+                            <!-- PAYMENT METHOD -->
+                            <div class="mb-4">
+
+                                <label for="paymentMethod"
+                                       class="form-label fw-semibold">
+                                    Payment Method
+                                </label>
+
+                                <select id="paymentMethod"
+                                        name="paymentMethod"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">
+                                        -- Select Payment Method --
+                                    </option>
+
+                                    <option value="Payroll Deduction">
+                                        Payroll Deduction
+                                    </option>
+
+                                    <option value="Bank Transfer">
+                                        Bank Transfer
+                                    </option>
+
+                                    <option value="Cash">
+                                        Cash
+                                    </option>
+
+                                    <option value="Cheque">
+                                        Cheque
+                                    </option>
+
+                                    <option value="Other">
+                                        Other
+                                    </option>
+
+                                </select>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="paymentMethod"
+                                      data-valmsg-replace="true">
+                                </span>
+
+                            </div>
+
+
+                            <!-- REMARKS -->
+                            <div class="mb-4">
+
+                                <label for="remarks"
+                                       class="form-label fw-semibold">
+                                    Remarks
+                                </label>
+
+                                <textarea id="remarks"
+                                          name="remarks"
+                                          class="form-control"
+                                          rows="4"
+                                          maxlength="500"
+                                          placeholder="Optional payment remarks"></textarea>
+
+                            </div>
+
+
+                            <!-- WARNING -->
+                            <div class="alert alert-warning border-0">
+
+                                <div class="d-flex">
+
+                                    <i class="bi bi-exclamation-triangle me-2 mt-1"></i>
+
+                                    <div>
+
+                                        <strong>Important</strong>
+
+                                        <div class="small mt-1">
+                                            The payment will automatically reduce
+                                            the loan's remaining balance.
+                                            If the balance reaches zero,
+                                            the loan will be marked as Completed.
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- BUTTONS -->
+                            <div class="d-flex justify-content-end gap-2">
+
+                                <a asp-action="Details"
+                                   asp-route-id="@loan.LoanId"
+                                   class="btn btn-outline-secondary">
+
+                                    Cancel
+
+                                </a>
+
+                                <button type="submit"
+                                        class="btn btn-success">
+
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Record Payment
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>

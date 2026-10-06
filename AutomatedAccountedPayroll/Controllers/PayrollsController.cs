@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AutomatedAccountedPayroll.Data;
 using AutomatedAccountedPayroll.Models;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace AutomatedAccountedPayroll.Controllers
 {
+    [Authorize(Roles = "Admin,Accountant")]
     public class PayrollsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,9 +22,12 @@ namespace AutomatedAccountedPayroll.Controllers
         {
             _context = context;
         }
-        //Payslip Action starts
 
-public async Task<IActionResult> Payslip(int id)
+        // =========================================================
+        // PAYSLIP
+        // =========================================================
+
+        public async Task<IActionResult> Payslip(int id)
         {
             var payroll = await _context.Payrolls
                 .Include(p => p.Employee)
@@ -40,10 +44,11 @@ public async Task<IActionResult> Payslip(int id)
             return View(payroll);
         }
 
-        // Payslip Action End
+        // =========================================================
+        // PAYSLIP PDF
+        // =========================================================
 
-        // pdf generation start
-public async Task<IActionResult> DownloadPayslip(int id)
+        public async Task<IActionResult> DownloadPayslip(int id)
         {
             var payroll = await _context.Payrolls
                 .Include(p => p.Employee)
@@ -87,6 +92,7 @@ public async Task<IActionResult> DownloadPayslip(int id)
                                 .Text(payroll.PayrollMonth.ToString("MMMM yyyy"))
                                 .FontSize(12);
 
+                            // Employee Information
                             column.Item()
                                 .PaddingTop(15)
                                 .Text("Employee Information")
@@ -106,7 +112,9 @@ public async Task<IActionResult> DownloadPayslip(int id)
                                         .Text("Employee Code");
 
                                     table.Cell().Border(1).Padding(5)
-                                        .Text(payroll.Employee?.EmployeeCode ?? "N/A");
+                                        .Text(
+                                            payroll.Employee?.EmployeeCode
+                                            ?? "N/A");
 
                                     table.Cell().Border(1).Padding(5)
                                         .Text("Employee Name");
@@ -134,6 +142,7 @@ public async Task<IActionResult> DownloadPayslip(int id)
                                             ?? "N/A");
                                 });
 
+                            // Salary Details
                             column.Item()
                                 .PaddingTop(15)
                                 .Text("Salary Details")
@@ -154,21 +163,59 @@ public async Task<IActionResult> DownloadPayslip(int id)
 
                                     table.Cell().Border(1).Padding(5)
                                         .AlignRight()
-                                        .Text(payroll.BasicSalary.ToString("N2"));
+                                        .Text(
+                                            payroll.BasicSalary.ToString("N2"));
 
                                     table.Cell().Border(1).Padding(5)
                                         .Text("Allowances");
 
                                     table.Cell().Border(1).Padding(5)
                                         .AlignRight()
-                                        .Text(payroll.Allowances.ToString("N2"));
+                                        .Text(
+                                            payroll.Allowances.ToString("N2"));
 
+                                    // Overtime
                                     table.Cell().Border(1).Padding(5)
-                                        .Text("Deductions");
+                                        .Text("Overtime");
 
                                     table.Cell().Border(1).Padding(5)
                                         .AlignRight()
-                                        .Text(payroll.Deductions.ToString("N2"));
+                                        .Text(
+                                            payroll.Overtime.ToString("N2"));
+
+                                    // Bonus
+                                    table.Cell().Border(1).Padding(5)
+                                        .Text("Bonus");
+
+                                    table.Cell().Border(1).Padding(5)
+                                        .AlignRight()
+                                        .Text(
+                                            payroll.Bonus.ToString("N2"));
+
+                                    table.Cell().Border(1).Padding(5)
+                                        .Text("Other Deductions");
+
+                                    table.Cell().Border(1).Padding(5)
+                                        .AlignRight()
+                                        .Text(
+                                            payroll.Deductions.ToString("N2"));
+
+                                    table.Cell().Border(1).Padding(5)
+                                        .Text("Loan Deduction");
+
+                                    table.Cell().Border(1).Padding(5)
+                                        .AlignRight()
+                                        .Text(
+                                            payroll.LoanDeduction.ToString("N2"));
+
+                                    // Advance Salary
+                                    table.Cell().Border(1).Padding(5)
+                                        .Text("Advance Salary");
+
+                                    table.Cell().Border(1).Padding(5)
+                                        .AlignRight()
+                                        .Text(
+                                            payroll.AdvanceSalary.ToString("N2"));
 
                                     table.Cell().Border(1).Padding(5)
                                         .Text("Net Salary")
@@ -176,10 +223,12 @@ public async Task<IActionResult> DownloadPayslip(int id)
 
                                     table.Cell().Border(1).Padding(5)
                                         .AlignRight()
-                                        .Text(payroll.NetSalary.ToString("N2"))
+                                        .Text(
+                                            payroll.NetSalary.ToString("N2"))
                                         .Bold();
                                 });
 
+                            // Payment Information
                             column.Item()
                                 .PaddingTop(15)
                                 .Text("Payment Information")
@@ -199,29 +248,36 @@ public async Task<IActionResult> DownloadPayslip(int id)
                                         .Text("Status");
 
                                     table.Cell().Border(1).Padding(5)
-                                        .Text(payroll.Status ?? "Draft");
+                                        .Text(
+                                            payroll.Status ?? "Draft");
 
                                     table.Cell().Border(1).Padding(5)
                                         .Text("Payment Date");
 
                                     table.Cell().Border(1).Padding(5)
                                         .Text(
-                                            payroll.PaymentDate?.ToString("dd-MM-yyyy")
+                                            payroll.PaymentDate?
+                                                .ToString("dd-MM-yyyy")
                                             ?? "Not Paid");
 
                                     table.Cell().Border(1).Padding(5)
                                         .Text("Payment Method");
 
                                     table.Cell().Border(1).Padding(5)
-                                        .Text(payroll.PaymentMethod ?? "Not Paid");
+                                        .Text(
+                                            payroll.PaymentMethod
+                                            ?? "Not Paid");
 
                                     table.Cell().Border(1).Padding(5)
                                         .Text("Payment Reference");
 
                                     table.Cell().Border(1).Padding(5)
-                                        .Text(payroll.PaymentReference ?? "N/A");
+                                        .Text(
+                                            payroll.PaymentReference
+                                            ?? "N/A");
                                 });
 
+                            // Signatures
                             column.Item()
                                 .PaddingTop(60)
                                 .Row(row =>
@@ -230,7 +286,8 @@ public async Task<IActionResult> DownloadPayslip(int id)
                                         .Column(c =>
                                         {
                                             c.Item()
-                                                .Text("________________________");
+                                                .Text(
+                                                    "________________________");
 
                                             c.Item()
                                                 .Text("Employee Signature");
@@ -240,17 +297,20 @@ public async Task<IActionResult> DownloadPayslip(int id)
                                         .Column(c =>
                                         {
                                             c.Item()
-                                                .Text("________________________");
+                                                .Text(
+                                                    "________________________");
 
                                             c.Item()
-                                                .Text("Authorized Signature");
+                                                .Text(
+                                                    "Authorized Signature");
                                         });
                                 });
                         });
 
                     page.Footer()
                         .AlignCenter()
-                        .Text("Generated by Automated Accounted Payroll");
+                        .Text(
+                            "Generated by Automated Accounted Payroll");
                 });
             });
 
@@ -261,14 +321,12 @@ public async Task<IActionResult> DownloadPayslip(int id)
                 "application/pdf",
                 $"Payslip-{payroll.Employee?.EmployeeCode ?? payroll.PayrollId.ToString()}-{payroll.PayrollMonth:yyyy-MM}.pdf");
         }
-        //pdf generation end 
 
+        // =========================================================
+        // INDEX
+        // =========================================================
 
-
-        // GET: Payrolls
-        // pay roll month filter has addedd here 
-
-public async Task<IActionResult> Index(DateTime? payrollMonth)
+        public async Task<IActionResult> Index(DateTime? payrollMonth)
         {
             var payrolls = _context.Payrolls
                 .Include(p => p.Employee)
@@ -286,9 +344,10 @@ public async Task<IActionResult> Index(DateTime? payrollMonth)
             return View(await payrolls.ToListAsync());
         }
 
+        // =========================================================
+        // DETAILS
+        // =========================================================
 
-
-        // GET: Payrolls/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -298,7 +357,9 @@ public async Task<IActionResult> Index(DateTime? payrollMonth)
 
             var payroll = await _context.Payrolls
                 .Include(p => p.Employee)
-                .FirstOrDefaultAsync(m => m.PayrollId == id);
+                .FirstOrDefaultAsync(
+                    p => p.PayrollId == id);
+
             if (payroll == null)
             {
                 return NotFound();
@@ -307,53 +368,113 @@ public async Task<IActionResult> Index(DateTime? payrollMonth)
             return View(payroll);
         }
 
-        // GET: Payrolls/Create
+        // =========================================================
+        // CREATE GET
+        // =========================================================
+
+
+
+
         public IActionResult Create()
         {
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "EmployeeCode");
-            return View();
+            ViewData["EmployeeId"] = new SelectList(
+                _context.Employees,
+                "EmployeeId",
+                "EmployeeCode");
+
+            return View(new Payroll
+            {
+                CreatedAt = DateTime.Now,
+                PayrollMonth = DateTime.Now
+            });
         }
 
-        // POST: Payrolls/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 
 
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> Create(
-    [Bind("PayrollId,EmployeeId,PayrollMonth,BasicSalary,Allowances,Deductions,NetSalary,CreatedAt")] Payroll payroll)
+
+
+
+
+        // =========================================================
+        // CREATE POST
+        // =========================================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(
+            [Bind(
+                "PayrollId,EmployeeId,PayrollMonth,BasicSalary,Allowances,Overtime,Bonus,Deductions,LoanDeduction,AdvanceSalary,NetSalary,CreatedAt")]
+            Payroll payroll)
         {
             var employee = await _context.Employees
-                .FirstOrDefaultAsync(e => e.EmployeeId == payroll.EmployeeId);
+                .FirstOrDefaultAsync(
+                    e => e.EmployeeId == payroll.EmployeeId);
 
             if (employee == null)
             {
-                ModelState.AddModelError("EmployeeId", "Selected employee was not found.");
+                ModelState.AddModelError(
+                    "EmployeeId",
+                    "Selected employee was not found.");
             }
             else
             {
+                // Load basic salary automatically
                 payroll.BasicSalary = employee.BasicSalary;
 
+                // Get active loan
+                var activeLoan = await _context.Loans
+                    .Where(l =>
+                        l.EmployeeId == payroll.EmployeeId &&
+                        l.Status == "Active" &&
+                        l.RemainingBalance > 0)
+                    .OrderBy(l => l.StartDate)
+                    .FirstOrDefaultAsync();
+
+                // Automatically calculate loan deduction
+                if (activeLoan != null)
+                {
+                    payroll.LoanDeduction = Math.Min(
+                        activeLoan.MonthlyInstallment,
+                        activeLoan.RemainingBalance);
+                }
+                else
+                {
+                    payroll.LoanDeduction = 0;
+                }
+
+                // Calculate net salary
                 payroll.NetSalary =
                     payroll.BasicSalary +
-                    payroll.Allowances -
-                    payroll.Deductions;
+                    payroll.Allowances +
+                    payroll.Overtime +
+                    payroll.Bonus -
+                    payroll.Deductions -
+                    payroll.LoanDeduction -
+                    payroll.AdvanceSalary;
             }
 
+            // Payroll business-rule validation
+            if (payroll.NetSalary < 0)
+            {
+                ModelState.AddModelError(
+                    "NetSalary",
+                    "Net salary cannot be negative.");
+            }
+
+            // Store payroll month as first day of month
             payroll.PayrollMonth = new DateTime(
-    payroll.PayrollMonth.Year,
-    payroll.PayrollMonth.Month,
-    1);
+                payroll.PayrollMonth.Year,
+                payroll.PayrollMonth.Month,
+                1);
 
-
-            //Payroll Duplication Prevention Code Starts 
-
+            // Payroll duplication prevention
             var payrollExists = await _context.Payrolls
-    .AnyAsync(p =>
-        p.EmployeeId == payroll.EmployeeId &&
-        p.PayrollMonth.Year == payroll.PayrollMonth.Year &&
-        p.PayrollMonth.Month == payroll.PayrollMonth.Month);
+                .AnyAsync(p =>
+                    p.EmployeeId == payroll.EmployeeId &&
+                    p.PayrollMonth.Year ==
+                        payroll.PayrollMonth.Year &&
+                    p.PayrollMonth.Month ==
+                        payroll.PayrollMonth.Month);
 
             if (payrollExists)
             {
@@ -362,11 +483,25 @@ public async Task<IActionResult> Create(
                     "Payroll for this employee and month already exists.");
             }
 
-            //Payroll Duplication Prevention Code end
-
             if (ModelState.IsValid)
             {
-                _context.Add(payroll);
+
+                // default creat time 
+
+                payroll.Status = "Draft";
+
+                if (payroll.CreatedAt == default)
+                {
+                    payroll.CreatedAt = DateTime.UtcNow;
+                }
+
+
+
+
+
+
+                _context.Payrolls.Add(payroll);
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
@@ -381,29 +516,52 @@ public async Task<IActionResult> Create(
             return View(payroll);
         }
 
+        // =========================================================
+        // EMPLOYEE SALARY + LOAN
+        // =========================================================
 
-        //Auto Employee Drop-down 
-        //this method load the employee basic salary automatically 
-
-[HttpGet]
-public async Task<IActionResult> GetEmployeeSalary(int employeeId)
+        [HttpGet]
+        public async Task<IActionResult> GetEmployeeSalary(
+            int employeeId)
         {
             var employee = await _context.Employees
-                .FirstOrDefaultAsync(e => e.EmployeeId == employeeId);
+                .FirstOrDefaultAsync(
+                    e => e.EmployeeId == employeeId);
 
             if (employee == null)
             {
                 return NotFound();
             }
 
+            var activeLoan = await _context.Loans
+                .Where(l =>
+                    l.EmployeeId == employeeId &&
+                    l.Status == "Active" &&
+                    l.RemainingBalance > 0)
+                .OrderBy(l => l.StartDate)
+                .FirstOrDefaultAsync();
+
+            decimal loanDeduction = 0;
+
+            if (activeLoan != null)
+            {
+                loanDeduction = Math.Min(
+                    activeLoan.MonthlyInstallment,
+                    activeLoan.RemainingBalance);
+            }
+
             return Json(new
             {
-                basicSalary = employee.BasicSalary
+                basicSalary = employee.BasicSalary,
+                loanDeduction = loanDeduction,
+                hasActiveLoan = activeLoan != null
             });
         }
 
+        // =========================================================
+        // EDIT GET
+        // =========================================================
 
-        // GET: Payrolls/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -411,26 +569,41 @@ public async Task<IActionResult> GetEmployeeSalary(int employeeId)
                 return NotFound();
             }
 
-            var payroll = await _context.Payrolls.FindAsync(id);
+            var payroll = await _context.Payrolls
+                .FindAsync(id);
+
             if (payroll == null)
             {
                 return NotFound();
             }
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "EmployeeCode", payroll.EmployeeId);
+
+            if (payroll.Status == "Paid")
+            {
+                TempData["Error"] =
+                    "Paid payroll cannot be edited.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewData["EmployeeId"] = new SelectList(
+                _context.Employees,
+                "EmployeeId",
+                "EmployeeCode",
+                payroll.EmployeeId);
+
             return View(payroll);
         }
 
-        // POST: Payrolls/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        // the new payment info section added in here ( status , p.date , p.method ,p.reffrence )
-        //payment status validation here also 
+        // =========================================================
+        // EDIT POST
+        // =========================================================
 
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> Edit(
-    int id,
-    [Bind("PayrollId,EmployeeId,PayrollMonth,BasicSalary,Allowances,Deductions,NetSalary,Status,PaymentDate,PaymentMethod,PaymentReference,CreatedAt")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(
+     int id,
+     [Bind(
+        "PayrollId,EmployeeId,PayrollMonth,BasicSalary,Allowances,Overtime,Bonus,Deductions,LoanDeduction,AdvanceSalary,NetSalary,CreatedAt,Status,PaymentDate,PaymentMethod,PaymentReference")]
     Payroll payroll)
         {
             if (id != payroll.PayrollId)
@@ -438,8 +611,57 @@ public async Task<IActionResult> Edit(
                 return NotFound();
             }
 
-            //validation code start
+            var existingPayroll = await _context.Payrolls
+                .FirstOrDefaultAsync(p => p.PayrollId == id);
 
+            if (existingPayroll == null)
+            {
+                return NotFound();
+            }
+
+            // Paid payroll cannot be edited
+            if (existingPayroll.Status == "Paid")
+            {
+                TempData["Error"] =
+                    "Paid payroll cannot be edited.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Validate status
+            var allowedStatuses = new[]
+            {
+        "Draft",
+        "Processed",
+        "Paid"
+    };
+
+            if (!allowedStatuses.Contains(payroll.Status))
+            {
+                ModelState.AddModelError(
+                    "Status",
+                    "Invalid payroll status.");
+            }
+            else
+            {
+                bool validTransition =
+                    existingPayroll.Status == "Draft" &&
+                    (payroll.Status == "Draft" ||
+                     payroll.Status == "Processed")
+                    ||
+                    existingPayroll.Status == "Processed" &&
+                    (payroll.Status == "Processed" ||
+                     payroll.Status == "Paid");
+
+                if (!validTransition)
+                {
+                    ModelState.AddModelError(
+                        "Status",
+                        $"Invalid status transition from {existingPayroll.Status} to {payroll.Status}.");
+                }
+            }
+
+            // Paid status requires payment information
             if (payroll.Status == "Paid")
             {
                 if (!payroll.PaymentDate.HasValue)
@@ -464,41 +686,197 @@ public async Task<IActionResult> Edit(
                 }
             }
 
-            //validation code end
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
+                ViewData["EmployeeId"] = new SelectList(
+                    _context.Employees,
+                    "EmployeeId",
+                    "EmployeeCode",
+                    payroll.EmployeeId);
+
+                return View(payroll);
+            }
+
+            try
+            {
+                bool isNewlyPaid =
+                    existingPayroll.Status != "Paid" &&
+                    payroll.Status == "Paid";
+
+                // Process loan deduction when payroll becomes Paid
+                if (isNewlyPaid && payroll.LoanDeduction > 0)
                 {
-                    _context.Update(payroll);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PayrollExists(payroll.PayrollId))
+                    var activeLoan = await _context.Loans
+                        .Where(l =>
+                            l.EmployeeId == payroll.EmployeeId &&
+                            l.Status == "Active" &&
+                            l.RemainingBalance > 0)
+                        .OrderBy(l => l.StartDate)
+                        .FirstOrDefaultAsync();
+
+                    if (activeLoan != null)
                     {
-                        return NotFound();
+                        decimal paymentAmount = Math.Min(
+                            payroll.LoanDeduction,
+                            activeLoan.RemainingBalance);
+
+                        if (paymentAmount > 0)
+                        {
+                            decimal newBalance =
+                                activeLoan.RemainingBalance -
+                                paymentAmount;
+
+                            if (newBalance < 0)
+                            {
+                                newBalance = 0;
+                            }
+
+                            var payrollReference =
+                                $"Payroll Deduction - Payroll #{payroll.PayrollId}";
+
+                            var existingLoanPayment =
+                                await _context.LoanPayments
+                                    .FirstOrDefaultAsync(p =>
+                                        p.Remarks == payrollReference);
+
+                            if (existingLoanPayment == null)
+                            {
+                                var loanPayment = new LoanPayment
+                                {
+                                    LoanId = activeLoan.LoanId,
+
+                                    PaymentDate =
+                                        payroll.PaymentDate
+                                        ?? DateTime.Today,
+
+                                    PaymentAmount =
+                                        paymentAmount,
+
+                                    RemainingBalance =
+                                        newBalance,
+
+                                    PaymentMethod =
+                                        "Payroll Deduction",
+
+                                    Remarks =
+                                        payrollReference,
+
+                                    CreatedAt =
+                                        DateTime.UtcNow
+                                };
+
+                                _context.LoanPayments.Add(loanPayment);
+
+                                activeLoan.RemainingBalance =
+                                    newBalance;
+
+                                if (newBalance == 0)
+                                {
+                                    activeLoan.Status = "Completed";
+                                }
+                            }
+
+                            payroll.LoanDeduction = paymentAmount;
+                        }
                     }
                     else
                     {
-                        throw;
+                        payroll.LoanDeduction = 0;
                     }
                 }
 
+                // Recalculate Net Salary on server
+                payroll.NetSalary =
+                    payroll.BasicSalary +
+                    payroll.Allowances +
+                    payroll.Overtime +
+                    payroll.Bonus -
+                    payroll.Deductions -
+                    payroll.LoanDeduction -
+                    payroll.AdvanceSalary;
+
+                if (payroll.NetSalary < 0)
+                {
+                    ModelState.AddModelError(
+                        "NetSalary",
+                        "Net salary cannot be negative.");
+
+                    ViewData["EmployeeId"] = new SelectList(
+                        _context.Employees,
+                        "EmployeeId",
+                        "EmployeeCode",
+                        payroll.EmployeeId);
+
+                    return View(payroll);
+                }
+
+                // Update existing payroll
+                existingPayroll.EmployeeId =
+                    payroll.EmployeeId;
+
+                existingPayroll.PayrollMonth =
+                    new DateTime(
+                        payroll.PayrollMonth.Year,
+                        payroll.PayrollMonth.Month,
+                        1);
+
+                existingPayroll.BasicSalary =
+                    payroll.BasicSalary;
+
+                existingPayroll.Allowances =
+                    payroll.Allowances;
+
+                existingPayroll.Overtime =
+                    payroll.Overtime;
+
+                existingPayroll.Bonus =
+                    payroll.Bonus;
+
+                existingPayroll.Deductions =
+                    payroll.Deductions;
+
+                existingPayroll.LoanDeduction =
+                    payroll.LoanDeduction;
+
+                existingPayroll.AdvanceSalary =
+                    payroll.AdvanceSalary;
+
+                existingPayroll.NetSalary =
+                    payroll.NetSalary;
+
+                // IMPORTANT
+                // Save the new status
+                existingPayroll.Status =
+                    payroll.Status;
+
+                existingPayroll.PaymentDate =
+                    payroll.PaymentDate;
+
+                existingPayroll.PaymentMethod =
+                    payroll.PaymentMethod;
+
+                existingPayroll.PaymentReference =
+                    payroll.PaymentReference;
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PayrollExists(payroll.PayrollId))
+                {
+                    return NotFound();
+                }
 
-            ViewData["EmployeeId"] = new SelectList(
-                _context.Employees,
-                "EmployeeId",
-                "EmployeeCode",
-                payroll.EmployeeId);
-
-            return View(payroll);
+                throw;
+            }
         }
 
+        // =========================================================
+        // DELETE GET
+        // =========================================================
 
-        // GET: Payrolls/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -508,7 +886,9 @@ public async Task<IActionResult> Edit(
 
             var payroll = await _context.Payrolls
                 .Include(p => p.Employee)
-                .FirstOrDefaultAsync(m => m.PayrollId == id);
+                .FirstOrDefaultAsync(
+                    p => p.PayrollId == id);
+
             if (payroll == null)
             {
                 return NotFound();
@@ -517,24 +897,47 @@ public async Task<IActionResult> Edit(
             return View(payroll);
         }
 
-        // POST: Payrolls/Delete/5
+        // =========================================================
+        // DELETE POST
+        // =========================================================
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var payroll = await _context.Payrolls.FindAsync(id);
-            if (payroll != null)
+            var payroll = await _context.Payrolls
+                .FirstOrDefaultAsync(
+                    p => p.PayrollId == id);
+
+            if (payroll == null)
             {
-                _context.Payrolls.Remove(payroll);
+                return NotFound();
             }
 
+            // Paid payroll cannot be deleted
+            if (payroll.Status == "Paid")
+            {
+                TempData["Error"] =
+                    "Paid payroll cannot be deleted.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.Payrolls.Remove(payroll);
+
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
+        // =========================================================
+        // PAYROLL EXISTS
+        // =========================================================
+
         private bool PayrollExists(int id)
         {
-            return _context.Payrolls.Any(e => e.PayrollId == id);
+            return _context.Payrolls
+                .Any(e => e.PayrollId == id);
         }
     }
 }

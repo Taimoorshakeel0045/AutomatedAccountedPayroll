@@ -1,206 +1,444 @@
-﻿```cshtml
-@model AutomatedAccountedPayroll.Models.Payroll
+﻿@model AutomatedAccountedPayroll.Models.Payroll
 
 @{
     ViewData["Title"] = "Edit Payroll";
 }
 
-<div class="mb-4">
-    <h1>Edit Payroll</h1>
-    <p class="text-muted mb-0">
-        Update payroll status and payment information
-    </p>
-</div>
+<div class="container-fluid py-4">
 
-<div class="row">
-    <div class="col-md-6">
-
-        <form asp-action="Edit">
-
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger mb-3">
-            </div>
-
-            <input type="hidden" asp-for="PayrollId" />
-
-            <div class="mb-3">
-                <label asp-for="EmployeeId" class="form-label">
-                    Employee
-                </label>
-
-                <select asp-for="EmployeeId"
-                        class="form-select"
-                        asp-items="ViewBag.EmployeeId">
-                </select>
-
-                <span asp-validation-for="EmployeeId"
-                      class="text-danger">
-                </span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="PayrollMonth" class="form-label">
-                    Payroll Month
-                </label>
-
-                <input asp-for="PayrollMonth"
-                       class="form-control"
-                       type="date" />
-
-                <span asp-validation-for="PayrollMonth"
-                      class="text-danger">
-                </span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="BasicSalary" class="form-label">
-                    Basic Salary
-                </label>
-
-                <input asp-for="BasicSalary"
-                       class="form-control" />
-
-                <span asp-validation-for="BasicSalary"
-                      class="text-danger">
-                </span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Allowances" class="form-label">
-                    Allowances
-                </label>
-
-                <input asp-for="Allowances"
-                       class="form-control" />
-
-                <span asp-validation-for="Allowances"
-                      class="text-danger">
-                </span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Deductions" class="form-label">
-                    Deductions
-                </label>
-
-                <input asp-for="Deductions"
-                       class="form-control" />
-
-                <span asp-validation-for="Deductions"
-                      class="text-danger">
-                </span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="NetSalary" class="form-label">
-                    Net Salary
-                </label>
-
-                <input asp-for="NetSalary"
-                       class="form-control" />
-
-                <span asp-validation-for="NetSalary"
-                      class="text-danger">
-                </span>
-            </div>
-
-            <hr />
-
-            <h4 class="mb-3">Payment Information</h4>
-
-            <div class="mb-3">
-                <label asp-for="Status" class="form-label">
-                    Payroll Status
-                </label>
-
-                <select asp-for="Status" class="form-select">
-                    <option value="Draft">Draft</option>
-                    <option value="Processed">Processed</option>
-                    <option value="Paid">Paid</option>
-                </select>
-
-                <span asp-validation-for="Status"
-                      class="text-danger">
-                </span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="PaymentDate" class="form-label">
-                    Payment Date
-                </label>
-
-                <input asp-for="PaymentDate"
-                       class="form-control"
-                       type="date" />
-
-                <span asp-validation-for="PaymentDate"
-                      class="text-danger">
-                </span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="PaymentMethod" class="form-label">
-                    Payment Method
-                </label>
-
-                <select asp-for="PaymentMethod" class="form-select">
-                    <option value="">Select Payment Method</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Bank Transfer">Bank Transfer</option>
-                    <option value="Cheque">Cheque</option>
-                </select>
-
-                <span asp-validation-for="PaymentMethod"
-                      class="text-danger">
-                </span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="PaymentReference" class="form-label">
-                    Payment Reference
-                </label>
-
-                <input asp-for="PaymentReference"
-                       class="form-control"
-                       placeholder="Transaction or cheque number" />
-
-                <span asp-validation-for="PaymentReference"
-                      class="text-danger">
-                </span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="CreatedAt" class="form-label">
-                    Created At
-                </label>
-
-                <input asp-for="CreatedAt"
-                       class="form-control"
-                       readonly />
-            </div>
-
-            <div class="mt-4">
-
-                <button type="submit"
-                        class="btn btn-primary">
-                    Save Changes
-                </button>
-
-                <a asp-action="Index"
-                   class="btn btn-secondary">
-                    Back to Payroll
-                </a>
-
-            </div>
-
-        </form>
-
+    <div class="mb-4">
+        <h1 class="h3 fw-bold mb-1">Edit Payroll</h1>
+        <p class="text-muted mb-0">
+            Update payroll salary and payment information
+        </p>
     </div>
+
+    <div class="row">
+        <div class="col-lg-7">
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+
+                    <form asp-action="Edit"
+                          asp-route-id="@Model.PayrollId"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger">
+                        </div>
+
+                        <input type="hidden" asp-for="PayrollId" />
+
+                        <!-- Employee -->
+                        <div class="mb-3">
+                            <label asp-for="EmployeeId"
+                                   class="form-label fw-semibold">
+                                Employee
+                            </label>
+
+                            <select asp-for="EmployeeId"
+                                    class="form-select"
+                                    asp-items="ViewBag.EmployeeId">
+                            </select>
+
+                            <span asp-validation-for="EmployeeId"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Payroll Month -->
+                        <div class="mb-3">
+                            <label asp-for="PayrollMonth"
+                                   class="form-label fw-semibold">
+                                Payroll Month
+                            </label>
+
+                            <input asp-for="PayrollMonth"
+                                   class="form-control"
+                                   type="month" />
+
+                            <span asp-validation-for="PayrollMonth"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Basic Salary -->
+                        <div class="mb-3">
+                            <label asp-for="BasicSalary"
+                                   class="form-label fw-semibold">
+                                Basic Salary
+                            </label>
+
+                            <input asp-for="BasicSalary"
+                                   class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   min="0"
+                                   readonly />
+
+                            <span asp-validation-for="BasicSalary"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Allowances -->
+                        <div class="mb-3">
+                            <label asp-for="Allowances"
+                                   class="form-label fw-semibold">
+                                Allowances
+                            </label>
+
+                            <input asp-for="Allowances"
+                                   class="form-control salary-input"
+                                   type="number"
+                                   step="0.01"
+                                   min="0" />
+
+                            <span asp-validation-for="Allowances"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Overtime -->
+                        <div class="mb-3">
+                            <label asp-for="Overtime"
+                                   class="form-label fw-semibold">
+                                Overtime
+                            </label>
+
+                            <input asp-for="Overtime"
+                                   class="form-control salary-input"
+                                   type="number"
+                                   step="0.01"
+                                   min="0" />
+
+                            <span asp-validation-for="Overtime"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Bonus -->
+                        <div class="mb-3">
+                            <label asp-for="Bonus"
+                                   class="form-label fw-semibold">
+                                Bonus
+                            </label>
+
+                            <input asp-for="Bonus"
+                                   class="form-control salary-input"
+                                   type="number"
+                                   step="0.01"
+                                   min="0" />
+
+                            <span asp-validation-for="Bonus"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Deductions -->
+                        <div class="mb-3">
+                            <label asp-for="Deductions"
+                                   class="form-label fw-semibold">
+                                Deductions
+                            </label>
+
+                            <input asp-for="Deductions"
+                                   class="form-control salary-input"
+                                   type="number"
+                                   step="0.01"
+                                   min="0" />
+
+                            <span asp-validation-for="Deductions"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Loan Deduction -->
+                        <div class="mb-3">
+                            <label asp-for="LoanDeduction"
+                                   class="form-label fw-semibold">
+                                Loan Deduction
+                            </label>
+
+                            <input asp-for="LoanDeduction"
+                                   class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   min="0"
+                                   readonly />
+
+                            <span asp-validation-for="LoanDeduction"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Advance Salary -->
+                        <div class="mb-3">
+                            <label asp-for="AdvanceSalary"
+                                   class="form-label fw-semibold">
+                                Advance Salary
+                            </label>
+
+                            <input asp-for="AdvanceSalary"
+                                   class="form-control salary-input"
+                                   type="number"
+                                   step="0.01"
+                                   min="0" />
+
+                            <div class="form-text">
+                                Advance amount deducted from salary
+                            </div>
+
+                            <span asp-validation-for="AdvanceSalary"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Net Salary -->
+                        <div class="mb-3">
+                            <label asp-for="NetSalary"
+                                   class="form-label fw-semibold">
+                                Net Salary
+                            </label>
+
+                            <input asp-for="NetSalary"
+                                   class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   readonly />
+
+                            <span asp-validation-for="NetSalary"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- Payment Information -->
+                        <h4 class="fw-bold mb-3">
+                            Payment Information
+                        </h4>
+
+                        <!-- Status -->
+                        <div class="mb-3">
+                            <label asp-for="Status"
+                                   class="form-label fw-semibold">
+                                Payroll Status
+                            </label>
+
+                            <select asp-for="Status"
+                                    class="form-select">
+
+                                @if (Model.Status == "Draft")
+                                {
+                                    <option value="Draft">
+                                        Draft
+                                    </option>
+
+                                    <option value="Processed">
+                                        Processed
+                                    </option>
+                                }
+                                else if (Model.Status == "Processed")
+                                {
+                                    <option value="Processed">
+                                        Processed
+                                    </option>
+
+                                    <option value="Paid">
+                                        Paid
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="Paid">
+                                        Paid
+                                    </option>
+                                }
+
+                            </select>
+
+                            <span asp-validation-for="Status"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Payment Date -->
+                        <div class="mb-3">
+                            <label asp-for="PaymentDate"
+                                   class="form-label fw-semibold">
+                                Payment Date
+                            </label>
+
+                            <input asp-for="PaymentDate"
+                                   class="form-control"
+                                   type="date" />
+
+                            <span asp-validation-for="PaymentDate"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="mb-3">
+                            <label asp-for="PaymentMethod"
+                                   class="form-label fw-semibold">
+                                Payment Method
+                            </label>
+
+                            <select asp-for="PaymentMethod"
+                                    class="form-select">
+
+                                <option value="">
+                                    Select Payment Method
+                                </option>
+
+                                <option value="Cash">
+                                    Cash
+                                </option>
+
+                                <option value="Bank Transfer">
+                                    Bank Transfer
+                                </option>
+
+                                <option value="Cheque">
+                                    Cheque
+                                </option>
+
+                            </select>
+
+                            <span asp-validation-for="PaymentMethod"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- Payment Reference -->
+                        <div class="mb-3">
+                            <label asp-for="PaymentReference"
+                                   class="form-label fw-semibold">
+                                Payment Reference
+                            </label>
+
+                            <input asp-for="PaymentReference"
+                                   class="form-control"
+                                   placeholder="Transaction or cheque number" />
+
+                            <span asp-validation-for="PaymentReference"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+
+
+                        <!-- Created At -->
+                        <div class="mb-3">
+                            <label asp-for="CreatedAt"
+                                   class="form-label fw-semibold">
+                                Created At
+                            </label>
+
+                            <input asp-for="CreatedAt"
+                                   type="datetime-local"
+                                   class="form-control"
+                                   value="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm")" />
+
+                            <small class="text-muted">
+                                Editable by Admin.
+                            </small>
+
+                            <span asp-validation-for="CreatedAt"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+
+
+
+
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 mt-4">
+
+                            <button type="submit"
+                                    class="btn btn-primary px-4">
+                                <i class="bi bi-check-lg me-1"></i>
+                                Save Changes
+                            </button>
+
+                            <a asp-action="Index"
+                               class="btn btn-secondary px-4">
+                                <i class="bi bi-arrow-left me-1"></i>
+                                Back to Payroll
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {
+
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
     }
+
+    <script>
+        function calculateNetSalary() {
+            const basicSalary = parseFloat(
+                document.getElementById("BasicSalary")?.value
+            ) || 0;
+
+            const allowances = parseFloat(
+                document.getElementById("Allowances")?.value
+            ) || 0;
+
+            const overtime = parseFloat(
+                document.getElementById("Overtime")?.value
+            ) || 0;
+
+            const bonus = parseFloat(
+                document.getElementById("Bonus")?.value
+            ) || 0;
+
+            const deductions = parseFloat(
+                document.getElementById("Deductions")?.value
+            ) || 0;
+
+            const loanDeduction = parseFloat(
+                document.getElementById("LoanDeduction")?.value
+            ) || 0;
+
+            const advanceSalary = parseFloat(
+                document.getElementById("AdvanceSalary")?.value
+            ) || 0;
+
+            const netSalary =
+                basicSalary +
+                allowances +
+                overtime +
+                bonus -
+                deductions -
+                loanDeduction -
+                advanceSalary;
+
+            document.getElementById("NetSalary").value =
+                netSalary.toFixed(2);
+        }
+
+        document.querySelectorAll(".salary-input").forEach(input => {
+            input.addEventListener("input", calculateNetSalary);
+        });
+
+        calculateNetSalary();
+    </script>
 }
-```

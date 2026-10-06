@@ -25,6 +25,13 @@
                 Edit Employee
             </a>
 
+            <a asp-action="ManageAccount"
+                   asp-route-id="@Model.EmployeeId"
+                   class="btn btn-outline-primary">
+                    <i class="bi bi-person-gear me-1"></i>
+                    Manage Login Account
+                </a>
+
             <a asp-action="Index"
                class="btn btn-secondary">
                 Back to Employees

@@ -67,6 +67,59 @@ namespace AutomatedAccountedPayroll.Migrations
                     b.ToTable("Attendances");
                 });
 
+            modelBuilder.Entity("AutomatedAccountedPayroll.Models.AuditLog", b =>
+                {
+                    b.Property<long>("AuditLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AuditLogId"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Changes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EntityId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RequestPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("AuditLogId");
+
+                    b.ToTable("AuditLogs");
+                });
+
             modelBuilder.Entity("AutomatedAccountedPayroll.Models.Department", b =>
                 {
                     b.Property<int>("DepartmentId")
@@ -174,6 +227,10 @@ namespace AutomatedAccountedPayroll.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("IdentityUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -197,6 +254,10 @@ namespace AutomatedAccountedPayroll.Migrations
 
                     b.HasIndex("EmployeeCode")
                         .IsUnique();
+
+                    b.HasIndex("IdentityUserId")
+                        .IsUnique()
+                        .HasFilter("[IdentityUserId] IS NOT NULL");
 
                     b.ToTable("Employees");
                 });
@@ -257,6 +318,125 @@ namespace AutomatedAccountedPayroll.Migrations
                     b.ToTable("Leaves");
                 });
 
+            modelBuilder.Entity("AutomatedAccountedPayroll.Models.LeaveBalance", b =>
+                {
+                    b.Property<int>("LeaveBalanceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeaveBalanceId"));
+
+                    b.Property<decimal>("AllocatedDays")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LeaveType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<decimal>("UsedDays")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("LeaveBalanceId");
+
+                    b.HasIndex("EmployeeId", "Year", "LeaveType")
+                        .IsUnique();
+
+                    b.ToTable("LeaveBalances");
+                });
+
+            modelBuilder.Entity("AutomatedAccountedPayroll.Models.Loan", b =>
+                {
+                    b.Property<int>("LoanId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LoanId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("LoanAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MonthlyInstallment")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("RemainingBalance")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("LoanId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Loans");
+                });
+
+            modelBuilder.Entity("AutomatedAccountedPayroll.Models.LoanPayment", b =>
+                {
+                    b.Property<int>("LoanPaymentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LoanPaymentId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LoanId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PaymentAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<decimal>("RemainingBalance")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("LoanPaymentId");
+
+                    b.HasIndex("LoanId");
+
+                    b.ToTable("LoanPayments");
+                });
+
             modelBuilder.Entity("AutomatedAccountedPayroll.Models.Payroll", b =>
                 {
                     b.Property<int>("PayrollId")
@@ -265,10 +445,16 @@ namespace AutomatedAccountedPayroll.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PayrollId"));
 
+                    b.Property<decimal>("AdvanceSalary")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("Allowances")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("BasicSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Bonus")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -280,7 +466,13 @@ namespace AutomatedAccountedPayroll.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("LoanDeduction")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("NetSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Overtime")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("PaymentDate")
@@ -547,6 +739,11 @@ namespace AutomatedAccountedPayroll.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("IdentityUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Department");
 
                     b.Navigation("Designation");
@@ -561,6 +758,39 @@ namespace AutomatedAccountedPayroll.Migrations
                         .IsRequired();
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("AutomatedAccountedPayroll.Models.LeaveBalance", b =>
+                {
+                    b.HasOne("AutomatedAccountedPayroll.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("AutomatedAccountedPayroll.Models.Loan", b =>
+                {
+                    b.HasOne("AutomatedAccountedPayroll.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("AutomatedAccountedPayroll.Models.LoanPayment", b =>
+                {
+                    b.HasOne("AutomatedAccountedPayroll.Models.Loan", "Loan")
+                        .WithMany()
+                        .HasForeignKey("LoanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Loan");
                 });
 
             modelBuilder.Entity("AutomatedAccountedPayroll.Models.Payroll", b =>

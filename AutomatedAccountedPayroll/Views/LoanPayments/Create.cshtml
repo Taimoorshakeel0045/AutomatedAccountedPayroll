@@ -1,0 +1,255 @@
+@model AutomatedAccountedPayroll.Models.LoanPayment
+
+@{
+    ViewData["Title"] = "Add Loan Payment";
+    var loan = ViewBag.Loan as AutomatedAccountedPayroll.Models.Loan;
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Add Loan Payment</h2>
+
+            @if (loan?.Employee != null)
+            {
+                <p class="text-muted mb-0">
+                    @loan.Employee.FirstName @loan.Employee.LastName
+                    · Loan #@loan.LoanId
+                </p>
+            }
+        </div>
+
+        @if (loan != null)
+        {
+            <a asp-action="Index"
+               asp-route-loanId="@loan.LoanId"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>
+                Payment History
+            </a>
+        }
+    </div>
+
+    @if (loan != null)
+    {
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <small class="text-muted">Original Loan Amount</small>
+                        <h4 class="fw-bold mt-2">
+                            @loan.LoanAmount.ToString("N2")
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <small class="text-muted">Monthly Installment</small>
+                        <h4 class="fw-bold mt-2">
+                            @loan.MonthlyInstallment.ToString("N2")
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <small class="text-muted">Current Remaining Balance</small>
+                        <h4 class="fw-bold mt-2">
+                            @loan.RemainingBalance.ToString("N2")
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            <h5 class="mb-0">Payment Information</h5>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="Create" method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <input type="hidden" asp-for="LoanId" />
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="PaymentDate"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="PaymentDate"
+                               class="form-control"
+                               type="date" />
+
+                        <span asp-validation-for="PaymentDate"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PaymentAmount"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="PaymentAmount"
+                               class="form-control"
+                               type="number"
+                               step="0.01"
+                               min="0.01" />
+
+                        <span asp-validation-for="PaymentAmount"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PaymentMethod"
+                               class="form-label">
+                        </label>
+
+                        <select asp-for="PaymentMethod"
+                                class="form-select">
+
+                            <option value="Payroll Deduction">
+                                Payroll Deduction
+                            </option>
+
+                            <option value="Cash">
+                                Cash
+                            </option>
+
+                            <option value="Bank Transfer">
+                                Bank Transfer
+                            </option>
+
+                            <option value="Online Transfer">
+                                Online Transfer
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="PaymentMethod"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Remaining Balance After Payment
+                        </label>
+
+                        <input id="remainingAfterPayment"
+                               class="form-control"
+                               type="text"
+                               readonly
+                               value="@loan?.RemainingBalance.ToString("N2")" />
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Remarks"
+                               class="form-label">
+                        </label>
+
+                        <textarea asp-for="Remarks"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Optional remarks">
+                        </textarea>
+
+                        <span asp-validation-for="Remarks"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+
+                    @if (loan != null)
+                    {
+                        <a asp-action="Index"
+                           asp-route-loanId="@loan.LoanId"
+                           class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    }
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>
+                        Record Payment
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const paymentInput =
+                document.getElementById("PaymentAmount");
+
+            const remainingInput =
+                document.getElementById("remainingAfterPayment");
+
+            const currentBalance =
+                @((loan?.RemainingBalance ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+            function updateRemainingBalance() {
+
+                const payment =
+                    parseFloat(paymentInput.value) || 0;
+
+                let remaining =
+                    currentBalance - payment;
+
+                if (remaining < 0) {
+                    remaining = 0;
+                }
+
+                remainingInput.value =
+                    remaining.toLocaleString(
+                        undefined,
+                        {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }
+                    );
+            }
+
+            paymentInput.addEventListener(
+                "input",
+                updateRemainingBalance
+            );
+
+            updateRemainingBalance();
+        });
+    </script>
+}

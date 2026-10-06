@@ -1,0 +1,371 @@
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Payroll>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "My Payroll";
+
+    var totalPayrolls = Model.Count();
+
+    var totalNetSalary = Model.Sum(x => x.NetSalary);
+
+    var paidPayrolls = Model.Count(x =>
+        x.Status.Equals("Paid", StringComparison.OrdinalIgnoreCase));
+
+    var pendingPayrolls = Model.Count(x =>
+        !x.Status.Equals("Paid", StringComparison.OrdinalIgnoreCase));
+}
+
+<div class="container-fluid">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                My Payroll
+            </h2>
+
+            <p class="text-muted mb-0">
+                View your salary history and payment information.
+            </p>
+        </div>
+
+        <div>
+            <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                <i class="bi bi-wallet2 me-1"></i>
+                Salary History
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-2">
+                        Payroll Records
+                    </div>
+
+                    <div class="fs-3 fw-bold">
+                        @totalPayrolls
+                    </div>
+
+                    <small class="text-muted">
+                        Total salary records
+                    </small>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-2">
+                        Total Net Salary
+                    </div>
+
+                    <div class="fs-3 fw-bold text-success">
+                        Rs. @totalNetSalary.ToString("N0")
+                    </div>
+
+                    <small class="text-muted">
+                        Across all payroll records
+                    </small>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-2">
+                        Paid
+                    </div>
+
+                    <div class="fs-3 fw-bold text-success">
+                        @paidPayrolls
+                    </div>
+
+                    <small class="text-muted">
+                        Payrolls paid
+                    </small>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-2">
+                        Pending
+                    </div>
+
+                    <div class="fs-3 fw-bold text-warning">
+                        @pendingPayrolls
+                    </div>
+
+                    <small class="text-muted">
+                        Unpaid payrolls
+                    </small>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- PAYROLL HISTORY -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex align-items-center">
+
+                <div class="bg-primary-subtle text-primary rounded-3 p-2 me-3">
+                    <i class="bi bi-cash-stack fs-5"></i>
+                </div>
+
+                <div>
+
+                    <h5 class="mb-1 fw-semibold">
+                        Salary History
+                    </h5>
+
+                    <small class="text-muted">
+                        Your payroll records and payment details.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+
+                    <div class="mb-3">
+                        <i class="bi bi-wallet2 fs-1 text-muted"></i>
+                    </div>
+
+                    <h5 class="fw-semibold">
+                        No Payroll Records
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        No salary records are currently available for you.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Payroll Month
+                                </th>
+
+                                <th>
+                                    Basic Salary
+                                </th>
+
+                                <th>
+                                    Allowances
+                                </th>
+
+                                <th>
+                                    Deductions
+                                </th>
+
+                                <th>
+                                    Loan Deduction
+                                </th>
+
+                                <th>
+                                    Net Salary
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Payment Date
+                                </th>
+
+                                <th class="text-end pe-4">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var payroll in Model)
+                            {
+                                <tr>
+
+                                    <td class="ps-4">
+
+                                        <span class="fw-semibold">
+                                            @payroll.PayrollMonth.ToString("MMM yyyy")
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+                                        Rs. @payroll.BasicSalary.ToString("N0")
+                                    </td>
+
+
+                                    <td>
+                                        Rs. @payroll.Allowances.ToString("N0")
+                                    </td>
+
+
+                                    <td>
+                                        Rs. @payroll.Deductions.ToString("N0")
+                                    </td>
+
+
+                                    <td>
+                                        Rs. @payroll.LoanDeduction.ToString("N0")
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="fw-bold text-success">
+                                            Rs. @payroll.NetSalary.ToString("N0")
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (payroll.Status.Equals(
+                                            "Paid",
+                                            StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <span class="badge bg-success-subtle text-success">
+
+                                                <i class="bi bi-check-circle me-1"></i>
+
+                                                Paid
+
+                                            </span>
+                                        }
+                                        else if (payroll.Status.Equals(
+                                            "Approved",
+                                            StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <span class="badge bg-primary-subtle text-primary">
+
+                                                <i class="bi bi-check2-circle me-1"></i>
+
+                                                Approved
+
+                                            </span>
+                                        }
+                                        else if (payroll.Status.Equals(
+                                            "Pending",
+                                            StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning-emphasis">
+
+                                                <i class="bi bi-hourglass-split me-1"></i>
+
+                                                Pending
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary">
+
+                                                @payroll.Status
+
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td>
+                                        @if (payroll.PaymentDate.HasValue)
+                                        {
+                                            @payroll.PaymentDate.Value.ToString("dd MMM yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Not paid
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td class="text-end pe-4">
+
+                                        <a asp-action="Payslip"
+                                           asp-route-id="@payroll.PayrollId"
+                                           class="btn btn-sm btn-outline-primary">
+
+                                            <i class="bi bi-receipt me-1"></i>
+                                            View Payslip
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

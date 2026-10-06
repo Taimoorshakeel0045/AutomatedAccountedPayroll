@@ -1,0 +1,288 @@
+﻿@model AutomatedAccountedPayroll.ViewModels.EmployeeAccountViewModel
+
+@{
+    ViewData["Title"] = "Manage Login Account";
+}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Manage Login Account</h2>
+            <p class="text-muted mb-0">
+                Manage the employee's system login account.
+            </p>
+        </div>
+
+        <a asp-action="Details"
+           asp-route-id="@Model.EmployeeId"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Employee
+        </a>
+    </div>
+
+    <!-- Employee Information -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+
+            <div class="d-flex align-items-center">
+
+                <div class="rounded-circle bg-primary-subtle text-primary
+                            d-flex align-items-center justify-content-center me-3"
+                     style="width: 56px; height: 56px; font-size: 22px;">
+                    <i class="bi bi-person"></i>
+                </div>
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        @Model.EmployeeName
+                    </h5>
+
+                    <span class="badge bg-light text-dark border">
+                        @Model.EmployeeCode
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Alerts -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            @TempData["Success"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            @TempData["Error"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        <!-- Current Account -->
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-white border-0 p-4 pb-2">
+                    <h5 class="fw-bold mb-1">
+                        <i class="bi bi-person-check me-2 text-primary"></i>
+                        Current Login Account
+                    </h5>
+
+                    <p class="text-muted small mb-0">
+                        Account currently connected to this employee.
+                    </p>
+                </div>
+
+                <div class="card-body p-4">
+
+                    @if (!string.IsNullOrWhiteSpace(Model.CurrentUserId))
+                    {
+                        <div class="bg-light rounded-3 p-3 mb-4">
+
+                            <div class="d-flex align-items-center">
+
+                                <div class="rounded-circle bg-success-subtle text-success
+                                            d-flex align-items-center justify-content-center me-3"
+                                     style="width: 46px; height: 46px;">
+                                    <i class="bi bi-person-check"></i>
+                                </div>
+
+                                <div>
+                                    <div class="fw-semibold">
+                                        @Model.CurrentUserEmail
+                                    </div>
+
+                                    <span class="badge bg-success mt-1">
+                                        Linked
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <form asp-action="UnlinkAccount"
+                              method="post"
+                              onsubmit="return confirm('Are you sure you want to unlink this login account?');">
+
+                            <input type="hidden"
+                                   name="employeeId"
+                                   value="@Model.EmployeeId" />
+
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit"
+                                    class="btn btn-outline-danger w-100">
+                                <i class="bi bi-link-45deg me-1"></i>
+                                Unlink Login Account
+                            </button>
+
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+
+                            <div class="rounded-circle bg-warning-subtle text-warning
+                                        d-inline-flex align-items-center justify-content-center mb-3"
+                                 style="width: 60px; height: 60px;">
+                                <i class="bi bi-person-x fs-4"></i>
+                            </div>
+
+                            <h6 class="fw-bold">
+                                No Login Account Linked
+                            </h6>
+
+                            <p class="text-muted small mb-0">
+                                This employee does not currently have a system login account.
+                            </p>
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Link Account -->
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-white border-0 p-4 pb-2">
+                    <h5 class="fw-bold mb-1">
+                        <i class="bi bi-link-45deg me-2 text-primary"></i>
+                        Link User Account
+                    </h5>
+
+                    <p class="text-muted small mb-0">
+                        Select an available User account for this employee.
+                    </p>
+                </div>
+
+                <div class="card-body p-4">
+
+                    @if (Model.AvailableUsers.Any())
+                    {
+                        <form asp-action="LinkAccount"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="employeeId"
+                                   value="@Model.EmployeeId" />
+
+                            <div class="mb-3">
+
+                                <label asp-for="SelectedUserId"
+                                       class="form-label fw-semibold">
+                                    User Account
+                                </label>
+
+                                <select asp-for="SelectedUserId"
+                                        asp-items="Model.AvailableUsers"
+                                        class="form-select">
+
+                                    <option value="">
+                                        -- Select User Account --
+                                    </option>
+
+                                </select>
+
+                                <div class="form-text">
+                                    Only available employee User accounts are shown.
+                                </div>
+
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-primary w-100">
+                                <i class="bi bi-link me-1"></i>
+                                Link Account
+                            </button>
+
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+
+                            <div class="rounded-circle bg-secondary-subtle text-secondary
+                                        d-inline-flex align-items-center justify-content-center mb-3"
+                                 style="width: 60px; height: 60px;">
+                                <i class="bi bi-person-plus fs-4"></i>
+                            </div>
+
+                            <h6 class="fw-bold">
+                                No Available User Accounts
+                            </h6>
+
+                            <p class="text-muted small mb-3">
+                                Create a User account from User Management first.
+                            </p>
+
+                            <a asp-controller="Users"
+                               asp-action="Create"
+                               class="btn btn-outline-primary">
+                                <i class="bi bi-person-plus me-1"></i>
+                                Create User Account
+                            </a>
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Security Notice -->
+    <div class="alert alert-info border-0 shadow-sm mt-4">
+
+        <div class="d-flex">
+
+            <i class="bi bi-shield-check fs-4 me-3"></i>
+
+            <div>
+                <h6 class="fw-bold mb-1">
+                    Account Linking Security
+                </h6>
+
+                <p class="small mb-0">
+                    Only Admin users can link or unlink employee accounts.
+                    Each User account can be linked to only one employee.
+                    Unlinking an account does not remove the employee's existing records.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

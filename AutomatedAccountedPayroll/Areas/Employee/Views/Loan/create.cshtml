@@ -1,0 +1,164 @@
+﻿@model AutomatedAccountedPayroll.Models.Loan
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Apply for Loan";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">Apply for Loan</h2>
+            <p class="text-muted mb-0">
+                Submit a loan request for approval.
+            </p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back
+        </a>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <form asp-action="Create" method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger">
+                        </div>
+
+                        <!-- LOAN AMOUNT -->
+                        <div class="mb-3">
+                            <label asp-for="LoanAmount"
+                                   class="form-label fw-semibold">
+                                Loan Amount
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">Rs.</span>
+
+                                <input asp-for="LoanAmount"
+                                       type="number"
+                                       step="0.01"
+                                       min="1"
+                                       class="form-control"
+                                       placeholder="50000"
+                                       required />
+
+                            </div>
+
+                            <span asp-validation-for="LoanAmount"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- MONTHLY INSTALLMENT -->
+                        <div class="mb-3">
+                            <label asp-for="MonthlyInstallment"
+                                   class="form-label fw-semibold">
+                                Monthly Installment
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">Rs.</span>
+
+                                <input asp-for="MonthlyInstallment"
+                                       type="number"
+                                       step="0.01"
+                                       min="1"
+                                       class="form-control"
+                                       placeholder="5000"
+                                       required />
+
+                            </div>
+
+                            <small class="text-muted">
+                                Amount deducted from your salary each month.
+                            </small>
+
+                            <span asp-validation-for="MonthlyInstallment"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- START DATE -->
+                        <div class="mb-3">
+                            <label asp-for="StartDate"
+                                   class="form-label fw-semibold">
+                                Requested Start Date
+                            </label>
+
+                            <input asp-for="StartDate"
+                                   type="date"
+                                   class="form-control"
+                                   required />
+
+                            <span asp-validation-for="StartDate"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- REMARKS -->
+                        <div class="mb-3">
+                            <label asp-for="Remarks"
+                                   class="form-label fw-semibold">
+                                Reason / Remarks
+                            </label>
+
+                            <textarea asp-for="Remarks"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Explain the purpose of this loan request..."></textarea>
+
+                            <span asp-validation-for="Remarks"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <!-- ACTIONS -->
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary px-4">
+                                <i class="bi bi-send me-1"></i>
+                                Submit Request
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

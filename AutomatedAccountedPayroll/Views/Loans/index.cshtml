@@ -1,0 +1,299 @@
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Loan>
+
+@{
+    ViewData["Title"] = "Loans";
+}
+
+<div class="attendance-report-page">
+
+    <div class="report-page-header d-flex justify-content-between align-items-center">
+
+        <div>
+            <h1>Loans</h1>
+            <p>Manage employee loans and outstanding balances.</p>
+        </div>
+
+        <div>
+            <a asp-action="Create"
+               class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i>
+                Add Loan
+            </a>
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="report-summary-grid">
+
+        <div class="report-summary-card">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+
+            <div>
+                <span>Total Loans</span>
+                <strong>@Model.Count()</strong>
+            </div>
+
+        </div>
+
+
+        <div class="report-summary-card present">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+
+            <div>
+                <span>Active Loans</span>
+                <strong>
+                    @Model.Count(l => l.Status == "Active")
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="report-summary-card late">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+
+            <div>
+                <span>Completed</span>
+                <strong>
+                    @Model.Count(l => l.Status == "Completed")
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="report-summary-card absent">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-pause-circle"></i>
+            </div>
+
+            <div>
+                <span>Cancelled</span>
+                <strong>
+                    @Model.Count(l => l.Status == "Cancelled")
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="report-summary-card leave">
+
+            <div class="report-summary-icon">
+                <i class="bi bi-wallet2"></i>
+            </div>
+
+            <div>
+                <span>Outstanding Balance</span>
+                <strong>
+                    @Model.Sum(l => l.RemainingBalance).ToString("N2")
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOAN TABLE -->
+
+    <div class="report-table-card">
+
+        <div class="report-table-header">
+
+            <div>
+                <h5>Loan Records</h5>
+
+                <p>
+                    @Model.Count() loan record(s) found
+                </p>
+            </div>
+
+        </div>
+
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table attendance-report-table mb-0">
+
+                    <thead>
+
+                        <tr>
+                            <th>Employee</th>
+                            <th>Loan Amount</th>
+                            <th>Monthly Installment</th>
+                            <th>Start Date</th>
+                            <th>Remaining Balance</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var loan in Model)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <div class="report-employee-name">
+                                        @loan.Employee?.FirstName
+                                        @loan.Employee?.LastName
+                                    </div>
+
+                                    <div class="report-employee-code">
+                                        @loan.Employee?.EmployeeCode
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    @loan.LoanAmount.ToString("N2")
+                                </td>
+
+
+                                <td>
+                                    @loan.MonthlyInstallment.ToString("N2")
+                                </td>
+
+
+                                <td>
+                                    @loan.StartDate.ToString("dd MMM yyyy")
+                                </td>
+
+
+                                <td>
+
+                                    <strong>
+                                        @loan.RemainingBalance.ToString("N2")
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (loan.Status == "Active")
+                                    {
+                                        <span class="report-status present">
+                                            Active
+                                        </span>
+                                    }
+                                    else if (loan.Status == "Completed")
+                                    {
+                                        <span class="report-status present">
+                                            Completed
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="report-status absent">
+                                            @loan.Status
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="d-flex gap-1">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@loan.LoanId"
+                                           class="btn btn-sm btn-light"
+                                           title="Details">
+
+                                                           <i class="bi bi-eye"></i>
+
+            </a>
+
+
+            <a asp-action="Edit"
+               asp-route-id="@loan.LoanId"
+               class="btn btn-sm btn-light"
+               title="Edit">
+
+                <i class="bi bi-pencil"></i>
+
+            </a>
+
+
+            <a asp-action="Delete"
+               asp-route-id="@loan.LoanId"
+               class="btn btn-sm btn-light text-danger"
+               title="Delete">
+
+                <i class="bi bi-trash"></i>
+
+            </a>
+
+
+            <a asp-controller="LoanPayments"
+               asp-action="Index"
+               asp-route-loanId="@loan.LoanId"
+               class="btn btn-sm btn-outline-success"
+               title="Payment History">
+
+                <i class="bi bi-receipt"></i>
+
+            </a>
+
+        </div>
+
+    </td>
+
+</tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="report-empty">
+
+                <i class="bi bi-cash-stack"></i>
+
+                <h5>No loan records found</h5>
+
+                <p>
+                    Create your first employee loan to get started.
+                </p>
+
+                <a asp-action="Create"
+                   class="btn btn-primary btn-sm">
+
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Add Loan
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>

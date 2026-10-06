@@ -93,6 +93,15 @@ namespace AutomatedAccountedPayroll.Areas.Identity.Pages.Account
 
             returnUrl ??= Url.Content("~/");
 
+
+            if (!string.IsNullOrEmpty(returnUrl) &&
+    (returnUrl.Contains("/Identity/", StringComparison.OrdinalIgnoreCase) ||
+     returnUrl.Contains("Logout", StringComparison.OrdinalIgnoreCase) ||
+     returnUrl.Contains("AccessDenied", StringComparison.OrdinalIgnoreCase)))
+            {
+                returnUrl = null;
+            }
+
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
@@ -105,36 +114,72 @@ namespace AutomatedAccountedPayroll.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
 
+            if (!string.IsNullOrEmpty(returnUrl) &&
+                (returnUrl.Contains("/Identity/", StringComparison.OrdinalIgnoreCase) ||
+                 returnUrl.Contains("Logout", StringComparison.OrdinalIgnoreCase) ||
+                 returnUrl.Contains("AccessDenied", StringComparison.OrdinalIgnoreCase)))
+            {
+                returnUrl = null;
+            }
+
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+
+                    var user = await _signInManager.UserManager
+                        .FindByEmailAsync(Input.Email);
+
+                    var isUserRole = user != null &&
+                        await _signInManager.UserManager
+                            .IsInRoleAsync(user, "User");
+
+                    if (isUserRole)
+                    {
+                        return RedirectToAction(
+                            "Index",
+                            "Dashboard",
+                            new { area = "Employee" });
+                    }
+
+                    if (!string.IsNullOrEmpty(returnUrl) &&
+                        returnUrl != "/" &&
+                        returnUrl != "~/" &&
+                        Url.IsLocalUrl(returnUrl))
+                    {
+                        return LocalRedirect(returnUrl);
+                    }
+
+                    return LocalRedirect("~/");
                 }
+
                 if (result.RequiresTwoFactor)
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
+
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
                     return RedirectToPage("./Lockout");
                 }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
-                }
+
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return Page();
             }
 
-            // If we got this far, something failed, redisplay form
             return Page();
         }
     }
-}
+    }
+
+
+
+
+
+

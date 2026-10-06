@@ -85,33 +85,23 @@
 
     <div class="no-print d-flex justify-content-between align-items-center mb-4">
 
-        ```cshtml
-        <div class="no-print d-flex justify-content-between align-items-center mb-4">
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Back to Payroll
+        </a>
 
-            <!-- PDF Download Button Start -->
+        <div>
+            <button onclick="window.print()"
+                    class="btn btn-primary me-2">
+                Print Payslip
+            </button>
 
-            <a asp-action="Index"
-               class="btn btn-secondary">
-                Back to Payroll
+            <a asp-action="DownloadPayslip"
+               asp-route-id="@Model.PayrollId"
+               class="btn btn-success">
+                Download PDF
             </a>
-
-            <div>
-                <button onclick="window.print()"
-                        class="btn btn-primary me-2">
-                    Print Payslip
-                </button>
-
-                <a asp-action="DownloadPayslip"
-                   asp-route-id="@Model.PayrollId"
-                   class="btn btn-success">
-                    Download PDF
-                </a>
-                <!-- PDF Download Button End Here -->
-
-            </div>
-
         </div>
-        ```
 
     </div>
 
@@ -247,10 +237,42 @@
                     </tr>
 
                     <tr>
+                        <th>Overtime</th>
+
+                        <td class="text-end">
+                            @Model.Overtime.ToString("N2")
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Bonus</th>
+
+                        <td class="text-end">
+                            @Model.Bonus.ToString("N2")
+                        </td>
+                    </tr>
+
+                    <tr>
                         <th>Deductions</th>
 
                         <td class="text-end">
                             @Model.Deductions.ToString("N2")
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Loan Deduction</th>
+
+                        <td class="text-end">
+                            @Model.LoanDeduction.ToString("N2")
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Advance Salary</th>
+
+                        <td class="text-end">
+                            @Model.AdvanceSalary.ToString("N2")
                         </td>
                     </tr>
 
@@ -279,7 +301,6 @@
                 <tbody>
 
                     <tr>
-
                         <th>Status</th>
 
                         <td>
@@ -308,7 +329,6 @@
                     </tr>
 
                     <tr>
-
                         <th>Payment Date</th>
 
                         <td>
@@ -318,25 +338,23 @@
                     </tr>
 
                     <tr>
-
                         <th>Payment Method</th>
 
                         <td>
                             @(string.IsNullOrWhiteSpace(Model.PaymentMethod)
-                                                        ? "Not Paid"
-                                                        : Model.PaymentMethod)
+                                ? "Not Paid"
+                                : Model.PaymentMethod)
                         </td>
 
                     </tr>
 
                     <tr>
-
                         <th>Payment Reference</th>
 
                         <td>
                             @(string.IsNullOrWhiteSpace(Model.PaymentReference)
-                                                        ? "N/A"
-                                                        : Model.PaymentReference)
+                                ? "N/A"
+                                : Model.PaymentReference)
                         </td>
 
                     </tr>

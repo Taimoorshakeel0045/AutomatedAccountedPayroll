@@ -1,0 +1,303 @@
+﻿@model AutomatedAccountedPayroll.Models.Payroll
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "My Payslip";
+
+    var employeeName = Model.Employee == null
+        ? "N/A"
+        : $"{Model.Employee.FirstName} {Model.Employee.LastName}";
+}
+
+<div class="container-fluid">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                My Payslip
+            </h2>
+
+            <p class="text-muted mb-0">
+                View your salary and payment details.
+            </p>
+        </div>
+
+        <div>
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Payroll
+            </a>
+        </div>
+
+    </div>
+
+
+    <!-- PAYSLIP -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4 p-lg-5">
+
+            <!-- COMPANY HEADER -->
+            <div class="text-center mb-4">
+
+                <h3 class="fw-bold mb-1">
+                    AUTOMATED ACCOUNTED PAYROLL
+                </h3>
+
+                <div class="text-muted">
+                    Employee Payslip
+                </div>
+
+                <div class="mt-2 fw-semibold">
+                    @Model.PayrollMonth.ToString("MMMM yyyy")
+                </div>
+
+            </div>
+
+
+            <hr />
+
+
+            <!-- EMPLOYEE INFORMATION -->
+            <div class="mb-4">
+
+                <h5 class="fw-semibold mb-3">
+                    <i class="bi bi-person-badge me-2"></i>
+                    Employee Information
+                </h5>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <div class="text-muted small">
+                            Employee Code
+                        </div>
+
+                        <div class="fw-semibold">
+                            @(Model.Employee?.EmployeeCode ?? "N/A")
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="text-muted small">
+                            Employee Name
+                        </div>
+
+                        <div class="fw-semibold">
+                            @employeeName
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="text-muted small">
+                            Department
+                        </div>
+
+                        <div class="fw-semibold">
+                            @(Model.Employee?.Department?.DepartmentName ?? "N/A")
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="text-muted small">
+                            Designation
+                        </div>
+
+                        <div class="fw-semibold">
+                            @(Model.Employee?.Designation?.DesignationName ?? "N/A")
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <hr />
+
+
+            <!-- SALARY DETAILS -->
+            <div class="mb-4">
+
+                <h5 class="fw-semibold mb-3">
+                    <i class="bi bi-cash-stack me-2"></i>
+                    Salary Details
+                </h5>
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle">
+
+                        <tbody>
+
+                            <tr>
+                                <td>Basic Salary</td>
+                                <td class="text-end fw-semibold">
+                                    Rs. @Model.BasicSalary.ToString("N2")
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Allowances</td>
+                                <td class="text-end">
+                                    Rs. @Model.Allowances.ToString("N2")
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Other Deductions</td>
+                                <td class="text-end">
+                                    Rs. @Model.Deductions.ToString("N2")
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Loan Deduction</td>
+                                <td class="text-end">
+                                    Rs. @Model.LoanDeduction.ToString("N2")
+                                </td>
+                            </tr>
+
+                            <tr class="table-light">
+
+                                <td class="fw-bold">
+                                    Net Salary
+                                </td>
+
+                                <td class="text-end fw-bold fs-5 text-success">
+                                    Rs. @Model.NetSalary.ToString("N2")
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <hr />
+
+
+            <!-- PAYMENT INFORMATION -->
+            <div class="mb-4">
+
+                <h5 class="fw-semibold mb-3">
+                    <i class="bi bi-credit-card me-2"></i>
+                    Payment Information
+                </h5>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <div class="text-muted small">
+                            Payroll Status
+                        </div>
+
+                        @if (Model.Status.Equals(
+                            "Paid",
+                            StringComparison.OrdinalIgnoreCase))
+                        {
+                            <span class="badge bg-success-subtle text-success mt-1">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Paid
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning-subtle text-warning-emphasis mt-1">
+                                @Model.Status
+                            </span>
+                        }
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="text-muted small">
+                            Payment Date
+                        </div>
+
+                        <div class="fw-semibold">
+                            @(Model.PaymentDate?.ToString("dd MMM yyyy")
+                                ?? "Not Paid")
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="text-muted small">
+                            Payment Method
+                        </div>
+
+                        <div class="fw-semibold">
+                            @(Model.PaymentMethod ?? "Not Paid")
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="text-muted small">
+                            Payment Reference
+                        </div>
+
+                        <div class="fw-semibold">
+                            @(Model.PaymentReference ?? "N/A")
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <hr />
+
+
+            <!-- ACTIONS -->
+            <div class="d-flex justify-content-between align-items-center mt-4">
+
+                <small class="text-muted">
+                    Generated by Automated Accounted Payroll
+                </small>
+
+                <a asp-action="DownloadPayslip"
+                   asp-route-id="@Model.PayrollId"
+                   class="btn btn-primary">
+
+                    <i class="bi bi-file-earmark-pdf me-1"></i>
+                    Download PDF
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

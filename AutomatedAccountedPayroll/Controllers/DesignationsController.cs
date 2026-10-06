@@ -11,7 +11,7 @@ using AutomatedAccountedPayroll.Models;
 
 namespace AutomatedAccountedPayroll.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,HR,Accountant")]
     public class DesignationsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,23 +22,34 @@ namespace AutomatedAccountedPayroll.Controllers
         }
 
         // GET: Designations
-        // opdtaed section ( implementation the logic ) 
-
-public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             var departments = await _context.Departments
                 .Where(d => d.IsActive)
                 .OrderBy(d => d.DepartmentName)
                 .ToListAsync();
 
+            ViewBag.TotalDesignations = await _context.Designations
+                .CountAsync();
+
+            ViewBag.ActiveDesignations = await _context.Designations
+                .CountAsync(d => d.IsActive);
+
+            ViewBag.InactiveDesignations = await _context.Designations
+                .CountAsync(d => !d.IsActive);
+
+            ViewBag.DepartmentsWithDesignations = await _context.Designations
+                .Where(d => d.DepartmentId.HasValue)
+                .Select(d => d.DepartmentId)
+                .Distinct()
+                .CountAsync();
+
             return View(departments);
         }
 
-        
-// GET: Designations/DepartmentDesignations/5
 
-
-public async Task<IActionResult> DepartmentDesignations(int? id)
+        // GET: Designations/DepartmentDesignations/5
+        public async Task<IActionResult> DepartmentDesignations(int? id)
         {
             if (id == null)
             {
@@ -58,14 +69,15 @@ public async Task<IActionResult> DepartmentDesignations(int? id)
                 .OrderBy(d => d.DesignationName)
                 .ToListAsync();
 
+            ViewBag.TotalDesignations = designations.Count;
+            ViewBag.ActiveDesignations = designations.Count(d => d.IsActive);
+            ViewBag.InactiveDesignations = designations.Count(d => !d.IsActive);
             ViewBag.Department = department;
 
             return View(
                 "~/Views/Designations/DepartmentDesignations.cshtml",
                 designations);
         }
-
-
 
 
         // GET: Designations/Details/5
@@ -88,8 +100,9 @@ public async Task<IActionResult> DepartmentDesignations(int? id)
             return View(designation);
         }
 
-// GET: Designations/Create
-public async Task<IActionResult> Create(int? departmentId)
+        // GET: Designations/Create
+        [Authorize(Roles = "Admin,HR")]
+        public async Task<IActionResult> Create(int? departmentId)
         {
             if (departmentId == null)
             {
@@ -115,15 +128,13 @@ public async Task<IActionResult> Create(int? departmentId)
         }
 
 
-
-
-
-       // post create method of designation that holds the designation duplicate prevention 
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> Create(
-    [Bind("DesignationId,DesignationName,Description,DepartmentId,IsActive")]
-    Designation designation)
+        // POST: Designations/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,HR")]
+        public async Task<IActionResult> Create(
+            [Bind("DesignationId,DesignationName,Description,DepartmentId,IsActive")]
+            Designation designation)
         {
             if (designation.DepartmentId == null)
             {
@@ -171,8 +182,8 @@ public async Task<IActionResult> Create(
         }
 
 
-
         // GET: Designations/Edit/5
+        [Authorize(Roles = "Admin,HR")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -195,6 +206,7 @@ public async Task<IActionResult> Create(
         // POST: Designations/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,HR")]
         public async Task<IActionResult> Edit(
             int id,
             [Bind("DesignationId,DesignationName,Description,DepartmentId,IsActive")]
@@ -246,6 +258,7 @@ public async Task<IActionResult> Create(
         }
 
         // GET: Designations/Delete/5
+        [Authorize(Roles = "Admin,HR")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -268,6 +281,7 @@ public async Task<IActionResult> Create(
         // POST: Designations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,HR")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var designation = await _context.Designations.FindAsync(id);

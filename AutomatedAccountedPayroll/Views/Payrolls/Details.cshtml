@@ -1,5 +1,4 @@
-﻿
-@model AutomatedAccountedPayroll.Models.Payroll
+﻿@model AutomatedAccountedPayroll.Models.Payroll
 
 @{
     ViewData["Title"] = "Payroll Details";
@@ -77,10 +76,38 @@
             </dd>
 
             <dt class="col-sm-3">
+                Overtime
+            </dt>
+            <dd class="col-sm-9">
+                @Model.Overtime.ToString("N2")
+            </dd>
+
+            <dt class="col-sm-3">
+                Bonus
+            </dt>
+            <dd class="col-sm-9">
+                @Model.Bonus.ToString("N2")
+            </dd>
+
+            <dt class="col-sm-3">
                 Deductions
             </dt>
             <dd class="col-sm-9">
                 @Model.Deductions.ToString("N2")
+            </dd>
+
+            <dt class="col-sm-3">
+                Loan Deduction
+            </dt>
+            <dd class="col-sm-9">
+                @Model.LoanDeduction.ToString("N2")
+            </dd>
+
+            <dt class="col-sm-3">
+                Advance Salary
+            </dt>
+            <dd class="col-sm-9">
+                @Model.AdvanceSalary.ToString("N2")
             </dd>
 
             <dt class="col-sm-3">
@@ -94,7 +121,6 @@
 
         </dl>
 
-        ```cshtml id="f7d2qs"
         <h4 class="mt-4">Payment Information</h4>
         <hr />
 
@@ -132,8 +158,8 @@
             </dt>
             <dd class="col-sm-9">
                 @(string.IsNullOrWhiteSpace(Model.PaymentMethod)
-                                ? "Not Paid"
-                                : Model.PaymentMethod)
+                    ? "Not Paid"
+                    : Model.PaymentMethod)
             </dd>
 
             <dt class="col-sm-3">
@@ -141,8 +167,8 @@
             </dt>
             <dd class="col-sm-9">
                 @(string.IsNullOrWhiteSpace(Model.PaymentReference)
-                                ? "N/A"
-                                : Model.PaymentReference)
+                    ? "N/A"
+                    : Model.PaymentReference)
             </dd>
 
             <dt class="col-sm-3">
@@ -153,7 +179,6 @@
             </dd>
 
         </dl>
-
 
     </div>
 </div>

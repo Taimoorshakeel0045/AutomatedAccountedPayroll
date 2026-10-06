@@ -65,6 +65,9 @@ namespace AutomatedAccountedPayroll.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        // Identity account linked to this employee
+        public string? IdentityUserId { get; set; }
+
         public Department? Department { get; set; }
 
         public Designation? Designation { get; set; }

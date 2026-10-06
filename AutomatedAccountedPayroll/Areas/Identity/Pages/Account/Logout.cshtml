@@ -2,20 +2,94 @@
 @model LogoutModel
 @{
     ViewData["Title"] = "Log out";
+    Layout = null;
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    @{
-        if (User.Identity?.IsAuthenticated ?? false)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logging out...</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="text-center">
+
+        @if (User.Identity?.IsAuthenticated ?? false)
         {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
+            <div class="rounded-circle bg-primary bg-opacity-10 text-primary
+                        d-inline-flex align-items-center justify-content-center mb-3"
+                 style="width:72px;height:72px;">
+                <i class="bi bi-box-arrow-right fs-2"></i>
+            </div>
+
+            <h4 class="fw-bold mb-2">
+                Signing you out...
+            </h4>
+
+            <p class="text-muted">
+                Please wait a moment.
+            </p>
+
+            <form id="logoutForm"
+                  asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Page("/", new { area = "" })"
+                  method="post">
             </form>
+
+            <script>
+                document.getElementById('logoutForm').submit();
+            </script>
         }
         else
         {
-            <p>You have successfully logged out of the application.</p>
+            <div class="rounded-circle bg-success bg-opacity-10 text-success
+                        d-inline-flex align-items-center justify-content-center mb-3"
+                 style="width:72px;height:72px;">
+                <i class="bi bi-check-circle fs-2"></i>
+            </div>
+
+            <h4 class="fw-bold mb-2">
+                You have been logged out
+            </h4>
+
+            <p class="text-muted mb-4">
+                Thank you for using Accounted Payroll System.
+            </p>
+
+            <a asp-area="Identity"
+               asp-page="/Account/Login"
+               class="btn btn-primary px-4">
+                <i class="bi bi-box-arrow-in-right me-2"></i>
+                Sign in again
+            </a>
         }
-    }
-</header>
+
+    </div>
+
+</body>
+</html>

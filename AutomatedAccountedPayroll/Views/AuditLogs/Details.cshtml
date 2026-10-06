@@ -1,0 +1,79 @@
+﻿@model AutomatedAccountedPayroll.Models.AuditLog
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Audit Details";
+    var changes = new Dictionary<string, JsonElement>();
+    if (!string.IsNullOrWhiteSpace(Model.Changes))
+    {
+        try
+        {
+            changes = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(Model.Changes)
+                ?? new Dictionary<string, JsonElement>();
+        }
+        catch
+        {
+            changes = new Dictionary<string, JsonElement>();
+        }
+    }
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Audit Details</h2>
+            <p class="text-muted mb-0">Complete information for this audit event.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to Audit Log</a>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-3"><strong>Audit ID</strong><div>@Model.AuditLogId</div></div>
+                <div class="col-md-3"><strong>Date & Time</strong><div>@Model.Timestamp.ToLocalTime().ToString("dd MMM yyyy, hh:mm:ss tt")</div></div>
+                <div class="col-md-3"><strong>User</strong><div>@(Model.UserName ?? "System")</div></div>
+                <div class="col-md-3"><strong>User ID</strong><div class="text-break">@(Model.UserId ?? "-")</div></div>
+                <div class="col-md-3"><strong>Action</strong><div>@Model.Action</div></div>
+                <div class="col-md-3"><strong>Entity</strong><div>@Model.EntityName</div></div>
+                <div class="col-md-3"><strong>Entity ID</strong><div>@(Model.EntityId ?? "-")</div></div>
+                <div class="col-md-3"><strong>IP Address</strong><div>@(Model.IpAddress ?? "-")</div></div>
+                <div class="col-md-6"><strong>Request Path</strong><div class="text-break">@(Model.RequestPath ?? "-")</div></div>
+                <div class="col-md-6"><strong>User Agent</strong><div class="text-break">@(Model.UserAgent ?? "-")</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-semibold">Changed Values</div>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Property</th>
+                        <th>Old Value</th>
+                        <th>New Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var change in changes)
+                    {
+                        var oldValue = change.Value.TryGetProperty("Old", out var oldElement) ? oldElement.ToString() : "";
+                        var newValue = change.Value.TryGetProperty("New", out var newElement) ? newElement.ToString() : "";
+                        <tr>
+                            <td class="fw-semibold">@change.Key</td>
+                            <td class="text-break">@(string.IsNullOrEmpty(oldValue) ? "-" : oldValue)</td>
+                            <td class="text-break">@(string.IsNullOrEmpty(newValue) ? "-" : newValue)</td>
+                        </tr>
+                    }
+                    @if (changes.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">No property changes were recorded.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

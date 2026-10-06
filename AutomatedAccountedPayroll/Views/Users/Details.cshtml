@@ -1,0 +1,484 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IdentityUser
+
+@{
+    ViewData["Title"] = "User Details";
+
+    var roles =
+        ViewBag.Roles as IList<string>
+        ?? new List<string>();
+
+    var role = roles.FirstOrDefault() ?? "User";
+
+    var linkedEmployee =
+        ViewBag.LinkedEmployee as AutomatedAccountedPayroll.Models.Employee;
+}
+
+<div class="attendance-report-page">
+
+    <!-- PAGE HEADER -->
+    <div class="report-page-header d-flex justify-content-between align-items-center">
+
+        <div>
+            <h1>User Details</h1>
+            <p>View system user account and employee information.</p>
+        </div>
+
+        <div>
+
+            <a asp-action="Index"
+               class="btn btn-secondary btn-sm">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Users
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- ACCOUNT INFORMATION -->
+        <div class="col-lg-7">
+
+            <div class="report-table-card h-100">
+
+                <div class="report-table-header">
+
+                    <div>
+                        <h5>Account Information</h5>
+                        <p>Details of the selected system user.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="p-4">
+
+                    <div class="d-flex align-items-center mb-4">
+
+                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center me-3"
+                             style="width:60px;height:60px;">
+
+                            <i class="bi bi-person fs-4"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h5 class="mb-1 fw-semibold">
+                                @Model.UserName
+                            </h5>
+
+                            <small class="text-muted">
+                                System User
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-4">
+
+                        <!-- USERNAME -->
+                        <div class="col-md-6">
+
+                            <div class="text-muted small mb-1">
+                                Username
+                            </div>
+
+                            <div class="fw-semibold">
+                                @Model.UserName
+                            </div>
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+                        <div class="col-md-6">
+
+                            <div class="text-muted small mb-1">
+                                Email
+                            </div>
+
+                            <div class="fw-semibold">
+                                @(Model.Email ?? "Not provided")
+                            </div>
+
+                        </div>
+
+
+                        <!-- ROLE -->
+                        <div class="col-md-6">
+
+                            <div class="text-muted small mb-1">
+                                Role
+                            </div>
+
+                            <div>
+
+                                @if (role == "Admin")
+                                {
+                                    <span class="report-status present">
+
+                                        <i class="bi bi-shield-check me-1"></i>
+                                        Admin
+
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="report-status">
+
+                                        <i class="bi bi-person me-1"></i>
+                                        User
+
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ACCOUNT STATUS -->
+                        <div class="col-md-6">
+
+                            <div class="text-muted small mb-1">
+                                Account Status
+                            </div>
+
+                            <div>
+
+                                @if (Model.EmailConfirmed)
+                                {
+                                    <span class="report-status present">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="report-status absent">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        Unconfirmed
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- USER ID -->
+                        <div class="col-12">
+
+                            <div class="text-muted small mb-1">
+                                User ID
+                            </div>
+
+                            <div class="small text-muted text-break">
+                                @Model.Id
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <hr class="my-4" />
+
+
+                    <div class="d-flex gap-2">
+
+                        <a asp-action="Edit"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-pencil me-1"></i>
+                            Edit User
+
+                        </a>
+
+
+                        <a asp-action="Index"
+                           class="btn btn-secondary">
+
+                            <i class="bi bi-arrow-left me-1"></i>
+                            Back
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EMPLOYEE LINK -->
+        <div class="col-lg-5">
+
+            <div class="report-table-card h-100">
+
+                <div class="report-table-header">
+
+                    <div>
+                        <h5>Employee Account Link</h5>
+                        <p>Employee profile connected to this login.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="p-4">
+
+                    @if (linkedEmployee != null)
+                    {
+                        <div class="text-center mb-4">
+
+                            <div class="rounded-circle bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center mb-3"
+                                 style="width:65px;height:65px;">
+
+                                <i class="bi bi-person-check fs-3"></i>
+
+                            </div>
+
+                            <h5 class="fw-semibold mb-1">
+
+                                @linkedEmployee.FirstName
+                                @linkedEmployee.LastName
+
+                            </h5>
+
+                            <small class="text-muted">
+
+                                @linkedEmployee.EmployeeCode
+
+                            </small>
+
+                        </div>
+
+
+                        <div class="border rounded p-3">
+
+                            <div class="d-flex justify-content-between mb-3">
+
+                                <span class="text-muted">
+                                    Employee ID
+                                </span>
+
+                                <span class="fw-semibold">
+                                    @linkedEmployee.EmployeeId
+                                </span>
+
+                            </div>
+
+
+                            <div class="d-flex justify-content-between mb-3">
+
+                                <span class="text-muted">
+                                    Employee Code
+                                </span>
+
+                                <span class="fw-semibold">
+                                    @linkedEmployee.EmployeeCode
+                                </span>
+
+                            </div>
+
+
+                            <div class="d-flex justify-content-between">
+
+                                <span class="text-muted">
+                                    Employee Status
+                                </span>
+
+                                @if (linkedEmployee.IsActive)
+                                {
+                                    <span class="report-status present">
+                                        Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="report-status absent">
+                                        Inactive
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="alert alert-success border-0 mt-4 mb-0">
+
+                            <div class="d-flex">
+
+                                <i class="bi bi-check-circle me-2 mt-1"></i>
+
+                                <div>
+
+                                    <strong>Account Linked</strong>
+
+                                    <div class="small mt-1">
+                                        This login account is connected
+                                        to the employee profile above.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+
+                            <div class="mb-3">
+
+                                <i class="bi bi-person-x fs-1 text-muted"></i>
+
+                            </div>
+
+                            <h5 class="fw-semibold">
+                                No Employee Linked
+                            </h5>
+
+                            <p class="text-muted mb-0">
+                                This login account is not currently
+                                connected to an employee profile.
+                            </p>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SECURITY INFORMATION -->
+    <div class="report-table-card mt-4">
+
+        <div class="report-table-header">
+
+            <div>
+                <h5>
+                    <i class="bi bi-shield-lock me-2"></i>
+                    Account Security
+                </h5>
+
+                <p>
+                    Access information for this account.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="p-4">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Email Verification
+                        </div>
+
+                        @if (Model.EmailConfirmed)
+                        {
+                            <div class="fw-semibold text-success">
+
+                                <i class="bi bi-check-circle me-1"></i>
+                                Confirmed
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="fw-semibold text-warning">
+
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                Not Confirmed
+
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Access Role
+                        </div>
+
+                        <div class="fw-semibold">
+                            @role
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <div class="text-muted small mb-1">
+                            Employee Portal
+                        </div>
+
+                        @if (role == "User" &&
+                             linkedEmployee != null &&
+                             linkedEmployee.IsActive)
+                        {
+                            <div class="fw-semibold text-success">
+
+                                <i class="bi bi-check-circle me-1"></i>
+                                Available
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="fw-semibold text-muted">
+
+                                <i class="bi bi-dash-circle me-1"></i>
+                                Not Available
+
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

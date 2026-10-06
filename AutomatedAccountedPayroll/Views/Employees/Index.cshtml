@@ -36,6 +36,77 @@
     </div>
 
 
+    <!-- SUMMARY CARDS -->
+<div class="employee-summary-grid">
+
+    <!-- TOTAL EMPLOYEES -->
+    <div class="employee-summary-card">
+        <div class="employee-summary-icon total">
+            <i class="bi bi-people-fill"></i>
+        </div>
+
+        <div class="employee-summary-content">
+            <span>Total Employees</span>
+            <strong>@ViewBag.TotalEmployees</strong>
+        </div>
+    </div>
+
+
+    <!-- ACTIVE EMPLOYEES -->
+    <div class="employee-summary-card">
+        <div class="employee-summary-icon active">
+            <i class="bi bi-person-check-fill"></i>
+        </div>
+
+        <div class="employee-summary-content">
+            <span>Active Employees</span>
+            <strong>@ViewBag.ActiveEmployees</strong>
+        </div>
+    </div>
+
+
+    <!-- INACTIVE EMPLOYEES -->
+    <div class="employee-summary-card">
+        <div class="employee-summary-icon inactive">
+            <i class="bi bi-person-x-fill"></i>
+        </div>
+
+        <div class="employee-summary-content">
+            <span>Inactive Employees</span>
+            <strong>@ViewBag.InactiveEmployees</strong>
+        </div>
+    </div>
+
+
+    <!-- PERMANENT EMPLOYEES -->
+    <div class="employee-summary-card">
+        <div class="employee-summary-icon permanent">
+            <i class="bi bi-person-badge-fill"></i>
+        </div>
+
+        <div class="employee-summary-content">
+            <span>Permanent Employees</span>
+            <strong>@ViewBag.PermanentEmployees</strong>
+        </div>
+    </div>
+
+
+    <!-- OTHER EMPLOYMENT TYPES -->
+    <div class="employee-summary-card">
+        <div class="employee-summary-icon other">
+            <i class="bi bi-person-lines-fill"></i>
+        </div>
+
+        <div class="employee-summary-content">
+            <span>Other Employment</span>
+            <strong>@ViewBag.OtherEmploymentEmployees</strong>
+        </div>
+    </div>
+
+</div>
+
+
+
     <!-- SEARCH AND FILTERS -->
     <div class="employee-filter-card">
 
@@ -97,8 +168,8 @@
 
                         @foreach (var department in ViewBag.Departments)
                         {
-                            if (ViewData["DepartmentId"]?.ToString()
-                            == department.DepartmentId.ToString())
+                            if (ViewBag.SelectedDepartmentId?.ToString()
+                                == department.DepartmentId.ToString())
                             {
                                 <option value="@department.DepartmentId"
                                         selected>

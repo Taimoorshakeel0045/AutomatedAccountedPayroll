@@ -1,0 +1,395 @@
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Attendance Report";
+}
+
+<div class="attendance-report-page">
+
+    <!-- PAGE HEADER -->
+    <div class="report-page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1>Attendance Report</h1>
+            <p>View and analyze employee attendance records.</p>
+        </div>
+
+        <a asp-controller="Attendances"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-calendar-check me-1"></i>
+            Attendance Management
+        </a>
+    </div>
+
+
+    <!-- FILTER CARD -->
+    <div class="report-filter-card">
+
+        <form asp-controller="Reports"
+              asp-action="Attendance"
+              method="get">
+
+            <div class="row g-3 align-items-end">
+
+                <!-- FROM DATE -->
+                <div class="col-md-3">
+                    <label class="form-label">
+                        From Date
+                    </label>
+
+                    <input type="date"
+                           name="fromDate"
+                           class="form-control"
+                           value="@(ViewBag.FromDate != null
+                               ? ((DateTime)ViewBag.FromDate).ToString("yyyy-MM-dd")
+                               : "")" />
+                </div>
+
+
+                <!-- TO DATE -->
+                <div class="col-md-3">
+                    <label class="form-label">
+                        To Date
+                    </label>
+
+                    <input type="date"
+                           name="toDate"
+                           class="form-control"
+                           value="@(ViewBag.ToDate != null
+                               ? ((DateTime)ViewBag.ToDate).ToString("yyyy-MM-dd")
+                               : "")" />
+                </div>
+
+
+                <!-- EMPLOYEE -->
+                <div class="col-md-3">
+                    <label class="form-label">
+                        Employee
+                    </label>
+
+                    <select name="employeeId"
+                            class="form-select">
+
+                        <option value="">
+                            All Employees
+                        </option>
+
+                        @if (ViewBag.Employees != null)
+                        {
+                            foreach (var employee in ViewBag.Employees)
+                            {
+                                if (ViewBag.EmployeeId == employee.EmployeeId)
+                                {
+                                    <option value="@employee.EmployeeId" selected>
+                                        @employee.EmployeeCode -
+                                        @employee.FirstName
+                                        @employee.LastName
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@employee.EmployeeId">
+                                        @employee.EmployeeCode -
+                                        @employee.FirstName
+                                        @employee.LastName
+                                    </option>
+                                }
+                            }
+                        }
+
+                    </select>
+                </div>
+
+
+                <!-- STATUS -->
+                <div class="col-md-3">
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select name="status"
+                            class="form-select">
+
+                        <option value="">All Statuses</option>
+
+                        @if (ViewBag.Status == "Present")
+                        {
+                            <option value="Present" selected>Present</option>
+                        }
+                        else
+                        {
+                            <option value="Present">Present</option>
+                        }
+
+                        @if (ViewBag.Status == "Absent")
+                        {
+                            <option value="Absent" selected>Absent</option>
+                        }
+                        else
+                        {
+                            <option value="Absent">Absent</option>
+                        }
+
+                        @if (ViewBag.Status == "Late")
+                        {
+                            <option value="Late" selected>Late</option>
+                        }
+                        else
+                        {
+                            <option value="Late">Late</option>
+                        }
+
+                        @if (ViewBag.Status == "Leave")
+                        {
+                            <option value="Leave" selected>Leave</option>
+                        }
+                        else
+                        {
+                            <option value="Leave">Leave</option>
+                        }
+
+                        @if (ViewBag.Status == "Half Day")
+                        {
+                            <option value="Half Day" selected>Half Day</option>
+                        }
+                        else
+                        {
+                            <option value="Half Day">Half Day</option>
+                        }
+
+                    </select>
+                </div>
+
+
+                <!-- ACTIONS -->
+                <div class="col-12 report-filter-actions">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i>
+                        Generate Report
+                    </button>
+
+                    <a asp-controller="Reports"
+                       asp-action="Attendance"
+                       class="btn btn-outline-secondary ms-2">
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+                        Reset
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+    <div class="row g-3 mb-4">
+
+        <!-- TOTAL -->
+        <div class="col-md-2">
+            <div class="report-summary-card h-100">
+                <div>
+                    <span>Total Records</span>
+                    <strong>@ViewBag.TotalAttendance</strong>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- PRESENT -->
+        <div class="col-md-2">
+            <div class="report-summary-card present h-100">
+                <div>
+                    <span>Present</span>
+                    <strong>@ViewBag.PresentCount</strong>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ABSENT -->
+        <div class="col-md-2">
+            <div class="report-summary-card absent h-100">
+                <div>
+                    <span>Absent</span>
+                    <strong>@ViewBag.AbsentCount</strong>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- LATE -->
+        <div class="col-md-2">
+            <div class="report-summary-card late h-100">
+                <div>
+                    <span>Late</span>
+                    <strong>@ViewBag.LateCount</strong>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- LEAVE -->
+        <div class="col-md-2">
+            <div class="report-summary-card leave h-100">
+                <div>
+                    <span>Leave</span>
+                    <strong>@ViewBag.LeaveCount</strong>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- HALF DAY -->
+        <div class="col-md-2">
+            <div class="report-summary-card h-100">
+                <div>
+                    <span>Half Day</span>
+                    <strong>@ViewBag.HalfDayCount</strong>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- REPORT TABLE -->
+    <div class="report-table-card">
+
+       <div class="report-table-header d-flex justify-content-between align-items-center">
+    <h5>
+        Attendance Records
+    </h5>
+
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm"
+            onclick="window.print()">
+        <i class="bi bi-printer me-1"></i>
+        Print Report
+    </button>
+</div>
+
+
+        <div class="table-responsive">
+
+            @if (Model != null && Model.Any())
+            {
+                <table class="table attendance-report-table">
+
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Date</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Working Hours</th>
+                            <th>Late Minutes</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var attendance in Model)
+                        {
+                            <tr>
+
+                                <!-- EMPLOYEE -->
+                                <td>
+                                    <span class="report-employee-name">
+                                        @attendance.Employee?.FirstName
+                                        @attendance.Employee?.LastName
+                                    </span>
+
+                                    <span class="report-employee-code">
+                                        @attendance.Employee?.EmployeeCode
+                                    </span>
+                                </td>
+
+
+                                <!-- DATE -->
+                                <td>
+                                    @attendance.AttendanceDate.ToString("dd MMM yyyy")
+                                </td>
+
+
+                                <!-- CHECK IN -->
+                                <td>
+                                    @(attendance.CheckInTime?.ToString(@"hh\:mm") ?? "-")
+                                </td>
+
+
+                                <!-- CHECK OUT -->
+                                <td>
+                                    @(attendance.CheckOutTime?.ToString(@"hh\:mm") ?? "-")
+                                </td>
+
+
+                                <!-- WORKING HOURS -->
+                                <td>
+                                    @(attendance.WorkingHours?.ToString("0.00") ?? "-")
+                                </td>
+
+
+                                <!-- LATE MINUTES -->
+                                <td>
+                                    @attendance.LateMinutes min
+                                </td>
+
+
+                                <!-- STATUS -->
+                                <td>
+
+                                    @{
+                                        var statusClass =
+                                            attendance.Status switch
+                                            {
+                                                "Present" => "report-status-present",
+                                                "Absent" => "report-status-absent",
+                                                "Late" => "report-status-late",
+                                                "Leave" => "report-status-leave",
+                                                "Half Day" => "report-status-halfday",
+                                                _ => ""
+                                            };
+                                    }
+
+                                    <span class="report-status @statusClass">
+                                        @attendance.Status
+                                    </span>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <div class="report-empty">
+
+                    <i class="bi bi-clipboard-x"></i>
+
+                    <h5>
+                        No Attendance Records
+                    </h5>
+
+                    <p>
+                        No attendance records match the selected filters.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

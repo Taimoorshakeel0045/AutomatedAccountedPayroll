@@ -1,0 +1,514 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Employee Dashboard";
+
+    var employee =
+        ViewBag.Employee as AutomatedAccountedPayroll.Models.Employee;
+
+    var todayAttendance =
+        ViewBag.TodayAttendance as AutomatedAccountedPayroll.Models.Attendance;
+
+    var latestPayroll =
+        ViewBag.LatestPayroll as AutomatedAccountedPayroll.Models.Payroll;
+
+    var totalLeaves = (int)(ViewBag.TotalLeaves ?? 0);
+    var pendingLeaves = (int)(ViewBag.PendingLeaves ?? 0);
+    var approvedLeaves = (int)(ViewBag.ApprovedLeaves ?? 0);
+
+    var remainingLeave =
+        (decimal)(ViewBag.RemainingLeave ?? 0);
+
+    var latestNetSalary =
+        (decimal)(ViewBag.LatestNetSalary ?? 0);
+
+    var activeLoanCount =
+        (int)(ViewBag.ActiveLoanCount ?? 0);
+
+    var remainingLoanBalance =
+        (decimal)(ViewBag.RemainingLoanBalance ?? 0);
+}
+
+<div class="container-fluid">
+
+    <!-- =========================================================
+         PAGE HEADER
+         ========================================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Welcome, @(employee?.FirstName ?? "Employee")
+            </h2>
+
+            <p class="text-muted mb-0">
+                Here's an overview of your employee account.
+            </p>
+
+        </div>
+
+        <div>
+
+            <span class="badge bg-primary-subtle text-primary px-3 py-2">
+
+                <i class="bi bi-person-check me-1"></i>
+
+                Employee Portal
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         EMPLOYEE INFORMATION
+         ========================================================= -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-8">
+
+                    <div class="d-flex align-items-center">
+
+                        <div class="bg-primary-subtle text-primary rounded-circle
+                            d-flex align-items-center justify-content-center
+                            me-3"
+                             style="width: 60px; height: 60px;">
+
+                            <i class="bi bi-person fs-3"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h5 class="fw-bold mb-1">
+
+                                @(employee == null
+                                    ? "Employee"
+                                    : $"{employee.FirstName} {employee.LastName}")
+
+                            </h5>
+
+                            <div class="text-muted">
+
+                                @(employee?.Designation?.DesignationName
+                                    ?? "Designation not assigned")
+
+                                <span class="mx-2">•</span>
+
+                                @(employee?.Department?.DepartmentName
+                                    ?? "Department not assigned")
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+
+                    <div class="text-muted small">
+                        Employee Code
+                    </div>
+
+                    <div class="fw-bold">
+                        @(employee?.EmployeeCode ?? "N/A")
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         STATISTICS
+         ========================================================= -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- TODAY ATTENDANCE -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <div class="text-muted small mb-2">
+                                Today's Attendance
+                            </div>
+
+                            @if (todayAttendance == null)
+                            {
+                                <div class="fs-5 fw-bold text-warning">
+                                    Not Marked
+                                </div>
+                            }
+                            else if (todayAttendance.CheckOutTime.HasValue)
+                            {
+                                <div class="fs-5 fw-bold text-success">
+                                    Completed
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="fs-5 fw-bold text-primary">
+                                    Checked In
+                                </div>
+                            }
+
+                        </div>
+
+                        <div class="bg-primary-subtle text-primary rounded-3 p-2">
+
+                            <i class="bi bi-calendar-check fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (todayAttendance != null)
+                    {
+                        <div class="small text-muted mt-3">
+
+                            Check In:
+
+                            <strong>
+                                @todayAttendance.CheckInTime?.ToString("hh\\:mm")
+                            </strong>
+
+                            @if (todayAttendance.CheckOutTime.HasValue)
+                            {
+                                <span class="ms-2">
+
+                                    Check Out:
+
+                                    <strong>
+                                        @todayAttendance.CheckOutTime.Value.ToString("hh\\:mm")
+                                    </strong>
+
+                                </span>
+                            }
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="small text-muted mt-3">
+                            Visit My Attendance to check in.
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LATEST SALARY -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <div class="text-muted small mb-2">
+                                Latest Net Salary
+                            </div>
+
+                            <div class="fs-5 fw-bold text-success">
+                                Rs. @latestNetSalary.ToString("N0")
+                            </div>
+
+                        </div>
+
+                        <div class="bg-success-subtle text-success rounded-3 p-2">
+
+                            <i class="bi bi-cash-stack fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (latestPayroll != null)
+                    {
+                        <div class="small text-muted mt-3">
+
+                            @latestPayroll.PayrollMonth.ToString("MMMM yyyy")
+
+                            <span class="ms-2">
+
+                                <span class="badge bg-success-subtle text-success">
+                                    @latestPayroll.Status
+                                </span>
+
+                            </span>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="small text-muted mt-3">
+                            No payroll record available.
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LEAVE BALANCE -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <div class="text-muted small mb-2">
+                                Leave Balance
+                            </div>
+
+                            <div class="fs-5 fw-bold text-primary">
+                                @remainingLeave.ToString("0.##") Days
+                            </div>
+
+                        </div>
+
+                        <div class="bg-warning-subtle text-warning rounded-3 p-2">
+
+                            <i class="bi bi-calendar2-range fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="small text-muted mt-3">
+
+                        @approvedLeaves approved
+
+                        <span class="mx-1">•</span>
+
+                        @pendingLeaves pending
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOAN BALANCE -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <div class="text-muted small mb-2">
+                                Loan Balance
+                            </div>
+
+                            <div class="fs-5 fw-bold text-danger">
+                                Rs. @remainingLoanBalance.ToString("N0")
+                            </div>
+
+                        </div>
+
+                        <div class="bg-danger-subtle text-danger rounded-3 p-2">
+
+                            <i class="bi bi-wallet2 fs-5"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="small text-muted mt-3">
+
+                        @activeLoanCount active loan(s)
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+        <!-- =========================================================
+         LEAVE SUMMARY
+         ========================================================= -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- LEAVE OVERVIEW -->
+
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-white border-0 py-3">
+
+                    <div class="d-flex align-items-center">
+
+                        <div class="bg-warning-subtle text-warning rounded-3 p-2 me-3">
+
+                            <i class="bi bi-calendar2-week fs-5"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h5 class="mb-1 fw-semibold">
+                                Leave Overview
+                            </h5>
+
+                            <small class="text-muted">
+                                Your current leave request summary.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row text-center">
+
+                        <div class="col-4">
+
+                            <div class="fs-4 fw-bold">
+                                @totalLeaves
+                            </div>
+
+                            <small class="text-muted">
+                                Total
+                            </small>
+
+                        </div>
+
+
+                        <div class="col-4">
+
+                            <div class="fs-4 fw-bold text-warning">
+                                @pendingLeaves
+                            </div>
+
+                            <small class="text-muted">
+                                Pending
+                            </small>
+
+                        </div>
+
+
+                        <div class="col-4">
+
+                            <div class="fs-4 fw-bold text-success">
+                                @approvedLeaves
+                            </div>
+
+                            <small class="text-muted">
+                                Approved
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+       
+
+
+    <!-- =========================================================
+         PORTAL INFORMATION
+         ========================================================= -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body">
+
+            <div class="d-flex align-items-start">
+
+                <div class="bg-primary-subtle text-primary rounded-3 p-2 me-3">
+
+                    <i class="bi bi-shield-check fs-5"></i>
+
+                </div>
+
+                <div>
+
+                    <h6 class="fw-semibold mb-1">
+                        Employee Portal
+                    </h6>
+
+                    <p class="text-muted mb-0 small">
+                        This portal provides access to your personal
+                        attendance, leave, payroll and loan information.
+                        Your records are restricted to your own employee
+                        account.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

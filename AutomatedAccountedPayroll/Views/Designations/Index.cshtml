@@ -1,5 +1,4 @@
-﻿
-@model IEnumerable<AutomatedAccountedPayroll.Models.Department>
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.Department>
 
 @{
     ViewData["Title"] = "Designations";
@@ -7,27 +6,172 @@
 
 <div class="container-fluid">
 
+    <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
             <h1 class="h3 mb-1">Designations</h1>
 
             <p class="text-muted mb-0">
-                Select a department to manage its designations.
+                Select a school department to manage its designations.
             </p>
         </div>
-
-        <a asp-action="Create"
-           class="btn btn-primary">
-            Create Designation
-        </a>
 
     </div>
 
 
+    <!-- Summary Boxes -->
+    <div class="row g-4 mb-4">
+
+        <!-- Total Designations -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">
+                                Total Designations
+                            </p>
+
+                            <h2 class="mb-0">
+                                @ViewBag.TotalDesignations
+                            </h2>
+                        </div>
+
+                        <div class="fs-2 text-primary">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Active Designations -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">
+                                Active Designations
+                            </p>
+
+                            <h2 class="mb-0">
+                                @ViewBag.ActiveDesignations
+                            </h2>
+                        </div>
+
+                        <div class="fs-2 text-success">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Inactive Designations -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">
+                                Inactive Designations
+                            </p>
+
+                            <h2 class="mb-0">
+                                @ViewBag.InactiveDesignations
+                            </h2>
+                        </div>
+
+                        <div class="fs-2 text-secondary">
+                            <i class="bi bi-pause-circle"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Departments With Designations -->
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">
+                                Departments With Designations
+                            </p>
+
+                            <h2 class="mb-0">
+                                @ViewBag.DepartmentsWithDesignations
+                            </h2>
+                        </div>
+
+                        <div class="fs-2 text-info">
+                            <i class="bi bi-diagram-3"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Department List -->
     <div class="card shadow-sm border-0">
 
-        <div class="card-body">
+        <div class="card-header bg-white border-0 py-3">
+
+            <div>
+                <h5 class="mb-1">
+                    School Departments
+                </h5>
+
+                <p class="text-muted mb-0">
+                    Select a department to view and manage its designations.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
 
             <div class="table-responsive">
 
@@ -36,6 +180,7 @@
                     <thead class="table-light">
 
                         <tr>
+
                             <th>
                                 Department
                             </th>
@@ -43,9 +188,11 @@
                             <th class="text-end">
                                 Actions
                             </th>
+
                         </tr>
 
                     </thead>
+
 
                     <tbody>
 
@@ -54,9 +201,19 @@
                             <tr>
 
                                 <td colspan="2"
-                                    class="text-center text-muted py-4">
+                                    class="text-center text-muted py-5">
 
-                                    No active departments found.
+                                    <div class="mb-2 fs-2">
+                                        <i class="bi bi-diagram-3"></i>
+                                    </div>
+
+                                    <strong>
+                                        No active departments found.
+                                    </strong>
+
+                                    <div class="mt-1">
+                                        Create an active department first.
+                                    </div>
 
                                 </td>
 
@@ -70,11 +227,28 @@
 
                                     <td>
 
-                                        <strong>
-                                            @department.DepartmentName
-                                        </strong>
+                                        <div class="d-flex align-items-center">
+
+                                            <div class="me-3 fs-4 text-primary">
+                                                <i class="bi bi-building"></i>
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    @department.DepartmentName
+                                                </strong>
+
+                                                <div class="text-muted small">
+                                                    Manage department designations
+                                                </div>
+
+                                            </div>
+
+                                        </div>
 
                                     </td>
+
 
                                     <td class="text-end">
 
@@ -82,6 +256,7 @@
                                            asp-route-id="@department.DepartmentId"
                                            class="btn btn-sm btn-primary">
 
+                                            <i class="bi bi-eye me-1"></i>
                                             View Designations
 
                                         </a>
@@ -103,4 +278,3 @@
     </div>
 
 </div>
-

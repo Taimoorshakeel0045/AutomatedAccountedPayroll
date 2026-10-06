@@ -806,26 +806,26 @@
 
                                     <!-- Remarks -->
 
-                                    <td>
+<td>
 
-                                        @if (!string.IsNullOrWhiteSpace(item.Remarks))
-                                        {
-                                            <span title="@item.Remarks">
+    @if (!string.IsNullOrWhiteSpace(item.Remarks))
+    {
+        var shortRemarks = item.Remarks.Length > 25
+            ? item.Remarks.Substring(0, 25) + "..."
+            : item.Remarks;
 
-                                                @(item.Remarks.Length > 25
-                                                                                    ? item.Remarks.Substring(0, 25) + "..."
-                                                                                    : item.Remarks)
+        <span title="@item.Remarks">
+            @shortRemarks
+        </span>
+    }
+    else
+    {
+        <span class="text-muted">
+            No remarks
+        </span>
+    }
 
-                                </span>
-                                                                }
-                                        else
-                                        {
-                                            <span class="text-muted">
-                                                No remarks
-                                            </span>
-                                        }
-
-                                    </td>
+</td>
 
 
                                     <!-- Actions -->

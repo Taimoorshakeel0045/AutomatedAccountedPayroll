@@ -1,0 +1,367 @@
+@model IEnumerable<AutomatedAccountedPayroll.Models.LeaveBalance>
+
+@{
+    ViewData["Title"] = "Leave Balances";
+
+    var totalRecords = Model.Count();
+
+    var totalAllocated = Model.Sum(x => x.AllocatedDays);
+
+    var totalUsed = Model.Sum(x => x.UsedDays);
+}
+<div class="container-fluid py-4">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                    <i class="bi bi-calendar-check me-1"></i>
+                    Leave Management
+                </span>
+            </div>
+
+            <h1 class="h3 fw-bold mb-1">
+                Leave Balances
+            </h1>
+
+            <p class="text-muted mb-0">
+                Manage employee yearly leave allocations and usage.
+            </p>
+        </div>
+
+        <a asp-action="Create"
+           class="btn btn-primary">
+
+            <i class="bi bi-plus-lg me-1"></i>
+            Add Leave Balance
+
+        </a>
+
+    </div>
+
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-2">
+                        Total Balance Records
+                    </div>
+
+                    <div class="fs-3 fw-bold">
+                        @Model.Count()
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-2">
+                        Allocated Days
+                    </div>
+
+                    <div class="fs-3 fw-bold">
+                        @totalAllocated.ToString("0.00")
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-2">
+                        Used Days
+                    </div>
+
+                    <div class="fs-3 fw-bold">
+                        @totalUsed.ToString("0.00")
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="mb-1 fw-semibold">
+                        Employee Leave Balances
+                    </h5>
+
+                    <small class="text-muted">
+                        Yearly allocation and remaining leave.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+
+                    <div class="mb-3">
+
+                        <i class="bi bi-calendar-x fs-1 text-muted"></i>
+
+                    </div>
+
+                    <h5 class="fw-semibold">
+                        No Leave Balances Found
+                    </h5>
+
+                    <p class="text-muted mb-3">
+                        Create the first leave balance for an employee.
+                    </p>
+
+                    <a asp-action="Create"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Add Leave Balance
+
+                    </a>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Employee
+                                </th>
+
+                                <th>
+                                    Year
+                                </th>
+
+                                <th>
+                                    Leave Type
+                                </th>
+
+                                <th>
+                                    Allocated
+                                </th>
+
+                                <th>
+                                    Used
+                                </th>
+
+                                <th>
+                                    Remaining
+                                </th>
+
+                                <th class="text-end pe-4">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                var remainingDays =
+                                    item.AllocatedDays - item.UsedDays;
+
+                                var remainingClass =
+                                    remainingDays > 0
+                                        ? "text-success"
+                                        : "text-danger";
+
+                                <tr>
+
+                                    <td class="ps-4">
+
+                                        @if (item.Employee != null)
+                                        {
+                                            <div class="fw-semibold">
+
+                                                @item.Employee.FirstName
+                                                @item.Employee.LastName
+
+                                            </div>
+
+                                            <small class="text-muted">
+
+                                                @item.Employee.EmployeeCode
+
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Employee unavailable
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="badge bg-light text-dark border">
+
+                                            @item.Year
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @{
+                                            var leaveTypeClass =
+                                                item.LeaveType switch
+                                                {
+                                                    "Casual" => "bg-primary",
+                                                    "Sick" => "bg-info",
+                                                    "Annual" => "bg-success",
+                                                    "Emergency" => "bg-warning text-dark",
+                                                    "Unpaid" => "bg-secondary",
+                                                    _ => "bg-dark"
+                                                };
+                                        }
+
+                                        <span class="badge rounded-pill @leaveTypeClass">
+
+                                            @item.LeaveType
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="fw-semibold">
+
+                                            @item.AllocatedDays.ToString("0.00")
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="fw-semibold">
+
+                                            @item.UsedDays.ToString("0.00")
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="fw-bold @remainingClass">
+
+                                            @remainingDays.ToString("0.00")
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td class="text-end pe-4">
+
+                                        <div class="btn-group">
+
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.LeaveBalanceId"
+                                               class="btn btn-sm btn-outline-secondary"
+                                               title="View Details">
+
+                                                <i class="bi bi-eye"></i>
+
+                                            </a>
+
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.LeaveBalanceId"
+                                               class="btn btn-sm btn-outline-primary"
+                                               title="Edit">
+
+                                                <i class="bi bi-pencil"></i>
+
+                                            </a>
+
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.LeaveBalanceId"
+                                               class="btn btn-sm btn-outline-danger"
+                                               title="Delete">
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

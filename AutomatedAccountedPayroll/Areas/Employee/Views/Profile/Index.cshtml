@@ -1,0 +1,208 @@
+﻿@model AutomatedAccountedPayroll.Models.Employee
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "My Profile";
+}
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">My Profile</h2>
+            <p class="text-muted mb-0">
+                View your personal and employment information.
+            </p>
+        </div>
+
+        <div>
+            <span class="badge bg-success-subtle text-success px-3 py-2">
+                <i class="bi bi-check-circle me-1"></i>
+                Active Employee
+            </span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Profile Card -->
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-4">
+
+                    <!-- Avatar -->
+                    <div class="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary"
+                         style="width: 110px; height: 110px; font-size: 42px;">
+
+                        @Model.FirstName.Substring(0, 1).ToUpper()
+                    </div>
+
+                    <h4 class="fw-bold mb-1">
+                        @Model.FirstName @Model.LastName
+                    </h4>
+
+                    <p class="text-muted mb-3">
+                        @Model.Designation?.DesignationName
+                    </p>
+
+                    <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                        @Model.EmployeeCode
+                    </span>
+
+                    <hr class="my-4">
+
+                    <div class="text-start">
+
+                        <div class="mb-3">
+                            <small class="text-muted d-block">
+                                Department
+                            </small>
+
+                            <span class="fw-semibold">
+                                @Model.Department?.DepartmentName
+                            </span>
+                        </div>
+
+                        <div>
+                            <small class="text-muted d-block">
+                                Employment Status
+                            </small>
+
+                            <span class="fw-semibold text-success">
+                                Active
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Employee Information -->
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white border-0 p-4">
+                    <h5 class="fw-bold mb-1">
+                        <i class="bi bi-person-vcard me-2 text-primary"></i>
+                        Employee Information
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Your registered employment details.
+                    </p>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <div class="row g-4">
+
+                        <!-- Employee Code -->
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                Employee Code
+                            </label>
+
+                            <div class="form-control bg-light">
+                                @Model.EmployeeCode
+                            </div>
+                        </div>
+
+                        <!-- Full Name -->
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                Full Name
+                            </label>
+
+                            <div class="form-control bg-light">
+                                @Model.FirstName @Model.LastName
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                Email
+                            </label>
+
+                            <div class="form-control bg-light">
+                                @(Model.Email ?? "Not provided")
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                Phone
+                            </label>
+
+                            <div class="form-control bg-light">
+                                @(Model.Phone ?? "Not provided")
+                            </div>
+                        </div>
+
+                        <!-- Department -->
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                Department
+                            </label>
+
+                            <div class="form-control bg-light">
+                                @(Model.Department?.DepartmentName ?? "Not assigned")
+                            </div>
+                        </div>
+
+                        <!-- Designation -->
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                Designation
+                            </label>
+
+                            <div class="form-control bg-light">
+                                @(Model.Designation?.DesignationName ?? "Not assigned")
+                            </div>
+                        </div>
+
+                        <!-- Joining Date -->
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                Joining Date
+                            </label>
+
+                            <div class="form-control bg-light">
+                                @Model.JoiningDate.ToString("dd MMMM yyyy")
+                            </div>
+                        </div>
+
+                        <!-- Basic Salary -->
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">
+                                Basic Salary
+                            </label>
+
+                            <div class="form-control bg-light">
+                                @Model.BasicSalary.ToString("N0")
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

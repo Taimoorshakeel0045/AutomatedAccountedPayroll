@@ -6,7 +6,7 @@
 
 <div class="container-fluid py-4">
 
-    ```
+    
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
@@ -391,6 +391,89 @@
         </div>
 
 
+                <!-- OPTIONAL LOGIN ACCOUNT -->
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-white py-3">
+
+                <h5 class="mb-1">
+                    Login Account (Optional)
+                </h5>
+
+                <small class="text-muted">
+                    Create a login account for this employee in the same step.
+                    Leave unchecked to create the account later.
+                </small>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="form-check mb-3">
+
+                    <input type="checkbox"
+                           id="createLogin"
+                           name="createLogin"
+                           value="true"
+                           class="form-check-input" />
+
+                    <label class="form-check-label fw-semibold"
+                           for="createLogin">
+                        Create login account now
+                    </label>
+
+                </div>
+
+                <div id="loginFields"
+                     class="row g-3"
+                     style="display:none;">
+
+                    <div class="col-md-6">
+
+                        <label for="loginEmail"
+                               class="form-label">
+                            Login Email
+                        </label>
+
+                        <input type="email"
+                               id="loginEmail"
+                               name="loginEmail"
+                               class="form-control"
+                               placeholder="employee@example.com" />
+
+                        <span class="text-danger small"
+                              data-valmsg-for="loginEmail">
+                        </span>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label for="loginPassword"
+                               class="form-label">
+                            Login Password
+                        </label>
+
+                        <input type="password"
+                               id="loginPassword"
+                               name="loginPassword"
+                               class="form-control"
+                               placeholder="Minimum 6 characters with a digit" />
+
+                        <span class="text-danger small"
+                              data-valmsg-for="loginPassword">
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
         <!-- Form Actions -->
 
         <div class="d-flex justify-content-end gap-2 mb-4">
@@ -408,13 +491,13 @@
         </div>
 
     </form>
-    ```
+    
 
 </div>
 
 @section Scripts {
 
-    ```
+    
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

@@ -1,0 +1,201 @@
+@model IEnumerable<AutomatedAccountedPayroll.Models.LoanPayment>
+
+@{
+    ViewData["Title"] = "Loan Payment History";
+    var loan = ViewBag.Loan as AutomatedAccountedPayroll.Models.Loan;
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Loan Payment History</h2>
+
+            @if (loan?.Employee != null)
+            {
+                <p class="text-muted mb-0">
+                    @loan.Employee.FirstName @loan.Employee.LastName
+                    · Loan #@loan.LoanId
+                </p>
+            }
+        </div>
+
+        @if (loan != null && loan.Status == "Active" && loan.RemainingBalance > 0)
+        {
+            <a asp-action="Create"
+               asp-route-loanId="@loan.LoanId"
+               class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>
+                Add Payment
+            </a>
+        }
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (loan != null)
+    {
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <small class="text-muted">Loan Amount</small>
+                        <h4 class="fw-bold mt-2">
+                            @loan.LoanAmount.ToString("N2")
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <small class="text-muted">Monthly Installment</small>
+                        <h4 class="fw-bold mt-2">
+                            @loan.MonthlyInstallment.ToString("N2")
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <small class="text-muted">Remaining Balance</small>
+                        <h4 class="fw-bold mt-2">
+                            @loan.RemainingBalance.ToString("N2")
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <small class="text-muted">Status</small>
+                        <h4 class="fw-bold mt-2">
+                            @loan.Status
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead>
+                        <tr>
+                            <th>Payment Date</th>
+                            <th>Payment Amount</th>
+                            <th>Remaining Balance</th>
+                            <th>Payment Method</th>
+                            <th>Remarks</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.PaymentDate.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td class="fw-semibold">
+                                    @item.PaymentAmount.ToString("N2")
+                                </td>
+
+                                <td>
+                                    @item.RemainingBalance.ToString("N2")
+                                </td>
+
+                                <td>
+                                    @item.PaymentMethod
+                                </td>
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(item.Remarks)
+                                        ? "-"
+                                        : item.Remarks)
+                                </td>
+
+                                <td class="text-end">
+
+                                    <a asp-action="Details"
+                                       asp-route-loanpaymentid="@item.LoanPaymentId"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <a asp-action="Edit"
+                                       asp-route-loanpaymentid="@item.LoanPaymentId"
+                                       class="btn btn-sm btn-outline-secondary"
+                                       title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <a asp-action="Delete"
+                                       asp-route-loanpaymentid="@item.LoanPaymentId"
+                                       class="btn btn-sm btn-outline-danger"
+                                       title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="bi bi-receipt fs-2 d-block mb-2"></i>
+                                    No payments have been recorded for this loan.
+                                </div>
+
+                                @if (loan != null && loan.Status == "Active")
+                                {
+                                    <a asp-action="Create"
+                                       asp-route-loanId="@loan.LoanId"
+                                       class="btn btn-primary mt-3">
+                                        Add First Payment
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>

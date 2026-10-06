@@ -10,7 +10,7 @@ namespace AutomatedAccountedPayroll.Data
             var roleManager =
                 serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            string[] roles = { "Admin", "User" };
+            string[] roles = { "Admin", "User", "HR", "Accountant" };
 
             foreach (var role in roles)
             {

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutomatedAccountedPayroll.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,HR")]
     public class LeavesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -269,13 +269,13 @@ namespace AutomatedAccountedPayroll.Controllers
         }
 
         // POST: Leaves/Approve/5
+        // POST: Leaves/Approve/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
         {
             var leave = await _context.Leaves
-                .FirstOrDefaultAsync(l =>
-                    l.LeaveId == id);
+                .FirstOrDefaultAsync(l => l.LeaveId == id);
 
             if (leave == null)
             {
@@ -294,6 +294,119 @@ namespace AutomatedAccountedPayroll.Controllers
 
             // Check for another approved leave overlapping this request.
             var overlappingLeave =
+                await HasOverlappingApprovedOrPendingLeave(
+                    leave,
+                    leave.LeaveId,
+                    onlyApproved: true);
+
+            if (overlappingLeave)
+            {
+                TempData["Error"] =
+                    "This leave cannot be approved because it overlaps another approved leave for the employee.";
+
+                return RedirectToAction(
+                    nameof(Details),
+                    new { id });
+            }
+
+            // Check whether attendance already exists for any leave date.
+            var existingAttendanceDates = await _context.Attendances
+                .Where(a =>
+                    a.EmployeeId == leave.EmployeeId &&
+                    a.AttendanceDate.Date >= leave.StartDate.Date &&
+                    a.AttendanceDate.Date <= leave.EndDate.Date)
+                .Select(a => a.AttendanceDate.Date)
+                .ToListAsync();
+
+            if (existingAttendanceDates.Any())
+            {
+                TempData["Error"] =
+                    "This leave cannot be approved because attendance already exists for one or more requested leave dates.";
+
+                return RedirectToAction(
+                    nameof(Details),
+                    new { id });
+            }
+
+            // Unpaid leave does not use a leave balance.
+            if (leave.LeaveType != "Unpaid")
+            {
+                var leaveBalance = await _context.LeaveBalances
+                    .FirstOrDefaultAsync(lb =>
+                        lb.EmployeeId == leave.EmployeeId &&
+                        lb.Year == leave.StartDate.Year &&
+                        lb.LeaveType == leave.LeaveType);
+
+                if (leaveBalance == null)
+                {
+                    TempData["Error"] =
+                        $"No {leave.LeaveType} leave balance exists for this employee for {leave.StartDate.Year}.";
+
+                    return RedirectToAction(
+                        nameof(Details),
+                        new { id });
+                }
+
+                var remainingDays =
+                    leaveBalance.AllocatedDays -
+                    leaveBalance.UsedDays;
+
+                if (remainingDays < leave.TotalDays)
+                {
+                    TempData["Error"] =
+                        $"Insufficient {leave.LeaveType} leave balance. Available: {remainingDays:0.##} days, requested: {leave.TotalDays:0.##} days.";
+
+                    return RedirectToAction(
+                        nameof(Details),
+                        new { id });
+                }
+
+                // Deduct the approved leave from the balance.
+                leaveBalance.UsedDays += leave.TotalDays;
+            }
+
+            // Approve the leave.
+            leave.Status = "Approved";
+
+            leave.ApprovedBy =
+                User.Identity?.Name ?? "Admin";
+
+            leave.ApprovedDate =
+                DateTime.UtcNow;
+
+            // Create Attendance records for each leave date.
+            var attendanceRecords = new List<Attendance>();
+
+            for (var date = leave.StartDate.Date;
+                 date <= leave.EndDate.Date;
+                 date = date.AddDays(1))
+            {
+                attendanceRecords.Add(
+                    new Attendance
+                    {
+                        EmployeeId = leave.EmployeeId,
+                        AttendanceDate = date,
+                        Status = "Leave",
+                        CheckInTime = null,
+                        CheckOutTime = null,
+                        WorkingHours = null,
+                        LateMinutes = 0,
+                        Remarks = $"Approved {leave.LeaveType} leave.",
+                        CreatedAt = DateTime.UtcNow
+                    });
+            }
+
+            _context.Attendances.AddRange(attendanceRecords);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(
+                nameof(Details),
+                new { id });
+        }
+
+        /* Check for another approved leave overlapping this request.
+        var overlappingLeave =
                 await HasOverlappingApprovedOrPendingLeave(
                     leave,
                     leave.LeaveId,
@@ -366,7 +479,7 @@ namespace AutomatedAccountedPayroll.Controllers
             return RedirectToAction(
                 nameof(Details),
                 new { id });
-        }
+        }*/
 
         // POST: Leaves/Reject/5
         [HttpPost]

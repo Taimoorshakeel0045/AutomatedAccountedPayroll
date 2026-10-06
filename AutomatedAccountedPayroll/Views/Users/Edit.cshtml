@@ -1,0 +1,335 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@model IdentityUser
+
+@{
+    ViewData["Title"] = "Edit User";
+
+    var currentRole =
+        ViewBag.CurrentRole as string ?? "User";
+}
+
+<div class="attendance-report-page">
+
+    <!-- PAGE HEADER -->
+
+    <div class="report-page-header">
+
+        <div>
+            <h1>Edit User</h1>
+
+            <p>
+                Update the user's account information and password.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- ACCOUNT INFORMATION -->
+
+        <div class="col-lg-7">
+
+            <div class="report-table-card">
+
+                <div class="report-table-header">
+
+                    <div>
+
+                        <h5>
+                            Account Information
+                        </h5>
+
+                        <p>
+                            Update the account information below.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="p-4">
+
+                    <form asp-action="Edit"
+                          asp-route-id="@Model.Id"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.Id" />
+
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="mb-3">
+
+                            <label for="email"
+                                   class="form-label fw-semibold">
+
+                                Email Address
+
+                            </label>
+
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   value="@Model.Email"
+                                   class="form-control"
+                                   required />
+
+                            <span class="text-danger"
+                                  data-valmsg-for="email">
+                            </span>
+
+                        </div>
+
+
+                        <!-- ROLE -->
+
+                        <div class="mb-3">
+
+                            <label for="role"
+                                   class="form-label fw-semibold">
+
+                                Role
+
+                            </label>
+
+                                                        <select id="role"
+                                    name="role"
+                                    class="form-select"
+                                    required>
+
+                                <option value="Admin"
+                                        selected="@(currentRole == "Admin")">
+                                    Admin
+                                </option>
+
+                                <option value="HR"
+                                        selected="@(currentRole == "HR")">
+                                    HR
+                                </option>
+
+                                <option value="Accountant"
+                                        selected="@(currentRole == "Accountant")">
+                                    Accountant
+                                </option>
+
+                                <option value="User"
+                                        selected="@(currentRole == "User")">
+                                    User
+                                </option>
+
+                            </select>
+
+                            <span class="text-danger"
+                                  data-valmsg-for="role">
+                            </span>
+
+                        </div>
+
+
+                        <!-- USERNAME -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Username
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   value="@Model.UserName"
+                                   readonly />
+
+                            <small class="text-muted">
+                                Username will be updated to match the email address.
+                            </small>
+
+                        </div>
+
+
+                        <!-- USER ID -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                User ID
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   value="@Model.Id"
+                                   readonly />
+
+                        </div>
+
+
+                        <hr class="my-4" />
+
+
+                        <div class="d-flex gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+
+                                <i class="bi bi-check-lg me-1"></i>
+                                Save Changes
+
+                            </button>
+
+
+                            <a asp-action="Index"
+                               class="btn btn-secondary">
+
+                                <i class="bi bi-arrow-left me-1"></i>
+                                Back to Users
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PASSWORD MANAGEMENT -->
+
+        <div class="col-lg-5">
+
+            <div class="report-table-card h-100">
+
+                <div class="report-table-header">
+
+                    <div>
+
+                        <h5>
+                            <i class="bi bi-key me-2"></i>
+                            Password Management
+                        </h5>
+
+                        <p>
+                            Reset the password for this user account.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="p-4">
+
+                    <div class="alert alert-warning border-0">
+
+                        <div class="d-flex">
+
+                            <i class="bi bi-exclamation-triangle me-2 mt-1"></i>
+
+                            <div>
+
+                                <strong>Administrator Action</strong>
+
+                                <div class="small mt-1">
+                                    This will immediately replace the
+                                    user's current password.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <form asp-action="ResetPassword"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.Id" />
+
+
+                        <!-- NEW PASSWORD -->
+
+                        <div class="mb-3">
+
+                            <label for="newPassword"
+                                   class="form-label fw-semibold">
+
+                                New Password
+
+                            </label>
+
+                            <input type="password"
+                                   id="newPassword"
+                                   name="newPassword"
+                                   class="form-control"
+                                   minlength="6"
+                                   placeholder="Enter new password"
+                                   required />
+
+                            <small class="text-muted">
+                                Minimum 6 characters with at least one digit.
+                            </small>
+
+                        </div>
+
+
+                        <!-- CONFIRM PASSWORD -->
+
+                        <div class="mb-4">
+
+                            <label for="confirmPassword"
+                                   class="form-label fw-semibold">
+
+                                Confirm New Password
+
+                            </label>
+
+                            <input type="password"
+                                   id="confirmPassword"
+                                   name="confirmPassword"
+                                   class="form-control"
+                                   minlength="6"
+                                   placeholder="Confirm new password"
+                                   required />
+
+                        </div>
+
+
+                        <button type="submit"
+                                class="btn btn-warning w-100">
+
+                            <i class="bi bi-key me-1"></i>
+                            Reset Password
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,298 @@
+﻿@model IEnumerable<AutomatedAccountedPayroll.Models.LeaveBalance>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "My Leave Balance";
+
+    var totalAllocated = Model.Sum(x => x.AllocatedDays);
+    var totalUsed = Model.Sum(x => x.UsedDays);
+    var totalRemaining = totalAllocated - totalUsed;
+}
+
+<div class="container-fluid">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                My Leave Balance
+            </h2>
+
+            <p class="text-muted mb-0">
+                View your allocated, used and remaining leave days.
+            </p>
+        </div>
+
+        <div>
+            <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                <i class="bi bi-calendar-check me-1"></i>
+                @DateTime.Now.Year
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-2">
+                        Total Allocated
+                    </div>
+
+                    <div class="fs-3 fw-bold">
+                        @totalAllocated.ToString("0.##")
+                    </div>
+
+                    <small class="text-muted">
+                        Leave days allocated
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-2">
+                        Total Used
+                    </div>
+
+                    <div class="fs-3 fw-bold text-warning">
+                        @totalUsed.ToString("0.##")
+                    </div>
+
+                    <small class="text-muted">
+                        Leave days used
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small mb-2">
+                        Total Remaining
+                    </div>
+
+                    <div class="fs-3 fw-bold text-success">
+                        @totalRemaining.ToString("0.##")
+                    </div>
+
+                    <small class="text-muted">
+                        Leave days available
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LEAVE BALANCE TABLE -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex align-items-center">
+
+                <div class="bg-primary-subtle text-primary rounded-3 p-2 me-3">
+                    <i class="bi bi-calendar2-range fs-5"></i>
+                </div>
+
+                <div>
+
+                    <h5 class="mb-1 fw-semibold">
+                        Leave Balance Details
+                    </h5>
+
+                    <small class="text-muted">
+                        Your leave allocation for @DateTime.Now.Year.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+
+                    <div class="mb-3">
+                        <i class="bi bi-calendar-x fs-1 text-muted"></i>
+                    </div>
+
+                    <h5 class="fw-semibold">
+                        No Leave Balance Found
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        No leave balance has been configured for you
+                        for @DateTime.Now.Year.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Leave Type
+                                </th>
+
+                                <th>
+                                    Allocated
+                                </th>
+
+                                <th>
+                                    Used
+                                </th>
+
+                                <th>
+                                    Remaining
+                                </th>
+
+                                <th class="pe-4">
+                                    Usage
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var balance in Model)
+                            {
+                                var remaining =
+                                    balance.AllocatedDays -
+                                    balance.UsedDays;
+
+                                var usagePercentage =
+                                    balance.AllocatedDays > 0
+                                        ? (balance.UsedDays /
+                                           balance.AllocatedDays) * 100
+                                        : 0;
+
+                                if (usagePercentage > 100)
+                                {
+                                    usagePercentage = 100;
+                                }
+
+                                <tr>
+
+                                    <td class="ps-4">
+
+                                        <span class="fw-semibold">
+                                            @balance.LeaveType
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+                                        @balance.AllocatedDays.ToString("0.##")
+                                    </td>
+
+
+                                    <td>
+                                        @balance.UsedDays.ToString("0.##")
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="fw-semibold
+                                            @(remaining > 0
+                                                ? "text-success"
+                                                : "text-danger")">
+
+                                            @remaining.ToString("0.##")
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td class="pe-4" style="min-width: 180px;">
+
+                                        <div class="d-flex justify-content-between mb-1">
+
+                                            <small class="text-muted">
+                                                Used
+                                            </small>
+
+                                            <small class="fw-semibold">
+                                                @usagePercentage.ToString("0")%
+                                            </small>
+
+                                        </div>
+
+                                        <div class="progress"
+                                             style="height: 7px;">
+
+                                            <div class="progress-bar"
+                                                 role="progressbar"
+                                                 style="width: @usagePercentage%;"
+                                                 aria-valuenow="@usagePercentage"
+                                                 aria-valuemin="0"
+                                                 aria-valuemax="100">
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

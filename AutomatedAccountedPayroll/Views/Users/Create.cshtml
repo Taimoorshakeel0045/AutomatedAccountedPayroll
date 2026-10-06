@@ -1,0 +1,174 @@
+﻿@{
+    ViewData["Title"] = "Create User";
+}
+
+<div class="attendance-report-page">
+
+    <div class="report-page-header">
+
+        <div>
+            <h1>Create User</h1>
+            <p>Create a new system account and assign a role.</p>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-lg-7">
+
+            <div class="report-table-card">
+
+                <div class="report-table-header">
+
+                    <div>
+                        <h5>User Information</h5>
+                        <p>Enter the login credentials for the new user.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="p-4">
+
+                    <form asp-action="Create"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="mb-3">
+
+                            <label for="email"
+                                   class="form-label fw-semibold">
+
+                                Email Address
+
+                            </label>
+
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   class="form-control"
+                                   placeholder="user@example.com"
+                                   required />
+
+                            <span class="text-danger"
+                                  data-valmsg-for="email">
+                            </span>
+
+                        </div>
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="mb-3">
+
+                            <label for="password"
+                                   class="form-label fw-semibold">
+
+                                Password
+
+                            </label>
+
+                            <input type="password"
+                                   id="password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="Enter password"
+                                   required />
+
+                            <small class="text-muted">
+                                Minimum 6 characters with at least one digit.
+                            </small>
+
+                        </div>
+
+
+                        <!-- ROLE -->
+
+                        <div class="mb-3">
+
+                            <label for="role"
+                                   class="form-label fw-semibold">
+
+                                Role
+
+                            </label>
+
+                                                       <select id="role"
+                                    name="role"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Select Role
+                                </option>
+
+                                <option value="Admin">
+                                    Admin
+                                </option>
+
+                                <option value="HR">
+                                    HR
+                                </option>
+
+                                <option value="Accountant">
+                                    Accountant
+                                </option>
+
+                                <option value="User">
+                                    User
+                                </option>
+
+                            </select>
+
+                            <span class="text-danger"
+                                  data-valmsg-for="role">
+                            </span>
+
+                        </div>
+
+
+                        <hr class="my-4" />
+
+
+                        <div class="d-flex gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+
+                                <i class="bi bi-person-plus me-1"></i>
+                                Create User
+
+                            </button>
+
+
+                            <a asp-action="Index"
+                               class="btn btn-secondary">
+
+                                <i class="bi bi-arrow-left me-1"></i>
+                                Back to Users
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

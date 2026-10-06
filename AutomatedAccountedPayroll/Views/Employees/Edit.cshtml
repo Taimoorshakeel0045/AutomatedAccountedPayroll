@@ -7,10 +7,8 @@
 <div class="container-fluid py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-
         <div>
             <h1 class="h3 mb-1">Edit Employee</h1>
-
             <p class="text-muted mb-0">
                 Update employee information.
             </p>
@@ -20,7 +18,6 @@
            class="btn btn-outline-secondary">
             Back to Employees
         </a>
-
     </div>
 
     <form asp-action="Edit" method="post">
@@ -32,21 +29,16 @@
              class="alert alert-danger">
         </div>
 
-
         <!-- Personal Information -->
 
         <div class="card shadow-sm border-0 mb-4">
 
             <div class="card-header bg-white py-3">
-
-                <h5 class="mb-1">
-                    Personal Information
-                </h5>
+                <h5 class="mb-1">Personal Information</h5>
 
                 <small class="text-muted">
                     Employee identity information
                 </small>
-
             </div>
 
             <div class="card-body">
@@ -54,7 +46,6 @@
                 <div class="row g-3">
 
                     <div class="col-md-4">
-
                         <label asp-for="EmployeeCode"
                                class="form-label">
                         </label>
@@ -65,12 +56,9 @@
                         <span asp-validation-for="EmployeeCode"
                               class="text-danger">
                         </span>
-
                     </div>
 
-
                     <div class="col-md-4">
-
                         <label asp-for="FirstName"
                                class="form-label">
                         </label>
@@ -81,12 +69,9 @@
                         <span asp-validation-for="FirstName"
                               class="text-danger">
                         </span>
-
                     </div>
 
-
                     <div class="col-md-4">
-
                         <label asp-for="LastName"
                                class="form-label">
                         </label>
@@ -97,12 +82,9 @@
                         <span asp-validation-for="LastName"
                               class="text-danger">
                         </span>
-
                     </div>
 
-
                     <div class="col-md-6">
-
                         <label asp-for="FatherName"
                                class="form-label">
                         </label>
@@ -113,12 +95,9 @@
                         <span asp-validation-for="FatherName"
                               class="text-danger">
                         </span>
-
                     </div>
 
-
                     <div class="col-md-6">
-
                         <label asp-for="CNIC"
                                class="form-label">
                         </label>
@@ -130,30 +109,23 @@
                         <span asp-validation-for="CNIC"
                               class="text-danger">
                         </span>
-
                     </div>
 
                 </div>
 
             </div>
-
         </div>
-
 
         <!-- Contact Information -->
 
         <div class="card shadow-sm border-0 mb-4">
 
             <div class="card-header bg-white py-3">
-
-                <h5 class="mb-1">
-                    Contact Information
-                </h5>
+                <h5 class="mb-1">Contact Information</h5>
 
                 <small class="text-muted">
                     Employee contact and address details
                 </small>
-
             </div>
 
             <div class="card-body">
@@ -161,7 +133,6 @@
                 <div class="row g-3">
 
                     <div class="col-md-6">
-
                         <label asp-for="Phone"
                                class="form-label">
                         </label>
@@ -172,12 +143,9 @@
                         <span asp-validation-for="Phone"
                               class="text-danger">
                         </span>
-
                     </div>
 
-
                     <div class="col-md-6">
-
                         <label asp-for="Email"
                                class="form-label">
                         </label>
@@ -189,12 +157,9 @@
                         <span asp-validation-for="Email"
                               class="text-danger">
                         </span>
-
                     </div>
 
-
                     <div class="col-12">
-
                         <label asp-for="Address"
                                class="form-label">
                         </label>
@@ -206,41 +171,32 @@
                         <span asp-validation-for="Address"
                               class="text-danger">
                         </span>
-
                     </div>
 
                 </div>
 
             </div>
-
         </div>
-
 
         <!-- Employment Information -->
 
         <div class="card shadow-sm border-0 mb-4">
 
             <div class="card-header bg-white py-3">
-
-                <h5 class="mb-1">
-                    Employment Information
-                </h5>
+                <h5 class="mb-1">Employment Information</h5>
 
                 <small class="text-muted">
                     Department, designation and employment details
                 </small>
-
             </div>
 
             <div class="card-body">
 
                 <div class="row g-3">
 
-
                     <!-- Joining Date -->
 
                     <div class="col-md-4">
-
                         <label asp-for="JoiningDate"
                                class="form-label">
                         </label>
@@ -252,14 +208,11 @@
                         <span asp-validation-for="JoiningDate"
                               class="text-danger">
                         </span>
-
                     </div>
-
 
                     <!-- Department -->
 
                     <div class="col-md-4">
-
                         <label asp-for="DepartmentId"
                                class="form-label">
                             Department
@@ -279,14 +232,11 @@
                         <span asp-validation-for="DepartmentId"
                               class="text-danger">
                         </span>
-
                     </div>
-
 
                     <!-- Designation -->
 
                     <div class="col-md-4">
-
                         <label asp-for="DesignationId"
                                class="form-label">
                             Designation
@@ -306,14 +256,11 @@
                         <span asp-validation-for="DesignationId"
                               class="text-danger">
                         </span>
-
                     </div>
-
 
                     <!-- Employment Type -->
 
                     <div class="col-md-4">
-
                         <label asp-for="EmploymentType"
                                class="form-label">
                         </label>
@@ -321,8 +268,8 @@
                         <select asp-for="EmploymentType"
                                 class="form-select">
 
-                            <option value="">
-                                Select Employment Type
+                            <option value="Permanent">
+                                Permanent
                             </option>
 
                             <option value="Full Time">
@@ -342,14 +289,11 @@
                         <span asp-validation-for="EmploymentType"
                               class="text-danger">
                         </span>
-
                     </div>
-
 
                     <!-- Basic Salary -->
 
                     <div class="col-md-4">
-
                         <label asp-for="BasicSalary"
                                class="form-label">
                         </label>
@@ -370,9 +314,7 @@
                         <span asp-validation-for="BasicSalary"
                               class="text-danger">
                         </span>
-
                     </div>
-
 
                     <!-- Active Status -->
 
@@ -396,9 +338,7 @@
                 </div>
 
             </div>
-
         </div>
-
 
         <!-- Form Actions -->
 
@@ -421,7 +361,6 @@
 
 </div>
 
-
 @section Scripts {
 
     @{
@@ -438,11 +377,9 @@
             const designationDropdown =
                 document.getElementById("DesignationId");
 
-            // This is the employee's existing designation
             const currentDesignationId =
                 '@Model.DesignationId';
 
-            // Load designations when Edit page opens
             if (departmentDropdown.value) {
 
                 loadDesignations(
@@ -451,8 +388,6 @@
                 );
             }
 
-
-            // Load new designations when department changes
             departmentDropdown.addEventListener("change", function () {
 
                 const departmentId = this.value;
@@ -464,7 +399,6 @@
 
             });
 
-
             function loadDesignations(
                 departmentId,
                 selectedDesignationId
@@ -475,7 +409,6 @@
 
                 designationDropdown.disabled = true;
 
-
                 if (!departmentId) {
 
                     designationDropdown.innerHTML =
@@ -483,7 +416,6 @@
 
                     return;
                 }
-
 
                 fetch(
                     '@Url.Action("GetDesignations", "Employees")?departmentId='
@@ -503,7 +435,6 @@
                     designationDropdown.innerHTML =
                         '<option value="">Select Designation</option>';
 
-
                     data.forEach(function (designation) {
 
                         const option =
@@ -513,20 +444,17 @@
 
                         option.textContent = designation.name;
 
-                        // Automatically select employee's existing designation
                         if (
                             selectedDesignationId &&
                             designation.id.toString() ===
                             selectedDesignationId.toString()
                         ) {
-
                             option.selected = true;
                         }
 
                         designationDropdown.appendChild(option);
 
                     });
-
 
                     if (data.length === 0) {
 
@@ -537,7 +465,6 @@
 
                         return;
                     }
-
 
                     designationDropdown.disabled = false;
 

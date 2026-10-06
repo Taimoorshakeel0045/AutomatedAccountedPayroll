@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutomatedAccountedPayroll.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,HR")]
     public class AttendancesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -344,7 +344,7 @@ namespace AutomatedAccountedPayroll.Controllers
         }
 
         private async Task LoadEmployees(
-            int? selectedEmployeeId = null)
+    int? selectedEmployeeId = null)
         {
             var employees = await _context.Employees
                 .Where(e => e.IsActive)
@@ -352,10 +352,21 @@ namespace AutomatedAccountedPayroll.Controllers
                 .ThenBy(e => e.LastName)
                 .ToListAsync();
 
+            var employeeList = employees
+                .Select(e => new
+                {
+                    e.EmployeeId,
+                    DisplayName = string.IsNullOrWhiteSpace(
+                            (e.FirstName + " " + e.LastName).Trim())
+                        ? e.EmployeeCode
+                        : $"{e.FirstName} {e.LastName}".Trim()
+                })
+                .ToList();
+
             ViewData["EmployeeId"] = new SelectList(
-                employees,
+                employeeList,
                 "EmployeeId",
-                "EmployeeCode",
+                "DisplayName",
                 selectedEmployeeId);
         }
 
